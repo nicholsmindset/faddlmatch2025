@@ -21,7 +21,7 @@ export default clerkMiddleware((auth, req) => {
   const { userId, sessionClaims } = auth()
   
   // Handle users who haven't completed onboarding
-  if (userId && !sessionClaims?.metadata?.profileComplete) {
+  if (userId && !(sessionClaims as any)?.metadata?.profileComplete) {
     const isOnboardingRoute = req.nextUrl.pathname.startsWith('/onboarding')
     const isApiRoute = req.nextUrl.pathname.startsWith('/api')
     
@@ -33,8 +33,8 @@ export default clerkMiddleware((auth, req) => {
   
   // Guardian access control
   if (req.nextUrl.pathname.startsWith('/guardian')) {
-    const isGuardian = sessionClaims?.organizations?.some(
-      org => org.role === 'guardian'
+    const isGuardian = (sessionClaims as any)?.organizations?.some?.(
+      (org: any) => org.role === 'guardian'
     )
     
     if (!isGuardian) {
@@ -48,7 +48,7 @@ export default clerkMiddleware((auth, req) => {
     vip: ['/matchmaker', '/exclusive-events', '/priority-support']
   }
   
-  const userTier = sessionClaims?.metadata?.subscriptionTier || 'basic'
+  const userTier = (sessionClaims as any)?.metadata?.subscriptionTier || 'basic'
   
   for (const [tier, routes] of Object.entries(protectedRoutes)) {
     if (routes.some(route => req.nextUrl.pathname.startsWith(route))) {

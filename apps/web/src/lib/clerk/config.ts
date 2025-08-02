@@ -51,8 +51,8 @@ export const clerkConfig = {
       }
     },
     layout: {
-      socialButtonsPlacement: 'bottom',
-      socialButtonsVariant: 'iconButton',
+      socialButtonsPlacement: 'bottom' as const,
+      socialButtonsVariant: 'iconButton' as const,
       showOptionalFields: false
     }
   },

@@ -6,7 +6,7 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/RadioGroup'
 import { Label } from '@/components/ui/Label'
 import { Button } from '@/components/ui/Button'
 import { FormError } from '@/components/ui/FormError'
-import { Mosque, Heart, Star } from 'lucide-react'
+import { Church, Heart, Star } from 'lucide-react'
 
 const religiousInfoSchema = z.object({
   religious_level: z.enum(['learning', 'practicing', 'devout'], {
@@ -63,7 +63,7 @@ export function ReligiousPracticeStep({ data, onUpdate, onNext }: ReligiousPract
       value: 'devout',
       label: 'Very Religious',
       description: 'Strong commitment to Islamic principles and practice',
-      icon: <Mosque className="h-5 w-5" />
+      icon: <Church className="h-5 w-5" />
     }
   ]
 
@@ -79,7 +79,7 @@ export function ReligiousPracticeStep({ data, onUpdate, onNext }: ReligiousPract
       {/* Header */}
       <div className="text-center mb-6">
         <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary-100">
-          <Mosque className="h-8 w-8 text-primary-600" />
+          <Church className="h-8 w-8 text-primary-600" />
         </div>
         <h3 className="text-lg font-semibold text-neutral-900 mb-2">
           Your Religious Practice
