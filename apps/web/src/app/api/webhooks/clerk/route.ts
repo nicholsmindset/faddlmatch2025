@@ -1,6 +1,6 @@
 import { Webhook } from 'svix'
 import { headers } from 'next/headers'
-import { WebhookEvent } from '@clerk/nextjs/server'
+import { WebhookEvent, clerkClient } from '@clerk/nextjs/server'
 import { userManagement } from '@/lib/clerk/user-management'
 import { NextRequest, NextResponse } from 'next/server'
 
@@ -53,13 +53,27 @@ export async function POST(req: NextRequest) {
 
     switch (type) {
       case 'user.created':
-        await userManagement.handleUserCreated(data)
-        console.log('User created:', data.id)
+        try {
+          // Webhook data is UserJSON, need to fetch full User object
+          const createdUser = await clerkClient.users.getUser(data.id)
+          await userManagement.handleUserCreated(createdUser)
+          console.log('User created:', data.id)
+        } catch (error) {
+          console.error('Error handling user.created webhook:', error)
+          throw error
+        }
         break
         
       case 'user.updated':
-        await userManagement.syncUser(data)
-        console.log('User updated:', data.id)
+        try {
+          // Webhook data is UserJSON, need to fetch full User object
+          const updatedUser = await clerkClient.users.getUser(data.id)
+          await userManagement.syncUser(updatedUser)
+          console.log('User updated:', data.id)
+        } catch (error) {
+          console.error('Error handling user.updated webhook:', error)
+          throw error
+        }
         break
         
       case 'user.deleted':
