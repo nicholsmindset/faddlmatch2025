@@ -1,0 +1,439 @@
+{
+  "usabilityTestingSurvey": {
+    "metadata": {
+      "version": "1.0",
+      "title": "FADDL Match Usability & User Experience Assessment",
+      "description": "Comprehensive evaluation of user interface, user experience, and platform usability",
+      "targetAudience": "All platform users",
+      "estimatedDuration": "5-7 minutes",
+      "languages": ["en", "ms", "ar", "ta", "zh"]
+    },
+    "sections": [
+      {
+        "id": "first_impressions",
+        "title": "First Impressions & Onboarding",
+        "description": "Initial experience and onboarding process evaluation",
+        "questions": [
+          {
+            "id": "first_impression_rating",
+            "type": "likert_5",
+            "question": "What was your first impression of the FADDL Match platform?",
+            "options": ["Very negative", "Negative", "Neutral", "Positive", "Very positive"],
+            "required": true
+          },
+          {
+            "id": "onboarding_clarity",
+            "type": "likert_5",
+            "question": "How clear and helpful was the onboarding process?",
+            "options": ["Very confusing", "Confusing", "Neutral", "Clear", "Very clear"],
+            "required": true,
+            "followUp": {
+              "condition": "score <= 2",
+              "question": "What part of the onboarding was most confusing?",
+              "type": "multiple_choice",
+              "options": [
+                "Account registration",
+                "Profile creation",
+                "Guardian setup",
+                "Islamic preference settings",
+                "Matching preferences",
+                "Privacy settings"
+              ]
+            }
+          },
+          {
+            "id": "profile_creation_ease",
+            "type": "likert_5",
+            "question": "How easy was it to create your profile?",
+            "options": ["Very difficult", "Difficult", "Neutral", "Easy", "Very easy"],
+            "required": true
+          },
+          {
+            "id": "islamic_settings_clarity",
+            "type": "likert_5",
+            "question": "How clear were the Islamic preference and practice settings?",
+            "options": ["Very unclear", "Unclear", "Neutral", "Clear", "Very clear"],
+            "required": true
+          }
+        ]
+      },
+      {
+        "id": "navigation_usability",
+        "title": "Navigation & Interface Usability",
+        "description": "Evaluation of platform navigation and interface design",
+        "questions": [
+          {
+            "id": "navigation_intuitiveness",
+            "type": "likert_5",
+            "question": "How intuitive is the platform navigation?",
+            "options": ["Very confusing", "Confusing", "Neutral", "Intuitive", "Very intuitive"],
+            "required": true
+          },
+          {
+            "id": "feature_findability",
+            "type": "likert_5",
+            "question": "How easy is it to find the features you need?",
+            "options": ["Very difficult", "Difficult", "Neutral", "Easy", "Very easy"],
+            "required": true
+          },
+          {
+            "id": "interface_design_appeal",
+            "type": "likert_5",
+            "question": "How appealing is the overall interface design?",
+            "options": ["Very unappealing", "Unappealing", "Neutral", "Appealing", "Very appealing"],
+            "required": true
+          },
+          {
+            "id": "cultural_design_appropriateness",
+            "type": "likert_5",
+            "question": "How culturally appropriate is the design for Muslim users?",
+            "options": ["Very inappropriate", "Inappropriate", "Neutral", "Appropriate", "Very appropriate"],
+            "required": true
+          },
+          {
+            "id": "loading_speed_satisfaction",
+            "type": "likert_5",
+            "question": "How satisfied are you with the platform's loading speed?",
+            "options": ["Very dissatisfied", "Dissatisfied", "Neutral", "Satisfied", "Very satisfied"],
+            "required": true
+          }
+        ]
+      },
+      {
+        "id": "matching_experience",
+        "title": "Matching & Discovery Experience",
+        "description": "User experience with the matching system and profile discovery",
+        "questions": [
+          {
+            "id": "match_quality_satisfaction",
+            "type": "likert_5",
+            "question": "How satisfied are you with the quality of your matches?",
+            "options": ["Very dissatisfied", "Dissatisfied", "Neutral", "Satisfied", "Very satisfied"],
+            "required": true
+          },
+          {
+            "id": "islamic_compatibility_accuracy",
+            "type": "likert_5",
+            "question": "How accurately do matches reflect Islamic compatibility?",
+            "options": ["Very inaccurately", "Inaccurately", "Neutrally", "Accurately", "Very accurately"],
+            "required": true
+          },
+          {
+            "id": "profile_information_adequacy",
+            "type": "likert_5",
+            "question": "How adequate is the profile information for making decisions?",
+            "options": ["Very inadequate", "Inadequate", "Neutral", "Adequate", "Very adequate"],
+            "required": true
+          },
+          {
+            "id": "matching_control_satisfaction",
+            "type": "likert_5",
+            "question": "How satisfied are you with your control over matching preferences?",
+            "options": ["Very dissatisfied", "Dissatisfied", "Neutral", "Satisfied", "Very satisfied"],
+            "required": true
+          },
+          {
+            "id": "cultural_matching_effectiveness",
+            "type": "likert_5",
+            "question": "How effectively does the system match based on cultural compatibility?",
+            "options": ["Very ineffectively", "Ineffectively", "Neutrally", "Effectively", "Very effectively"],
+            "required": true
+          }
+        ]
+      },
+      {
+        "id": "messaging_usability",
+        "title": "Messaging & Communication Experience",
+        "description": "Usability of messaging features and communication tools",
+        "questions": [
+          {
+            "id": "messaging_interface_ease",
+            "type": "likert_5",
+            "question": "How easy is the messaging interface to use?",
+            "options": ["Very difficult", "Difficult", "Neutral", "Easy", "Very easy"],
+            "required": true
+          },
+          {
+            "id": "conversation_flow_naturalness",
+            "type": "likert_5",
+            "question": "How natural does the conversation flow feel?",
+            "options": ["Very unnatural", "Unnatural", "Neutral", "Natural", "Very natural"],
+            "required": true
+          },
+          {
+            "id": "islamic_guidance_helpfulness",
+            "type": "likert_5",
+            "question": "How helpful are the Islamic conversation guidelines and suggestions?",
+            "options": ["Very unhelpful", "Unhelpful", "Neutral", "Helpful", "Very helpful"],
+            "required": true
+          },
+          {
+            "id": "guardian_integration_smoothness",
+            "type": "likert_5",
+            "question": "How smoothly is guardian oversight integrated into messaging?",
+            "options": ["Very roughly", "Roughly", "Neutrally", "Smoothly", "Very smoothly"],
+            "required": true
+          },
+          {
+            "id": "message_status_clarity",
+            "type": "likert_5",
+            "question": "How clear are message delivery and read status indicators?",
+            "options": ["Very unclear", "Unclear", "Neutral", "Clear", "Very clear"],
+            "required": true
+          }
+        ]
+      },
+      {
+        "id": "mobile_experience",
+        "title": "Mobile Experience",
+        "description": "Evaluation of mobile app or mobile web experience",
+        "questions": [
+          {
+            "id": "mobile_usability_rating",
+            "type": "likert_5",
+            "question": "How would you rate the overall mobile experience?",
+            "options": ["Very poor", "Poor", "Neutral", "Good", "Excellent"],
+            "required": true
+          },
+          {
+            "id": "mobile_feature_completeness",
+            "type": "likert_5",
+            "question": "How complete are the mobile features compared to desktop?",
+            "options": ["Much less", "Less", "Same", "More", "Much more"],
+            "required": true
+          },
+          {
+            "id": "mobile_performance_satisfaction",
+            "type": "likert_5",
+            "question": "How satisfied are you with mobile performance and speed?",
+            "options": ["Very dissatisfied", "Dissatisfied", "Neutral", "Satisfied", "Very satisfied"],
+            "required": true
+          },
+          {
+            "id": "mobile_notification_effectiveness",
+            "type": "likert_5",
+            "question": "How effective are mobile notifications and alerts?",
+            "options": ["Very ineffective", "Ineffective", "Neutral", "Effective", "Very effective"],
+            "required": true
+          }
+        ]
+      },
+      {
+        "id": "accessibility_inclusion",
+        "title": "Accessibility & Inclusion",
+        "description": "Assessment of accessibility features and inclusive design",
+        "questions": [
+          {
+            "id": "text_readability",
+            "type": "likert_5",
+            "question": "How readable is the text and content on the platform?",
+            "options": ["Very difficult", "Difficult", "Neutral", "Easy", "Very easy"],
+            "required": true
+          },
+          {
+            "id": "language_support_adequacy",
+            "type": "likert_5",
+            "question": "How adequate is the language support for your needs?",
+            "options": ["Very inadequate", "Inadequate", "Neutral", "Adequate", "Very adequate"],
+            "required": true
+          },
+          {
+            "id": "cultural_inclusivity",
+            "type": "likert_5",
+            "question": "How inclusive does the platform feel for your cultural background?",
+            "options": ["Very exclusive", "Exclusive", "Neutral", "Inclusive", "Very inclusive"],
+            "required": true
+          },
+          {
+            "id": "accessibility_features_awareness",
+            "type": "yes_no",
+            "question": "Are you aware of any accessibility features on the platform?",
+            "required": true,
+            "followUp": {
+              "condition": "answer === 'yes'",
+              "question": "How would you rate the accessibility features you've used?",
+              "type": "likert_5",
+              "options": ["Very poor", "Poor", "Neutral", "Good", "Excellent"]
+            }
+          }
+        ]
+      },
+      {
+        "id": "task_completion_efficiency",
+        "title": "Task Completion & Efficiency",
+        "description": "Evaluation of how efficiently users can complete common tasks",
+        "questions": [
+          {
+            "id": "profile_editing_ease",
+            "type": "likert_5",
+            "question": "How easy is it to edit and update your profile?",
+            "options": ["Very difficult", "Difficult", "Neutral", "Easy", "Very easy"],
+            "required": true
+          },
+          {
+            "id": "preference_adjustment_ease",
+            "type": "likert_5",
+            "question": "How easy is it to adjust your matching preferences?",
+            "options": ["Very difficult", "Difficult", "Neutral", "Easy", "Very easy"],
+            "required": true
+          },
+          {
+            "id": "match_decision_speed",
+            "type": "likert_5",
+            "question": "How quickly can you make decisions about potential matches?",
+            "options": ["Very slowly", "Slowly", "Neutrally", "Quickly", "Very quickly"],
+            "required": true
+          },
+          {
+            "id": "help_information_accessibility",
+            "type": "likert_5",
+            "question": "How easy is it to find help and support information?",
+            "options": ["Very difficult", "Difficult", "Neutral", "Easy", "Very easy"],
+            "required": true
+          }
+        ]
+      },
+      {
+        "id": "overall_usability_satisfaction",
+        "title": "Overall Usability Satisfaction",
+        "description": "General usability satisfaction and improvement priorities",
+        "questions": [
+          {
+            "id": "overall_usability_rating",
+            "type": "likert_5",
+            "question": "Overall, how would you rate the usability of FADDL Match?",
+            "options": ["Very poor", "Poor", "Neutral", "Good", "Excellent"],
+            "required": true
+          },
+          {
+            "id": "platform_efficiency_vs_alternatives",
+            "type": "likert_5",
+            "question": "Compared to other platforms you've used, how efficient is FADDL Match?",
+            "options": ["Much worse", "Worse", "Similar", "Better", "Much better"],
+            "required": true
+          },
+          {
+            "id": "learning_curve_assessment",
+            "type": "likert_5",
+            "question": "How would you describe the learning curve for new users?",
+            "options": ["Very steep", "Steep", "Moderate", "Gentle", "Very gentle"],
+            "required": true
+          },
+          {
+            "id": "most_frustrating_aspects",
+            "type": "multiple_choice",
+            "question": "What are the most frustrating aspects of using the platform? (Select up to 3)",
+            "options": [
+              "Slow loading times",
+              "Confusing navigation",
+              "Limited mobile features",
+              "Complex guardian processes",
+              "Inadequate search filters",
+              "Poor match quality",
+              "Messaging limitations",
+              "Profile creation complexity",
+              "Language barriers",
+              "Technical glitches"
+            ],
+            "maxSelections": 3,
+            "required": false
+          },
+          {
+            "id": "most_helpful_features",
+            "type": "multiple_choice",
+            "question": "What are the most helpful features of the platform? (Select up to 3)",
+            "options": [
+              "Islamic compatibility matching",
+              "Guardian oversight system",
+              "Cultural sensitivity features",
+              "Comprehensive profiles",
+              "Messaging guidelines",
+              "Prayer time awareness",
+              "Privacy controls",
+              "Mobile accessibility",
+              "Multilingual support",
+              "Match quality scoring"
+            ],
+            "maxSelections": 3,
+            "required": true
+          },
+          {
+            "id": "usability_improvement_priorities",
+            "type": "multiple_choice",
+            "question": "What are your top priorities for usability improvements? (Select up to 3)",
+            "options": [
+              "Faster loading speeds",
+              "Simpler navigation",
+              "Better mobile experience",
+              "Enhanced search functionality",
+              "Improved messaging interface",
+              "Clearer guardian processes",
+              "Better accessibility features",
+              "More language options",
+              "Simplified profile creation",
+              "Better help documentation"
+            ],
+            "maxSelections": 3,
+            "required": true
+          },
+          {
+            "id": "additional_usability_feedback",
+            "type": "text",
+            "question": "Please share any additional feedback about the platform's usability:",
+            "required": false,
+            "placeholder": "Your thoughts on user experience and usability..."
+          }
+        ]
+      }
+    ],
+    "conditionalLogic": {
+      "mobileUsers": {
+        "condition": "primaryDevice === 'mobile'",
+        "additionalQuestions": [
+          {
+            "id": "mobile_primary_pain_points",
+            "type": "multiple_choice",
+            "question": "What are your main pain points with the mobile experience?",
+            "options": [
+              "Small text/buttons",
+              "Slow performance",
+              "Limited functionality",
+              "Navigation difficulties",
+              "Battery drain",
+              "Notification issues"
+            ],
+            "required": true
+          }
+        ]
+      },
+      "newUsers": {
+        "condition": "userTenure <= 30",
+        "additionalQuestions": [
+          {
+            "id": "new_user_support_adequacy",
+            "type": "likert_5",
+            "question": "How adequate was the support for new users during your first month?",
+            "options": ["Very inadequate", "Inadequate", "Neutral", "Adequate", "Very adequate"],
+            "required": true
+          }
+        ]
+      }
+    },
+    "analytics": {
+      "trackingEvents": [
+        "usability_survey_started",
+        "section_completed",
+        "pain_point_identified",
+        "feature_praised",
+        "survey_completed"
+      ],
+      "segmentationFields": [
+        "userTenure",
+        "primaryDevice",
+        "culturalBackground",
+        "ageGroup",
+        "techProficiency"
+      ]
+    }
+  }
+}

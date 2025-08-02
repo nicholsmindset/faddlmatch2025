@@ -1,10 +1,111 @@
 /**
  * FADDL Match API Client
- * TypeScript client for interacting with Supabase Edge Functions
+ * Enterprise-grade TypeScript client with real-time features,
+ * Islamic compliance, and guardian oversight
  */
 
 import { createClient, SupabaseClient } from '@supabase/supabase-js'
 import type { Database } from '@faddlmatch/types'
+
+// Import services for enhanced client
+import { MessagingService } from './services/messaging'
+import { GuardianService } from './services/guardian'
+import { MatchesService } from './services/matches'
+import { NotificationsService } from './services/notifications'
+import { RealtimeConnectionManager } from './realtime/connection'
+import { RealtimeSubscriptionManager } from './realtime/subscriptions'
+
+// Export all real-time components
+export { RealtimeConnectionManager } from './realtime/connection'
+export { RealtimeSubscriptionManager } from './realtime/subscriptions'
+export * from './realtime/types'
+
+// Export all services
+export { MessagingService } from './services/messaging'
+export { GuardianService } from './services/guardian'
+export { MatchesService } from './services/matches'
+export { NotificationsService } from './services/notifications'
+
+// Export all hooks
+export { useRealTimeUpdates } from './hooks/useRealTimeUpdates'
+export { useAPIClient } from './hooks/useAPIClient'
+export { useConnectionStatus } from './hooks/useConnectionStatus'
+
+// Export service types
+export type {
+  // Messaging types
+  SendMessageRequest as EnhancedSendMessageRequest,
+  MessageResponse,
+  ConversationSummary,
+  MessageThread,
+  Message,
+  Participant,
+  TypingIndicator,
+  MessageFilter
+} from './services/messaging'
+
+export type {
+  // Guardian types
+  GuardianProfile,
+  ApprovalRequest,
+  GuardianDashboard,
+  GuardianActivity,
+  WardOverview,
+  ComplianceMetrics,
+  GuardianNotification,
+  InviteGuardianRequest,
+  GuardianSettings
+} from './services/guardian'
+
+export type {
+  // Match types
+  Match,
+  MatchUser,
+  UserPhoto,
+  ReligiousProfile,
+  CompatibilityBreakdown,
+  MatchFilters,
+  MatchPreferences,
+  DailyMatches,
+  MatchStatistics,
+  MatchResponse
+} from './services/matches'
+
+export type {
+  // Notification types
+  Notification,
+  NotificationType,
+  NotificationCategory,
+  NotificationPriority,
+  NotificationMetadata,
+  NotificationPreferences,
+  NotificationTemplate,
+  NotificationBatch,
+  NotificationStatistics,
+  PushSubscription
+} from './services/notifications'
+
+// Export hook types
+export type {
+  UseRealTimeUpdatesOptions,
+  RealTimeState,
+  RealTimeActions,
+  RealTimeEvents
+} from './hooks/useRealTimeUpdates'
+
+export type {
+  UseAPIClientOptions,
+  APIClientState,
+  APIServices
+} from './hooks/useAPIClient'
+
+export type {
+  NetworkStatus,
+  APIHealth,
+  RealtimeStatus,
+  ConnectionStatusState,
+  UseConnectionStatusOptions
+} from './hooks/useConnectionStatus'
 
 export interface ApiClientConfig {
   supabaseUrl: string
@@ -296,9 +397,10 @@ export class FaddlMatchApiClient {
     return this.supabase
   }
 
-  // Real-time subscriptions
+  // Real-time subscriptions (legacy - use new RealtimeSubscriptionManager)
   /**
    * Subscribe to new matches
+   * @deprecated Use RealtimeSubscriptionManager.subscribeToMatches instead
    */
   subscribeToMatches(userId: string, callback: (payload: any) => void) {
     return this.supabase
@@ -318,6 +420,7 @@ export class FaddlMatchApiClient {
 
   /**
    * Subscribe to new messages
+   * @deprecated Use RealtimeSubscriptionManager.subscribeToMessages instead
    */
   subscribeToMessages(conversationId: string, callback: (payload: any) => void) {
     return this.supabase
@@ -337,6 +440,7 @@ export class FaddlMatchApiClient {
 
   /**
    * Unsubscribe from all channels
+   * @deprecated Use RealtimeSubscriptionManager.unsubscribeAll instead
    */
   unsubscribeAll(): void {
     this.supabase.removeAllChannels()
@@ -348,7 +452,39 @@ export function createFaddlMatchClient(config: ApiClientConfig): FaddlMatchApiCl
   return new FaddlMatchApiClient(config)
 }
 
-// Export types
+// Create enhanced API client factory with all services
+export function createEnhancedFaddlMatchClient(config: ApiClientConfig & { userId: string; isGuardian?: boolean }) {
+  const { userId, isGuardian = false, ...clientConfig } = config
+  
+  const coreClient = new FaddlMatchApiClient(clientConfig)
+  const supabase = coreClient.getSupabaseClient()
+  const baseUrl = `${config.supabaseUrl}/functions/v1`
+  const authToken = config.authToken || ''
+  
+  return {
+    core: coreClient,
+    messaging: new MessagingService(supabase, authToken, userId, baseUrl),
+    guardian: new GuardianService(supabase, authToken, userId, baseUrl, isGuardian),
+    matches: new MatchesService(supabase, authToken, userId, baseUrl),
+    notifications: new NotificationsService(supabase, authToken, userId, baseUrl),
+    
+    // Real-time managers
+    createRealtimeConnection: (connectionConfig?: any) => {
+      return new RealtimeConnectionManager(
+        config.supabaseUrl,
+        config.supabaseKey,
+        authToken,
+        connectionConfig
+      )
+    },
+    
+    createSubscriptionManager: (connectionManager: RealtimeConnectionManager) => {
+      return new RealtimeSubscriptionManager(connectionManager, userId, isGuardian)
+    }
+  }
+}
+
+// Export legacy types for backward compatibility
 export type {
   Database,
   ApiClientConfig,

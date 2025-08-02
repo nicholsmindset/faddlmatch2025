@@ -1,0 +1,297 @@
+{
+  "islamicComplianceSurvey": {
+    "metadata": {
+      "version": "1.0",
+      "title": "Islamic Compliance & Cultural Sensitivity Assessment",
+      "description": "Comprehensive survey to evaluate how well the platform respects Islamic values and cultural sensitivities",
+      "targetAudience": "Muslim users and their guardians",
+      "estimatedDuration": "8-10 minutes",
+      "languages": ["en", "ms", "ar"]
+    },
+    "sections": [
+      {
+        "id": "islamic_values_adherence",
+        "title": "Islamic Values Adherence",
+        "description": "How well does the platform respect and implement Islamic principles?",
+        "questions": [
+          {
+            "id": "islamic_guidelines_clear",
+            "type": "likert_5",
+            "question": "How clear are the Islamic guidelines and expectations on the platform?",
+            "options": ["Very unclear", "Unclear", "Neutral", "Clear", "Very clear"],
+            "required": true,
+            "followUp": {
+              "condition": "score <= 2",
+              "question": "What specific Islamic guidelines would you like to see clarified?",
+              "type": "text"
+            }
+          },
+          {
+            "id": "content_moderation_islamic",
+            "type": "likert_5",
+            "question": "How well does the content moderation respect Islamic sensitivities?",
+            "options": ["Very poor", "Poor", "Neutral", "Good", "Excellent"],
+            "required": true
+          },
+          {
+            "id": "prayer_time_awareness",
+            "type": "likert_5",
+            "question": "How well does the platform accommodate Islamic prayer times and religious obligations?",
+            "options": ["Not at all", "Poorly", "Somewhat", "Well", "Excellently"],
+            "required": true,
+            "followUp": {
+              "condition": "score >= 4",
+              "question": "Which prayer-time features were most helpful?",
+              "type": "multiple_choice",
+              "options": ["Prayer time reminders", "Auto-away during prayer", "Scheduling around prayers", "Islamic calendar integration"]
+            }
+          },
+          {
+            "id": "halal_interaction_guidelines",
+            "type": "likert_5",
+            "question": "How well does the platform guide users toward halal interactions?",
+            "options": ["Very poorly", "Poorly", "Neutrally", "Well", "Very well"],
+            "required": true
+          },
+          {
+            "id": "islamic_marriage_process",
+            "type": "likert_5",
+            "question": "How well does the platform support the Islamic marriage process and timeline?",
+            "options": ["Very poorly", "Poorly", "Neutrally", "Well", "Very well"],
+            "required": true
+          }
+        ]
+      },
+      {
+        "id": "guardian_system_effectiveness",
+        "title": "Guardian System Effectiveness",
+        "description": "Evaluation of the guardian oversight and approval system",
+        "questions": [
+          {
+            "id": "guardian_role_clarity",
+            "type": "likert_5",
+            "question": "How clearly defined is the guardian's role and responsibilities?",
+            "options": ["Very unclear", "Unclear", "Neutral", "Clear", "Very clear"],
+            "required": true
+          },
+          {
+            "id": "approval_process_efficiency",
+            "type": "likert_5",
+            "question": "How efficient is the guardian approval process?",
+            "options": ["Very slow", "Slow", "Neutral", "Fast", "Very fast"],
+            "required": true,
+            "followUp": {
+              "condition": "score <= 2",
+              "question": "What would improve the approval process speed?",
+              "type": "text"
+            }
+          },
+          {
+            "id": "guardian_oversight_balance",
+            "type": "likert_5",
+            "question": "How well does the guardian oversight balance protection with user independence?",
+            "options": ["Very poorly", "Poorly", "Neutrally", "Well", "Very well"],
+            "required": true
+          },
+          {
+            "id": "guardian_communication_tools",
+            "type": "likert_5",
+            "question": "How effective are the communication tools for guardians?",
+            "options": ["Very ineffective", "Ineffective", "Neutral", "Effective", "Very effective"],
+            "required": true
+          },
+          {
+            "id": "family_honor_protection",
+            "type": "likert_5",
+            "question": "How well does the platform protect family honor and reputation?",
+            "options": ["Very poorly", "Poorly", "Neutrally", "Well", "Very well"],
+            "required": true
+          }
+        ]
+      },
+      {
+        "id": "cultural_sensitivity",
+        "title": "Cultural Sensitivity",
+        "description": "Assessment of cultural awareness and respect for diverse Muslim backgrounds",
+        "questions": [
+          {
+            "id": "cultural_representation",
+            "type": "likert_5",
+            "question": "How well does the platform represent diverse Muslim cultures (Malay, Indian, Chinese, Arab, etc.)?",
+            "options": ["Very poorly", "Poorly", "Neutrally", "Well", "Very well"],
+            "required": true
+          },
+          {
+            "id": "language_support",
+            "type": "likert_5",
+            "question": "How adequate is the multilingual support for your community?",
+            "options": ["Very inadequate", "Inadequate", "Neutral", "Adequate", "Very adequate"],
+            "required": true,
+            "followUp": {
+              "condition": "always",
+              "question": "Which languages are most important for your community?",
+              "type": "multiple_choice",
+              "options": ["English", "Malay", "Arabic", "Tamil", "Mandarin", "Hindi", "Urdu", "Other"]
+            }
+          },
+          {
+            "id": "cultural_matching_accuracy",
+            "type": "likert_5",
+            "question": "How accurately does the platform match users with compatible cultural backgrounds?",
+            "options": ["Very inaccurately", "Inaccurately", "Neutrally", "Accurately", "Very accurately"],
+            "required": true
+          },
+          {
+            "id": "tradition_respect",
+            "type": "likert_5",
+            "question": "How well does the platform respect traditional marriage customs and practices?",
+            "options": ["Very poorly", "Poorly", "Neutrally", "Well", "Very well"],
+            "required": true
+          }
+        ]
+      },
+      {
+        "id": "messaging_compliance",
+        "title": "Messaging & Communication Compliance",
+        "description": "Evaluation of Islamic compliance in messaging features",
+        "questions": [
+          {
+            "id": "conversation_guidance",
+            "type": "likert_5",
+            "question": "How helpful are the conversation guidelines for maintaining Islamic etiquette?",
+            "options": ["Very unhelpful", "Unhelpful", "Neutral", "Helpful", "Very helpful"],
+            "required": true
+          },
+          {
+            "id": "inappropriate_content_detection",
+            "type": "likert_5",
+            "question": "How effectively does the system detect and prevent inappropriate content?",
+            "options": ["Very ineffectively", "Ineffectively", "Neutrally", "Effectively", "Very effectively"],
+            "required": true
+          },
+          {
+            "id": "guardian_message_oversight",
+            "type": "likert_5",
+            "question": "How appropriate is the level of guardian oversight in messaging?",
+            "options": ["Too little", "Insufficient", "Just right", "Excessive", "Too much"],
+            "required": true
+          },
+          {
+            "id": "islamic_conversation_flow",
+            "type": "likert_5",
+            "question": "How well does the platform facilitate Islamic-appropriate conversation progression?",
+            "options": ["Very poorly", "Poorly", "Neutrally", "Well", "Very well"],
+            "required": true
+          }
+        ]
+      },
+      {
+        "id": "overall_satisfaction",
+        "title": "Overall Satisfaction & Recommendations",
+        "description": "General satisfaction and improvement suggestions",
+        "questions": [
+          {
+            "id": "islamic_compliance_overall",
+            "type": "likert_5",
+            "question": "Overall, how well does FADDL Match comply with Islamic principles?",
+            "options": ["Very poorly", "Poorly", "Neutrally", "Well", "Very well"],
+            "required": true
+          },
+          {
+            "id": "family_comfort_level",
+            "type": "likert_5",
+            "question": "How comfortable would your family be with you using this platform?",
+            "options": ["Very uncomfortable", "Uncomfortable", "Neutral", "Comfortable", "Very comfortable"],
+            "required": true
+          },
+          {
+            "id": "recommendation_likelihood",
+            "type": "nps",
+            "question": "How likely are you to recommend FADDL Match to other Muslim families?",
+            "required": true,
+            "followUp": {
+              "condition": "score <= 6",
+              "question": "What is the primary reason you would not recommend this platform?",
+              "type": "text"
+            }
+          },
+          {
+            "id": "priority_improvements",
+            "type": "multiple_choice",
+            "question": "What are the most important areas for improvement? (Select up to 3)",
+            "options": [
+              "Islamic compliance features",
+              "Guardian system improvements",
+              "Cultural sensitivity enhancements",
+              "Messaging compliance tools",
+              "Prayer time integration",
+              "Family involvement features",
+              "Content moderation accuracy",
+              "Multilingual support",
+              "Traditional marriage process support",
+              "Community features"
+            ],
+            "maxSelections": 3,
+            "required": true
+          },
+          {
+            "id": "additional_feedback",
+            "type": "text",
+            "question": "Please share any additional feedback or suggestions for improving Islamic compliance:",
+            "required": false,
+            "placeholder": "Your thoughts and suggestions..."
+          }
+        ]
+      }
+    ],
+    "conditionalLogic": {
+      "guardianUsers": {
+        "condition": "userType === 'guardian'",
+        "additionalQuestions": [
+          {
+            "id": "guardian_dashboard_usability",
+            "type": "likert_5",
+            "question": "How user-friendly is the guardian dashboard?",
+            "options": ["Very difficult", "Difficult", "Neutral", "Easy", "Very easy"],
+            "required": true
+          },
+          {
+            "id": "guardian_notification_effectiveness",
+            "type": "likert_5",
+            "question": "How effective are the guardian notifications and alerts?",
+            "options": ["Very ineffective", "Ineffective", "Neutral", "Effective", "Very effective"],
+            "required": true
+          }
+        ]
+      },
+      "convertUsers": {
+        "condition": "userProfile.islamicEducation === 'convert_with_formal_studies'",
+        "additionalQuestions": [
+          {
+            "id": "convert_support_adequacy",
+            "type": "likert_5",
+            "question": "How well does the platform support new Muslims in finding compatible partners?",
+            "options": ["Very poorly", "Poorly", "Neutrally", "Well", "Very well"],
+            "required": true
+          }
+        ]
+      }
+    },
+    "analytics": {
+      "trackingEvents": [
+        "survey_started",
+        "section_completed",
+        "survey_abandoned",
+        "survey_completed",
+        "follow_up_triggered"
+      ],
+      "segmentationFields": [
+        "userType",
+        "culturalBackground",
+        "guardianRequired",
+        "islamicPracticeLevel",
+        "maritalStatus"
+      ]
+    }
+  }
+}

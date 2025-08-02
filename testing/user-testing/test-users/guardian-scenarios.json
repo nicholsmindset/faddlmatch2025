@@ -1,0 +1,215 @@
+{
+  "guardianScenarios": {
+    "traditionalWali": {
+      "name": "Traditional Father as Wali",
+      "description": "Traditional Islamic approach where father must approve all interactions",
+      "characteristics": {
+        "approvalRequired": true,
+        "messageOversight": true,
+        "meetingApproval": true,
+        "culturalExpectations": "high",
+        "religiousOversight": "strict"
+      },
+      "testingObjectives": [
+        "Verify father approval workflow",
+        "Test message moderation by guardian",
+        "Validate cultural sensitivity in communications",
+        "Ensure Islamic compliance in all interactions"
+      ],
+      "expectedBehaviors": {
+        "initialResponse": "cautious_screening",
+        "messageApproval": "review_before_send",
+        "meetingArrangement": "requires_permission",
+        "familyInvolvement": "high_involvement"
+      }
+    },
+    "protectiveMother": {
+      "name": "Protective Mother Guardian",
+      "description": "Mother acting as guardian for widowed daughter with children",
+      "characteristics": {
+        "approvalRequired": true,
+        "messageOversight": false,
+        "meetingApproval": true,
+        "culturalExpectations": "medium",
+        "religiousOversight": "moderate"
+      },
+      "testingObjectives": [
+        "Test mother-daughter guardian dynamics",
+        "Verify child welfare considerations",
+        "Validate practical family concerns",
+        "Ensure emotional support system"
+      ],
+      "expectedBehaviors": {
+        "initialResponse": "protective_evaluation",
+        "messageApproval": "trust_with_oversight",
+        "meetingArrangement": "careful_planning",
+        "familyInvolvement": "medium_involvement"
+      }
+    },
+    "elderBrotherGuardian": {
+      "name": "Elder Brother as Guardian",
+      "description": "Brother acting as guardian for younger divorced sister",
+      "characteristics": {
+        "approvalRequired": true,
+        "messageOversight": true,
+        "meetingApproval": true,
+        "culturalExpectations": "medium",
+        "religiousOversight": "moderate"
+      },
+      "testingObjectives": [
+        "Test sibling guardian relationship",
+        "Verify peer-generation oversight",
+        "Validate modern approach with traditional values",
+        "Ensure appropriate boundary setting"
+      ],
+      "expectedBehaviors": {
+        "initialResponse": "balanced_approach",
+        "messageApproval": "spot_check_monitoring",
+        "meetingArrangement": "guided_independence",
+        "familyInvolvement": "supportive_oversight"
+      }
+    },
+    "sisterGuardian": {
+      "name": "Sister as Guardian",
+      "description": "Sister acting as guardian for younger brother (modern scenario)",
+      "characteristics": {
+        "approvalRequired": true,
+        "messageOversight": true,
+        "meetingApproval": false,
+        "culturalExpectations": "low",
+        "religiousOversight": "light"
+      },
+      "testingObjectives": [
+        "Test non-traditional guardian arrangement",
+        "Verify modern Islamic family dynamics",
+        "Validate peer-level guidance",
+        "Ensure respectful family involvement"
+      ],
+      "expectedBehaviors": {
+        "initialResponse": "supportive_guidance",
+        "messageApproval": "advisory_role",
+        "meetingArrangement": "minimal_involvement",
+        "familyInvolvement": "peer_support"
+      }
+    }
+  },
+  "guardianInteractionWorkflows": {
+    "approvalWorkflow": {
+      "steps": [
+        {
+          "step": 1,
+          "action": "match_notification",
+          "guardian_involved": true,
+          "user_action": "view_match",
+          "guardian_action": "review_profile",
+          "timeline": "immediate"
+        },
+        {
+          "step": 2,
+          "action": "initial_interest",
+          "guardian_involved": true,
+          "user_action": "express_interest",
+          "guardian_action": "approve_interest",
+          "timeline": "24_hours"
+        },
+        {
+          "step": 3,
+          "action": "mutual_match",
+          "guardian_involved": true,
+          "user_action": "activate_conversation",
+          "guardian_action": "set_guidelines",
+          "timeline": "immediate"
+        },
+        {
+          "step": 4,
+          "action": "message_exchange",
+          "guardian_involved": "variable",
+          "user_action": "send_message",
+          "guardian_action": "monitor_content",
+          "timeline": "ongoing"
+        },
+        {
+          "step": 5,
+          "action": "meeting_request",
+          "guardian_involved": true,
+          "user_action": "request_meeting",
+          "guardian_action": "approve_meeting",
+          "timeline": "48_hours"
+        }
+      ]
+    },
+    "messageOversightWorkflow": {
+      "automatic_moderation": {
+        "enabled": true,
+        "sensitivity_level": "high",
+        "flag_keywords": ["inappropriate_content", "personal_details", "meeting_arrangements"],
+        "guardian_notification": "immediate"
+      },
+      "guardian_review": {
+        "review_frequency": "all_messages",
+        "review_threshold": "guardian_preference",
+        "approval_required": true,
+        "timeout_policy": "24_hour_auto_approve"
+      },
+      "escalation_process": {
+        "concern_level_1": "automated_guidance",
+        "concern_level_2": "guardian_notification",
+        "concern_level_3": "conversation_pause",
+        "concern_level_4": "match_termination"
+      }
+    }
+  },
+  "culturalConsiderations": {
+    "malayMuslim": {
+      "guardianRole": "traditional_high_involvement",
+      "decisionMaking": "collective_family_decision",
+      "communicationStyle": "respectful_formal",
+      "meetingArrangements": "family_presence_expected",
+      "timelineExpectations": "patient_thorough_process"
+    },
+    "indianMuslim": {
+      "guardianRole": "protective_guidance",
+      "decisionMaking": "elder_consultation",
+      "communicationStyle": "warm_respectful",
+      "meetingArrangements": "structured_supervised",
+      "timelineExpectations": "moderate_paced_process"
+    },
+    "chineseMuslim": {
+      "guardianRole": "advisory_support",
+      "decisionMaking": "individual_with_family_input",
+      "communicationStyle": "practical_direct",
+      "meetingArrangements": "flexible_arrangements",
+      "timelineExpectations": "efficient_process"
+    },
+    "internationalMuslim": {
+      "guardianRole": "emotional_support",  
+      "decisionMaking": "individual_focused",
+      "communicationStyle": "open_communicative",
+      "meetingArrangements": "modern_flexible",
+      "timelineExpectations": "adaptable_process"
+    }
+  },
+  "testingMetrics": {
+    "guardianSatisfaction": [
+      "approval_process_clarity",
+      "communication_oversight_effectiveness",
+      "cultural_sensitivity_compliance",
+      "islamic_values_adherence",
+      "family_honor_protection"
+    ],
+    "userExperience": [
+      "guardian_interaction_smoothness",
+      "privacy_balance_comfort",
+      "cultural_respect_perception",
+      "process_efficiency_rating",
+      "overall_satisfaction_score"
+    ],
+    "systemPerformance": [
+      "guardian_notification_speed",
+      "approval_workflow_timing",
+      "message_moderation_accuracy",
+      "escalation_response_time",
+      "cultural_compliance_scoring"
+    ]
+  }
+}

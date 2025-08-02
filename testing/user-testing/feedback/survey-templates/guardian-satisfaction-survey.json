@@ -1,0 +1,382 @@
+{
+  "guardianSatisfactionSurvey": {
+    "metadata": {
+      "version": "1.0",
+      "title": "Guardian Experience & Satisfaction Assessment",
+      "description": "Comprehensive evaluation of the guardian oversight system from the guardian's perspective",
+      "targetAudience": "Guardians (parents, siblings, family members)",
+      "estimatedDuration": "6-8 minutes",
+      "languages": ["en", "ms", "ar", "ta", "zh"]
+    },
+    "sections": [
+      {
+        "id": "guardian_role_understanding",
+        "title": "Guardian Role & Responsibilities",
+        "description": "Understanding and clarity of guardian duties and expectations",
+        "questions": [
+          {
+            "id": "role_explanation_clarity",
+            "type": "likert_5",
+            "question": "How clearly were your responsibilities as a guardian explained?",
+            "options": ["Very unclear", "Unclear", "Neutral", "Clear", "Very clear"],
+            "required": true,
+            "followUp": {
+              "condition": "score <= 2",
+              "question": "What aspects of the guardian role need better explanation?",
+              "type": "text"
+            }
+          },
+          {
+            "id": "comfort_with_responsibilities",
+            "type": "likert_5",
+            "question": "How comfortable are you with your level of involvement in the process?",
+            "options": ["Very uncomfortable", "Uncomfortable", "Neutral", "Comfortable", "Very comfortable"],
+            "required": true
+          },
+          {
+            "id": "cultural_role_alignment",
+            "type": "likert_5",
+            "question": "How well does the guardian system align with your cultural expectations?",
+            "options": ["Very poorly", "Poorly", "Neutrally", "Well", "Very well"],
+            "required": true
+          },
+          {
+            "id": "islamic_guidance_adequacy",
+            "type": "likert_5",
+            "question": "How adequate is the Islamic guidance provided for guardian decisions?",
+            "options": ["Very inadequate", "Inadequate", "Neutral", "Adequate", "Very adequate"],
+            "required": true
+          }
+        ]
+      },
+      {
+        "id": "approval_workflow_experience",
+        "title": "Approval Workflow & Process",
+        "description": "Experience with the guardian approval system and workflow",
+        "questions": [
+          {
+            "id": "approval_process_efficiency",
+            "type": "likert_5",
+            "question": "How efficient is the approval process workflow?",
+            "options": ["Very slow", "Slow", "Neutral", "Fast", "Very fast"],
+            "required": true
+          },
+          {
+            "id": "decision_information_adequacy",
+            "type": "likert_5",
+            "question": "How adequate is the information provided to make informed approval decisions?",
+            "options": ["Very inadequate", "Inadequate", "Neutral", "Adequate", "Very adequate"],
+            "required": true,
+            "followUp": {
+              "condition": "score <= 2",
+              "question": "What additional information would help you make better decisions?",
+              "type": "multiple_choice",
+              "options": [
+                "More detailed profiles",
+                "Family background information",
+                "Islamic practice verification",
+                "Professional/education verification",
+                "Character references",
+                "Previous guardian feedback"
+              ]
+            }
+          },
+          {
+            "id": "notification_timeliness",
+            "type": "likert_5",
+            "question": "How timely are the notifications for approval requests?",
+            "options": ["Very delayed", "Delayed", "Neutral", "Timely", "Very timely"],
+            "required": true
+          },
+          {
+            "id": "approval_deadline_reasonableness",
+            "type": "likert_5",
+            "question": "How reasonable are the time limits for making approval decisions?",
+            "options": ["Too short", "Short", "Just right", "Long", "Too long"],
+            "required": true
+          }
+        ]
+      },
+      {
+        "id": "communication_oversight",
+        "title": "Communication Monitoring & Oversight",
+        "description": "Experience with message monitoring and communication oversight features",
+        "questions": [
+          {
+            "id": "message_monitoring_comfort",
+            "type": "likert_5",
+            "question": "How comfortable are you with the level of message monitoring provided?",
+            "options": ["Very uncomfortable", "Uncomfortable", "Neutral", "Comfortable", "Very comfortable"],
+            "required": true
+          },
+          {
+            "id": "inappropriate_content_alerts",
+            "type": "likert_5",
+            "question": "How effective are the alerts for potentially inappropriate content?",
+            "options": ["Very ineffective", "Ineffective", "Neutral", "Effective", "Very effective"],
+            "required": true
+          },
+          {
+            "id": "conversation_summary_usefulness",
+            "type": "likert_5",
+            "question": "How useful are the conversation summaries and highlights?",
+            "options": ["Very useless", "Useless", "Neutral", "Useful", "Very useful"],
+            "required": true
+          },
+          {
+            "id": "intervention_tools_adequacy",
+            "type": "likert_5",
+            "question": "How adequate are the tools for intervening when necessary?",
+            "options": ["Very inadequate", "Inadequate", "Neutral", "Adequate", "Very adequate"],
+            "required": true
+          },
+          {
+            "id": "privacy_balance_satisfaction",
+            "type": "likert_5",
+            "question": "How satisfied are you with the balance between oversight and privacy?",
+            "options": ["Very dissatisfied", "Dissatisfied", "Neutral", "Satisfied", "Very satisfied"],
+            "required": true
+          }
+        ]
+      },
+      {
+        "id": "dashboard_usability",
+        "title": "Guardian Dashboard & Interface",
+        "description": "Usability and effectiveness of the guardian dashboard and tools",
+        "questions": [
+          {
+            "id": "dashboard_ease_of_use",
+            "type": "likert_5",
+            "question": "How easy is the guardian dashboard to navigate and use?",
+            "options": ["Very difficult", "Difficult", "Neutral", "Easy", "Very easy"],
+            "required": true
+          },
+          {
+            "id": "information_organization",
+            "type": "likert_5",
+            "question": "How well organized is the information in the guardian dashboard?",
+            "options": ["Very poorly", "Poorly", "Neutrally", "Well", "Very well"],
+            "required": true
+          },
+          {
+            "id": "mobile_experience",
+            "type": "likert_5",
+            "question": "How satisfactory is the mobile experience for guardian functions?",
+            "options": ["Very poor", "Poor", "Neutral", "Good", "Excellent"],
+            "required": true
+          },
+          {
+            "id": "notification_management",
+            "type": "likert_5",
+            "question": "How well can you manage and customize your notifications?",
+            "options": ["Very poorly", "Poorly", "Neutrally", "Well", "Very well"],
+            "required": true
+          }
+        ]
+      },
+      {
+        "id": "family_protection_effectiveness",
+        "title": "Family Protection & Honor",
+        "description": "Assessment of how well the platform protects family honor and values",
+        "questions": [
+          {
+            "id": "family_honor_protection",
+            "type": "likert_5",
+            "question": "How well does the platform protect your family's honor and reputation?",
+            "options": ["Very poorly", "Poorly", "Neutrally", "Well", "Very well"],
+            "required": true
+          },
+          {
+            "id": "islamic_values_enforcement",
+            "type": "likert_5",
+            "question": "How effectively does the platform enforce Islamic values in interactions?",
+            "options": ["Very ineffectively", "Ineffectively", "Neutrally", "Effectively", "Very effectively"],
+            "required": true
+          },
+          {
+            "id": "community_reputation_confidence",
+            "type": "likert_5",
+            "question": "How confident are you in maintaining community reputation while using this platform?",
+            "options": ["Very unconfident", "Unconfident", "Neutral", "Confident", "Very confident"],
+            "required": true
+          },
+          {
+            "id": "inappropriate_behavior_prevention",
+            "type": "likert_5",
+            "question": "How well does the platform prevent inappropriate behavior or requests?",
+            "options": ["Very poorly", "Poorly", "Neutrally", "Well", "Very well"],
+            "required": true
+          }
+        ]
+      },
+      {
+        "id": "ward_relationship_impact",
+        "title": "Impact on Guardian-Ward Relationship",
+        "description": "How the guardian system affects the relationship with your family member",
+        "questions": [
+          {
+            "id": "relationship_strain_level",
+            "type": "likert_5",
+            "question": "How much strain has the guardian process put on your relationship with your family member?",
+            "options": ["Significant strain", "Some strain", "No change", "Improved slightly", "Improved significantly"],
+            "required": true
+          },
+          {
+            "id": "trust_building_effectiveness",
+            "type": "likert_5",
+            "question": "How well has the guardian system helped build trust in the marriage search process?",
+            "options": ["Harmed trust", "No effect", "Neutral", "Built some trust", "Built strong trust"],
+            "required": true
+          },
+          {
+            "id": "communication_improvement",
+            "type": "likert_5",
+            "question": "How has the guardian system affected communication with your family member?",
+            "options": ["Much worse", "Worse", "No change", "Better", "Much better"],
+            "required": true
+          },
+          {
+            "id": "decision_collaboration",
+            "type": "likert_5",
+            "question": "How well do you and your family member collaborate on marriage-related decisions?",
+            "options": ["Very poorly", "Poorly", "Neutrally", "Well", "Very well"],
+            "required": true
+          }
+        ]
+      },
+      {
+        "id": "overall_guardian_satisfaction",
+        "title": "Overall Satisfaction & Recommendations",
+        "description": "General satisfaction and suggestions for improvement",
+        "questions": [
+          {
+            "id": "overall_guardian_experience",
+            "type": "likert_5",
+            "question": "Overall, how satisfied are you with your experience as a guardian on this platform?",
+            "options": ["Very dissatisfied", "Dissatisfied", "Neutral", "Satisfied", "Very satisfied"],
+            "required": true
+          },
+          {
+            "id": "platform_recommendation_to_families",
+            "type": "nps",
+            "question": "How likely are you to recommend this platform to other Muslim families?",
+            "required": true,
+            "followUp": {
+              "condition": "score <= 6",
+              "question": "What is the primary reason you would not recommend this platform to other families?",
+              "type": "text"
+            }
+          },
+          {
+            "id": "guardian_system_vs_traditional",
+            "type": "likert_5",
+            "question": "Compared to traditional marriage arrangements, how do you rate this guardian system?",
+            "options": ["Much worse", "Worse", "Similar", "Better", "Much better"],
+            "required": true
+          },
+          {
+            "id": "most_valuable_features",
+            "type": "multiple_choice",
+            "question": "Which guardian features are most valuable to you? (Select up to 3)",
+            "options": [
+              "Profile approval system",
+              "Message monitoring",
+              "Real-time alerts",
+              "Conversation summaries",
+              "Match approval workflow",
+              "Meeting arrangement tools",
+              "Islamic compliance checking",
+              "Cultural sensitivity features",
+              "Family communication tools",
+              "Progress tracking"
+            ],
+            "maxSelections": 3,
+            "required": true
+          },
+          {
+            "id": "improvement_priorities",
+            "type": "multiple_choice",
+            "question": "What are your top priorities for guardian system improvements? (Select up to 3)",
+            "options": [
+              "Faster approval processes",
+              "Better mobile experience",
+              "More detailed profile information",
+              "Enhanced communication tools",
+              "Improved Islamic guidance",
+              "Better cultural customization",
+              "More intervention options",
+              "Enhanced privacy controls",
+              "Better notification management",
+              "Improved dashboard design"
+            ],
+            "maxSelections": 3,
+            "required": true
+          },
+          {
+            "id": "additional_guardian_feedback",
+            "type": "text",
+            "question": "Please share any additional feedback or suggestions for improving the guardian experience:",
+            "required": false,
+            "placeholder": "Your thoughts and suggestions as a guardian..."
+          }
+        ]
+      }
+    ],
+    "conditionalLogic": {
+      "fatherGuardians": {
+        "condition": "guardianRelationship === 'father'",
+        "additionalQuestions": [
+          {
+            "id": "wali_responsibilities_clarity",
+            "type": "likert_5",
+            "question": "How clearly does the platform explain your role as wali (Islamic guardian)?",
+            "options": ["Very unclear", "Unclear", "Neutral", "Clear", "Very clear"],
+            "required": true
+          }
+        ]
+      },
+      "motherGuardians": {
+        "condition": "guardianRelationship === 'mother'",
+        "additionalQuestions": [
+          {
+            "id": "emotional_support_tools",
+            "type": "likert_5",
+            "question": "How well does the platform support your role in providing emotional guidance?",
+            "options": ["Very poorly", "Poorly", "Neutrally", "Well", "Very well"],
+            "required": true
+          }
+        ]
+      },
+      "siblingGuardians": {
+        "condition": "guardianRelationship === 'brother' || guardianRelationship === 'sister'",
+        "additionalQuestions": [
+          {
+            "id": "peer_guardian_balance",
+            "type": "likert_5",
+            "question": "How well does the platform balance your protective role with peer-level relationship?",
+            "options": ["Very poorly", "Poorly", "Neutrally", "Well", "Very well"],
+            "required": true
+          }
+        ]
+      }
+    },
+    "analytics": {
+      "trackingEvents": [
+        "guardian_survey_started",
+        "section_completed",
+        "survey_abandoned",
+        "guardian_survey_completed",
+        "approval_workflow_feedback",
+        "dashboard_usability_feedback"
+      ],
+      "segmentationFields": [
+        "guardianRelationship",
+        "wardGender",
+        "wardAge",
+        "culturalBackground",
+        "islamicPracticeLevel",
+        "guardianExperience"
+      ]
+    }
+  }
+}

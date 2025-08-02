@@ -144,3 +144,136 @@ export function getEducationLevelLabel(level: string): string {
   }
   return labels[level as keyof typeof labels] || level
 }
+
+// Messaging utilities
+export function formatMessageTime(date: Date | string | number): string {
+  const messageDate = new Date(date)
+  const now = new Date()
+  const diffInSeconds = Math.floor((now.getTime() - messageDate.getTime()) / 1000)
+  
+  // Less than 1 minute
+  if (diffInSeconds < 60) {
+    return "Just now"
+  }
+  
+  // Less than 1 hour
+  if (diffInSeconds < 3600) {
+    const minutes = Math.floor(diffInSeconds / 60)
+    return `${minutes}m`
+  }
+  
+  // Same day
+  if (messageDate.toDateString() === now.toDateString()) {
+    return messageDate.toLocaleTimeString("en-US", {
+      hour: "numeric",
+      minute: "2-digit",
+      hour12: true
+    })
+  }
+  
+  // Yesterday
+  const yesterday = new Date(now)
+  yesterday.setDate(yesterday.getDate() - 1)
+  if (messageDate.toDateString() === yesterday.toDateString()) {
+    return "Yesterday"
+  }
+  
+  // This week
+  const diffInDays = Math.floor(diffInSeconds / (24 * 3600))
+  if (diffInDays < 7) {
+    return messageDate.toLocaleDateString("en-US", { weekday: "short" })
+  }
+  
+  // Older than a week
+  return messageDate.toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric"
+  })
+}
+
+export function formatLastSeen(date: Date | string | number): string {
+  const lastSeenDate = new Date(date)
+  const now = new Date()
+  const diffInSeconds = Math.floor((now.getTime() - lastSeenDate.getTime()) / 1000)
+  
+  if (diffInSeconds < 60) {
+    return "Just now"
+  }
+  
+  if (diffInSeconds < 3600) {
+    const minutes = Math.floor(diffInSeconds / 60)
+    return `${minutes} minute${minutes === 1 ? '' : 's'} ago`
+  }
+  
+  if (diffInSeconds < 86400) {
+    const hours = Math.floor(diffInSeconds / 3600)
+    return `${hours} hour${hours === 1 ? '' : 's'} ago`
+  }
+  
+  const days = Math.floor(diffInSeconds / 86400)
+  return `${days} day${days === 1 ? '' : 's'} ago`
+}
+
+export function validateMessageContent(content: string): {
+  isValid: boolean
+  errors: string[]
+  warnings: string[]
+} {
+  const errors: string[] = []
+  const warnings: string[] = []
+  
+  // Check length
+  if (content.length > 500) {
+    errors.push('Message is too long (maximum 500 characters)')
+  }
+  
+  if (!content.trim()) {
+    errors.push('Message cannot be empty')
+  }
+  
+  // Check for forbidden content
+  const forbiddenPatterns = [
+    { pattern: /\b(dating|kiss|hug|touch|meet\s+alone)\b/i, message: 'Contains inappropriate language for Islamic communication' },
+    { pattern: /\b\d{10,}\b/, message: 'Contains phone number - please avoid sharing personal contact info' },
+    { pattern: /\b[\w\.-]+@[\w\.-]+\.\w+\b/, message: 'Contains email address - please avoid sharing personal contact info' },
+    { pattern: /\b(instagram|facebook|snapchat|whatsapp|telegram|@\w+)\b/i, message: 'Contains social media reference - please avoid sharing handles' }
+  ]
+  
+  forbiddenPatterns.forEach(({ pattern, message }) => {
+    if (pattern.test(content)) {
+      errors.push(message)
+    }
+  })
+  
+  // Check for warning patterns
+  const warningPatterns = [
+    { pattern: /\b(meet|meeting|coffee|dinner|lunch)\b/i, message: 'Consider involving family in meeting arrangements' },
+    { pattern: /\b(beautiful|handsome|attractive|cute)\b/i, message: 'Keep compliments respectful and focused on character' }
+  ]
+  
+  warningPatterns.forEach(({ pattern, message }) => {
+    if (pattern.test(content)) {
+      warnings.push(message)
+    }
+  })
+  
+  return {
+    isValid: errors.length === 0,
+    errors,
+    warnings
+  }
+}
+
+export function getModerationStatusLabel(status: string): string {
+  const labels = {
+    approved: 'Approved',
+    flagged: 'Flagged',
+    guardian_review: 'Under Review',
+    pending: 'Pending Review'
+  }
+  return labels[status as keyof typeof labels] || status
+}
+
+export function isOwnMessage(messageUserId: string, currentUserId: string): boolean {
+  return messageUserId === currentUserId
+}

@@ -1,0 +1,58 @@
+{
+  "name": "faddl-match-user-testing",
+  "version": "1.0.0",
+  "description": "Comprehensive user testing framework for FADDL Match Islamic matrimonial platform",
+  "private": true,
+  "scripts": {
+    "test-env:init": "tsx environment/staging-setup.ts",
+    "test-env:seed": "tsx environment/data-seeding.ts",
+    "test-env:cleanup": "tsx environment/data-seeding.ts cleanup",
+    "test-users:create": "tsx test-users/create-test-users.ts",
+    "test:islamic-compliance": "tsx scenarios/islamic-compliance-tests.ts",
+    "test:islamic-compliance:specific": "tsx scenarios/islamic-compliance-tests.ts",
+    "test:messaging-scenarios": "tsx scenarios/messaging-scenarios.ts",
+    "test:messaging-scenarios:specific": "tsx scenarios/messaging-scenarios.ts",
+    "analytics:init": "tsx environment/analytics-monitoring.ts init",
+    "analytics:metrics": "tsx environment/analytics-monitoring.ts metrics",
+    "analytics:dashboard": "tsx environment/analytics-monitoring.ts dashboard",
+    "analytics:compliance": "tsx environment/analytics-monitoring.ts compliance",
+    "user-testing:start": "npm run test-env:init && npm run test-users:create && npm run test:islamic-compliance && npm run test:messaging-scenarios",
+    "user-testing:quick": "npm run test:islamic-compliance && npm run test:messaging-scenarios",
+    "reports:generate": "tsx environment/staging-setup.ts && tsx environment/analytics-monitoring.ts dashboard",
+    "results:export": "echo 'Exporting test results...' && tsx environment/analytics-monitoring.ts dashboard > test-results-$(date +%Y%m%d-%H%M%S).json",
+    "dev:dashboard": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint . --ext .ts,.tsx,.js,.jsx",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.39.0",
+    "next": "^14.0.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "typescript": "^5.2.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.8.0",
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0",
+    "eslint": "^8.52.0",
+    "eslint-config-next": "^14.0.0",
+    "tsx": "^4.0.0"
+  },
+  "keywords": [
+    "islamic",
+    "matrimonial",
+    "user-testing",
+    "guardian-system",
+    "cultural-sensitivity",
+    "compliance-testing",
+    "feedback-collection"
+  ],
+  "author": "FADDL Match Team",
+  "license": "UNLICENSED",
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

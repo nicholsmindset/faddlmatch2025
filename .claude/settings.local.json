@@ -9,7 +9,11 @@
       "Bash(git push:*)",
       "Bash(supabase functions:*)",
       "Bash(npx supabase:*)",
-      "Bash(npm install:*)"
+      "Bash(npm install:*)",
+      "Bash(find:*)",
+      "Bash(ls:*)",
+      "Bash(npm run build:*)",
+      "Bash(chmod:*)"
     ],
     "deny": []
   }

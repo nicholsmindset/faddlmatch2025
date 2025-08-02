@@ -1,0 +1,316 @@
+{
+  "testUserProfiles": {
+    "maleProfiles": [
+      {
+        "id": "test_male_1",
+        "demographics": {
+          "firstName": "Ahmad",
+          "lastName": "Rahman",
+          "yearOfBirth": 1987,
+          "gender": "male",
+          "locationZone": "central",
+          "maritalStatus": "divorced",
+          "ethnicity": "malay",
+          "languages": ["English", "Malay", "Arabic"]
+        },
+        "islamicPractice": {
+          "prayerFrequency": "always",
+          "modestDress": "always",
+          "islamicKnowledge": "advanced",
+          "mosqueeAttendance": "weekly",
+          "quranRecitation": "fluent",
+          "islamicEducation": "madrasah_background"
+        },
+        "familySituation": {
+          "hasChildren": true,
+          "childrenCount": 2,
+          "childrenAges": [8, 12],
+          "openToMoreChildren": true,
+          "guardianRequired": false
+        },
+        "preferences": {
+          "seekingMaritalStatus": ["divorced", "widowed"],
+          "acceptChildren": true,
+          "minPrayerFrequency": "usually",
+          "culturalValues": "traditional",
+          "familyInvolvement": "high"
+        },
+        "testingNotes": {
+          "purpose": "Traditional male seeking traditional match",
+          "guardianScenario": "Independent adult male",
+          "culturalContext": "Malay Muslim traditional values"
+        }
+      },
+      {
+        "id": "test_male_2",
+        "demographics": {
+          "firstName": "Omar",
+          "lastName": "Ali",
+          "yearOfBirth": 1992,
+          "gender": "male",
+          "locationZone": "north",
+          "maritalStatus": "divorced",
+          "ethnicity": "indian",
+          "languages": ["English", "Tamil", "Urdu"]
+        },
+        "islamicPractice": {
+          "prayerFrequency": "usually",
+          "modestDress": "usually",
+          "islamicKnowledge": "intermediate",
+          "mosqueeAttendance": "monthly",
+          "quranRecitation": "basic",
+          "islamicEducation": "secular_with_islamic_studies"
+        },
+        "familySituation": {
+          "hasChildren": false,
+          "childrenCount": 0,
+          "childrenAges": [],
+          "openToMoreChildren": true,
+          "guardianRequired": true
+        },
+        "preferences": {
+          "seekingMaritalStatus": ["divorced", "widowed"],
+          "acceptChildren": false,
+          "minPrayerFrequency": "usually",
+          "culturalValues": "moderate",
+          "familyInvolvement": "medium"
+        },
+        "guardian": {
+          "name": "Fatima Ali",
+          "relationship": "sister",
+          "email": "fatima.ali.test@example.com",
+          "phone": "+65-8888-2222",
+          "approvalRequired": true,
+          "canViewMessages": true,
+          "culturalRole": "elder_sister_guardian"
+        },
+        "testingNotes": {
+          "purpose": "Younger male with guardian oversight",
+          "guardianScenario": "Sister as guardian for family honor",
+          "culturalContext": "Indian Muslim moderate practice"
+        }
+      },
+      {
+        "id": "test_male_3",
+        "demographics": {
+          "firstName": "Hassan",
+          "lastName": "Lee",
+          "yearOfBirth": 1985,
+          "gender": "male",
+          "locationZone": "east",
+          "maritalStatus": "widowed",
+          "ethnicity": "chinese",
+          "languages": ["English", "Mandarin", "Malay"]
+        },
+        "islamicPractice": {
+          "prayerFrequency": "always",
+          "modestDress": "usually",
+          "islamicKnowledge": "advanced",
+          "mosqueeAttendance": "daily",
+          "quranRecitation": "fluent",
+          "islamicEducation": "convert_with_formal_studies"
+        },
+        "familySituation": {
+          "hasChildren": true,
+          "childrenCount": 1,
+          "childrenAges": [5],
+          "openToMoreChildren": true,
+          "guardianRequired": false
+        },
+        "preferences": {
+          "seekingMaritalStatus": ["divorced", "widowed"],
+          "acceptChildren": true,
+          "minPrayerFrequency": "always",
+          "culturalValues": "traditional",
+          "familyInvolvement": "high"
+        },
+        "testingNotes": {
+          "purpose": "Convert seeking practicing Muslim wife",
+          "guardianScenario": "Independent widower",
+          "culturalContext": "Chinese Muslim convert with strong practice"
+        }
+      }
+    ],
+    "femaleProfiles": [
+      {
+        "id": "test_female_1",
+        "demographics": {
+          "firstName": "Siti",
+          "lastName": "Abdullah",
+          "yearOfBirth": 1990,
+          "gender": "female",
+          "locationZone": "central",
+          "maritalStatus": "divorced",
+          "ethnicity": "malay",
+          "languages": ["English", "Malay", "Arabic"]
+        },
+        "islamicPractice": {
+          "prayerFrequency": "always",
+          "modestDress": "always",
+          "islamicKnowledge": "advanced",
+          "mosqueeAttendance": "weekly",
+          "quranRecitation": "fluent",
+          "islamicEducation": "islamic_university"
+        },
+        "familySituation": {
+          "hasChildren": true,
+          "childrenCount": 1,
+          "childrenAges": [6],
+          "openToMoreChildren": true,
+          "guardianRequired": true
+        },
+        "preferences": {
+          "seekingMaritalStatus": ["divorced", "widowed"],
+          "acceptChildren": true,
+          "minPrayerFrequency": "always",
+          "culturalValues": "traditional",
+          "familyInvolvement": "high"
+        },
+        "guardian": {
+          "name": "Haj Abdullah Rahman",
+          "relationship": "father",
+          "email": "abdullah.rahman.test@example.com",
+          "phone": "+65-9999-1111",
+          "approvalRequired": true,
+          "canViewMessages": true,
+          "culturalRole": "traditional_father_wali"
+        },
+        "testingNotes": {
+          "purpose": "Traditional female with father as wali",
+          "guardianScenario": "Father approval required for all interactions",
+          "culturalContext": "Traditional Malay Muslim with strong islamic education"
+        }
+      },
+      {
+        "id": "test_female_2",
+        "demographics": {
+          "firstName": "Amina",
+          "lastName": "Mohamed",
+          "yearOfBirth": 1988,
+          "gender": "female",
+          "locationZone": "west",
+          "maritalStatus": "widowed",
+          "ethnicity": "other",
+          "languages": ["English", "Arabic", "French"]
+        },
+        "islamicPractice": {
+          "prayerFrequency": "usually",
+          "modestDress": "always",
+          "islamicKnowledge": "intermediate",
+          "mosqueeAttendance": "weekly",
+          "quranRecitation": "intermediate",
+          "islamicEducation": "community_islamic_education"
+        },
+        "familySituation": {
+          "hasChildren": true,
+          "childrenCount": 3,
+          "childrenAges": [4, 7, 10],
+          "openToMoreChildren": false,
+          "guardianRequired": true
+        },
+        "preferences": {
+          "seekingMaritalStatus": ["divorced", "widowed"],
+          "acceptChildren": true,
+          "minPrayerFrequency": "usually",
+          "culturalValues": "moderate",
+          "familyInvolvement": "medium"
+        },
+        "guardian": {
+          "name": "Khadija Mohamed",
+          "relationship": "mother",
+          "email": "khadija.mohamed.test@example.com",
+          "phone": "+65-8888-3333",
+          "approvalRequired": true,
+          "canViewMessages": false,
+          "culturalRole": "protective_mother"
+        },
+        "testingNotes": {
+          "purpose": "Widowed mother seeking compatible partner",
+          "guardianScenario": "Mother as protective guardian",
+          "culturalContext": "International Muslim background with practical approach"
+        }
+      },
+      {
+        "id": "test_female_3",
+        "demographics": {
+          "firstName": "Zara",
+          "lastName": "Khan",
+          "yearOfBirth": 1995,
+          "gender": "female",
+          "locationZone": "south",
+          "maritalStatus": "divorced",
+          "ethnicity": "indian",
+          "languages": ["English", "Urdu", "Hindi"]
+        },
+        "islamicPractice": {
+          "prayerFrequency": "usually",
+          "modestDress": "usually",
+          "islamicKnowledge": "intermediate",
+          "mosqueeAttendance": "monthly",
+          "quranRecitation": "basic",
+          "islamicEducation": "weekend_madrasah"
+        },
+        "familySituation": {
+          "hasChildren": false,
+          "childrenCount": 0,
+          "childrenAges": [],
+          "openToMoreChildren": true,
+          "guardianRequired": true
+        },
+        "preferences": {
+          "seekingMaritalStatus": ["divorced", "widowed"],
+          "acceptChildren": true,
+          "minPrayerFrequency": "usually",
+          "culturalValues": "moderate",
+          "familyInvolvement": "medium"
+        },
+        "guardian": {
+          "name": "Ahmed Khan",
+          "relationship": "brother",
+          "email": "ahmed.khan.test@example.com",
+          "phone": "+65-7777-4444",
+          "approvalRequired": true,
+          "canViewMessages": true,
+          "culturalRole": "elder_brother_guardian"
+        },
+        "testingNotes": {
+          "purpose": "Young divorcee with brother as guardian",
+          "guardianScenario": "Elder brother protective oversight",
+          "culturalContext": "Indian Muslim moderate practice seeking new start"
+        }
+      }
+    ]
+  },
+  "testingScenarios": {
+    "crossCulturalMatching": [
+      {
+        "scenario": "Malay-Indian Match",
+        "participants": ["test_male_1", "test_female_3"],
+        "focusAreas": ["cultural_sensitivity", "language_compatibility", "guardian_interaction"],
+        "expectedChallenges": ["cultural_differences", "guardian_approval_complexity"]
+      },
+      {
+        "scenario": "Convert-Traditional Match",
+        "participants": ["test_male_3", "test_female_1"],
+        "focusAreas": ["islamic_knowledge_compatibility", "family_acceptance", "children_blending"],
+        "expectedChallenges": ["family_acceptance_of_convert", "parenting_style_differences"]
+      }
+    ],
+    "guardianComplexity": [
+      {
+        "scenario": "Dual Guardian Approval",
+        "participants": ["test_male_2", "test_female_2"],
+        "focusAreas": ["guardian_coordination", "approval_workflow", "message_oversight"],
+        "expectedChallenges": ["multiple_guardian_approval", "communication_delays"]
+      }
+    ],
+    "familyBlending": [
+      {
+        "scenario": "Both Have Children",
+        "participants": ["test_male_1", "test_female_2"],
+        "focusAreas": ["children_acceptance", "blended_family_planning", "guardian_comfort"],
+        "expectedChallenges": ["children_age_compatibility", "family_size_considerations"]
+      }
+    ]
+  }
+}
