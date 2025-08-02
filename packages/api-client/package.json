@@ -1,0 +1,46 @@
+{
+  "name": "@faddlmatch/api-client",
+  "version": "1.0.0",
+  "description": "TypeScript API client for FADDL Match",
+  "main": "dist/index.js",
+  "module": "dist/index.esm.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsup src/index.ts --format cjs,esm --dts",
+    "dev": "tsup src/index.ts --format cjs,esm --dts --watch",
+    "lint": "eslint src/**/*.ts",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.39.0"
+  },
+  "peerDependencies": {
+    "@faddlmatch/types": "*"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "tsup": "^8.0.0",
+    "typescript": "^5.3.0"
+  },
+  "files": [
+    "dist"
+  ],
+  "publishConfig": {
+    "access": "restricted"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nicholsmindset/faddlmatch2025.git",
+    "directory": "packages/api-client"
+  },
+  "keywords": [
+    "faddl-match",
+    "matrimonial",
+    "islamic",
+    "api-client",
+    "supabase",
+    "typescript"
+  ],
+  "author": "FADDL Match Team",
+  "license": "UNLICENSED"
+}
