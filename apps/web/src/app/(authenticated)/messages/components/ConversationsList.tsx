@@ -215,7 +215,7 @@ function ConversationItem({
             </h3>
             <div className="flex items-center gap-1">
               {guardian_approval_required && (
-                <Shield className="w-3 h-3 text-blue-500" title="Guardian oversight active" />
+                <Shield className="w-3 h-3 text-blue-500" />
               )}
               {getModerationIcon()}
               {last_message && (
