@@ -1,9 +1,8 @@
 # FADDL Match - Netlify Configuration
 [build]
-  base = "apps/web"
-  command = "npm install && npm run build"
+  command = "npm install && cd apps/web && npm install && npm run build"
   functions = "netlify/functions"
-  publish = ".next"
+  publish = "apps/web/.next"
   
 [build.environment]
   NODE_VERSION = "18"
