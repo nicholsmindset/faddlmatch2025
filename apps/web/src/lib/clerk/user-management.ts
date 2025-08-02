@@ -1,4 +1,4 @@
-import { clerkClient } from '@clerk/nextjs'
+import { clerkClient } from '@clerk/nextjs/server'
 import { User } from '@clerk/nextjs/server'
 import { createClient } from '@/lib/supabase/server'
 

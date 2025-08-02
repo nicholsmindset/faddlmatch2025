@@ -119,7 +119,7 @@ export function MatchesFilters() {
             </label>
             <Select
               value={filters.location}
-              onValueChange={(value) => handleFilterChange('location', value)}
+              onChange={(e) => handleFilterChange('location', e.target.value)}
             >
               <option value="">Any location</option>
               <option value="same-city">Same city</option>
@@ -135,7 +135,7 @@ export function MatchesFilters() {
             </label>
             <Select
               value={filters.education}
-              onValueChange={(value) => handleFilterChange('education', value)}
+              onChange={(e) => handleFilterChange('education', e.target.value)}
             >
               <option value="">Any education</option>
               <option value="high-school">High School</option>
@@ -152,7 +152,7 @@ export function MatchesFilters() {
             </label>
             <Select
               value={filters.religiousLevel}
-              onValueChange={(value) => handleFilterChange('religiousLevel', value)}
+              onChange={(e) => handleFilterChange('religiousLevel', e.target.value)}
             >
               <option value="">Any level</option>
               <option value="learning">Learning & Growing</option>
