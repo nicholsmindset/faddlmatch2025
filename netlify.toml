@@ -1,89 +1,18 @@
-# FADDL Match - Enterprise Netlify Configuration
-# Optimized for Series C scale with 99.99% uptime
-
+# FADDL Match - Netlify Configuration
 [build]
   command = "npm install && npm run build"
   functions = "netlify/functions"
   publish = "apps/web/.next"
   
 [build.environment]
-  NEXT_NETLIFY_PLUGIN_STOP_CACHING = "true"
   NODE_VERSION = "18"
   NPM_FLAGS = "--legacy-peer-deps"
-  TURBO_TOKEN = "$TURBO_TOKEN"
 
-# Build optimization plugins
+# Next.js plugin
 [[plugins]]
   package = "@netlify/plugin-nextjs"
 
-[[plugins]]
-  package = "netlify-plugin-cache"
-  [plugins.inputs]
-    paths = [
-      "apps/web/.next/cache",
-      "apps/web/node_modules/.cache",
-      ".pnpm-store"
-    ]
-
-[[plugins]]
-  package = "netlify-plugin-lighthouse"
-  [plugins.inputs]
-    audit_url = "https://staging.faddlmatch.com"
-    [plugins.inputs.thresholds]
-      performance = 95
-      accessibility = 95
-      best-practices = 95
-      seo = 95
-
-# Staging context (main branch)
-[context.staging]
-  environment = { NODE_ENV = "staging" }
-  
-[context.staging.environment]
-  NEXT_PUBLIC_SUPABASE_URL = "https://dvydbgjoagrzgpqdhqoq.supabase.co"
-  NEXT_PUBLIC_SUPABASE_ANON_KEY = "$SUPABASE_STAGING_ANON_KEY"
-  NEXT_PUBLIC_API_URL = "https://staging-api.faddlmatch.com"
-  NEXT_PUBLIC_APP_ENV = "staging"
-  NEXT_PUBLIC_ENABLE_BETA_FEATURES = "true"
-  NEXT_PUBLIC_BETA_TESTING_MODE = "true"
-  SENTRY_DSN = "$SENTRY_STAGING_DSN"
-  SENTRY_AUTH_TOKEN = "$SENTRY_AUTH_TOKEN"
-  SENTRY_ENVIRONMENT = "staging"
-
-# Production context
-[context.production]
-  environment = { NODE_ENV = "production" }
-  
-[context.production.environment]
-  NEXT_PUBLIC_SUPABASE_URL = "https://dvydbgjoagrzgpqdhqoq.supabase.co"
-  NEXT_PUBLIC_SUPABASE_ANON_KEY = "$SUPABASE_ANON_KEY"
-  NEXT_PUBLIC_API_URL = "https://api.faddlmatch.com"
-  NEXT_PUBLIC_APP_ENV = "production"
-  SENTRY_DSN = "$SENTRY_DSN"
-  SENTRY_AUTH_TOKEN = "$SENTRY_AUTH_TOKEN"
-  SENTRY_ENVIRONMENT = "production"
-
-# Branch deploy context (PR previews)
-[context.branch-deploy]
-  environment = { NODE_ENV = "development" }
-
-[context.branch-deploy.environment]
-  NEXT_PUBLIC_SUPABASE_URL = "https://dvydbgjoagrzgpqdhqoq.supabase.co"
-  NEXT_PUBLIC_SUPABASE_ANON_KEY = "$SUPABASE_STAGING_ANON_KEY"
-  NEXT_PUBLIC_APP_ENV = "preview"
-  ROBOTS_TXT_POLICY = "disallow"
-
-# Deploy preview context
-[context.deploy-preview]
-  environment = { NODE_ENV = "development" }
-  
-[context.deploy-preview.environment]
-  NEXT_PUBLIC_ENABLE_PREVIEW_MODE = "true"
-  BASIC_AUTH_USERNAME = "preview"
-  BASIC_AUTH_PASSWORD = "$PREVIEW_PASSWORD"
-  NEXT_PUBLIC_APP_ENV = "preview"
-
-# Security headers - Islamic content protection
+# Security headers
 [[headers]]
   for = "/*"
   [headers.values]
@@ -91,50 +20,23 @@
     X-Content-Type-Options = "nosniff"
     X-XSS-Protection = "1; mode=block"
     Referrer-Policy = "strict-origin-when-cross-origin"
-    Permissions-Policy = "camera=(self), microphone=(), geolocation=(self), payment=()"
-    Strict-Transport-Security = "max-age=31536000; includeSubDomains; preload"
-    X-Islamic-Content-Filter = "enabled"
-    X-Family-Safe = "true"
-    Content-Security-Policy = """
-      default-src 'self';
-      script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://js.sentry-cdn.com;
-      style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
-      font-src 'self' https://fonts.gstatic.com;
-      img-src 'self' data: https: blob: https://dvydbgjoagrzgpqdhqoq.supabase.co;
-      connect-src 'self' https://*.supabase.co wss://*.supabase.co https://api.faddlmatch.com https://staging-api.faddlmatch.com https://*.sentry.io;
-      frame-ancestors 'none';
-      base-uri 'self';
-      form-action 'self';
-      upgrade-insecure-requests;
-    """
+    Strict-Transport-Security = "max-age=31536000; includeSubDomains"
 
-# Static asset caching - 1 year
+# Static assets caching
 [[headers]]
   for = "/_next/static/*"
   [headers.values]
     Cache-Control = "public, max-age=31536000, immutable"
 
-[[headers]]
-  for = "/images/*"
-  [headers.values]
-    Cache-Control = "public, max-age=31536000, immutable"
-
-# Profile photos caching - 1 day
-[[headers]]
-  for = "/api/storage/profiles/*"
-  [headers.values]
-    Cache-Control = "private, max-age=86400"
-
-# Redirects for SEO and navigation
+# Basic redirects
 [[redirects]]
   from = "/home"
   to = "/"
   status = 301
-  force = true
 
 [[redirects]]
   from = "/login"
-  to = "/auth/login"
+  to = "/auth/login" 
   status = 301
 
 [[redirects]]
@@ -142,47 +44,14 @@
   to = "/auth/signup"
   status = 301
 
-# API proxy to Supabase functions
+# API proxy
 [[redirects]]
   from = "/api/functions/*"
   to = "https://dvydbgjoagrzgpqdhqoq.supabase.co/functions/v1/:splat"
   status = 200
   force = true
-  headers = {X-From = "Netlify"}
 
-# Edge Functions for enhanced performance
-[[edge_functions]]
-  function = "geolocation"
-  path = "/api/geo"
-
-[[edge_functions]]
-  function = "auth-check"
-  path = "/dashboard/*"
-
-[[edge_functions]]
-  function = "beta-testing"
-  path = "/beta/*"
-
-# Function configuration
-[functions]
-  directory = "netlify/functions"
-  node_bundler = "esbuild"
-  
-# Performance monitoring function
-[functions."performance-tracking"]
-  schedule = "*/5 * * * *" # Every 5 minutes
-
-# Beta feedback collection
-[functions."beta-feedback"]
-  schedule = "0 */6 * * *" # Every 6 hours
-
-# Dev settings for local development
+# Dev settings
 [dev]
   command = "cd apps/web && npm run dev"
   port = 3000
-  targetPort = 3000
-  framework = "#custom"
-  autoLaunch = false
-  
-[dev.env]
-  NEXT_PUBLIC_APP_ENV = "development"
