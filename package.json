@@ -1,0 +1,35 @@
+{
+  "name": "faddl-match",
+  "version": "1.0.0",
+  "description": "Series C-ready Muslim matrimonial platform",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev",
+    "lint": "turbo run lint",
+    "test": "turbo run test",
+    "test:e2e": "turbo run test:e2e",
+    "type-check": "turbo run type-check",
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
+    "clean": "turbo run clean",
+    "db:generate": "supabase gen types typescript --project-id dvydbgjoagrzgpqdhqoq > packages/types/src/database.ts",
+    "db:migrate": "supabase db reset --project-ref dvydbgjoagrzgpqdhqoq",
+    "db:seed": "supabase db seed --project-ref dvydbgjoagrzgpqdhqoq"
+  },
+  "devDependencies": {
+    "@turbo/gen": "^1.12.4",
+    "turbo": "^1.12.4",
+    "prettier": "^3.0.0",
+    "typescript": "^5.3.0",
+    "@types/node": "^20.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=8.0.0"
+  },
+  "packageManager": "npm@10.0.0"
+}
