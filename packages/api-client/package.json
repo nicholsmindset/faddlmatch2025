@@ -15,8 +15,7 @@
     "@supabase/supabase-js": "^2.39.0",
     "@supabase/realtime-js": "^2.9.3",
     "ioredis": "^5.3.2",
-    "ws": "^8.16.0",
-    "@faddlmatch/types": "workspace:*"
+    "ws": "^8.16.0"
   },
   "peerDependencies": {
     "react": ">=16.8.0"
