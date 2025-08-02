@@ -2,7 +2,7 @@
 # Optimized for Series C scale with 99.99% uptime
 
 [build]
-  command = "cd apps/web && npm run build"
+  command = "npm install && npm run build"
   functions = "netlify/functions"
   publish = "apps/web/.next"
   
@@ -10,6 +10,7 @@
   NEXT_NETLIFY_PLUGIN_STOP_CACHING = "true"
   NODE_VERSION = "18"
   NPM_FLAGS = "--legacy-peer-deps"
+  TURBO_TOKEN = "$TURBO_TOKEN"
 
 # Build optimization plugins
 [[plugins]]
@@ -28,12 +29,11 @@
   package = "netlify-plugin-lighthouse"
   [plugins.inputs]
     audit_url = "https://staging.faddlmatch.com"
-    thresholds = {
-      performance = 95,
-      accessibility = 95,
-      best-practices = 95,
+    [plugins.inputs.thresholds]
+      performance = 95
+      accessibility = 95
+      best-practices = 95
       seo = 95
-    }
 
 # Staging context (main branch)
 [context.staging]
