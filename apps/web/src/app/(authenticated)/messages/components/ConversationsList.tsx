@@ -112,7 +112,7 @@ export function ConversationsList({
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           leftIcon={<Search className="w-4 h-4" />}
-          size={'sm' as const}
+          size="sm"
           data-testid="conversation-search"
         />
       </div>
@@ -232,7 +232,7 @@ function ConversationItem({
             </p>
             
             {unread_count > 0 && (
-              <Badge variant="primary" size={'sm' as const}>
+              <Badge variant="primary" size="sm">
                 {unread_count > 99 ? '99+' : unread_count}
               </Badge>
             )}
@@ -241,12 +241,12 @@ function ConversationItem({
           {/* Status indicators */}
           <div className="flex items-center gap-2 mt-1">
             {conversation.match_status === 'pending' && (
-              <Badge variant="warning" size={'sm' as const}>
+              <Badge variant="warning" size="sm">
                 Pending
               </Badge>
             )}
             {conversation.match_status === 'expired' && (
-              <Badge variant="danger" size={'sm' as const}>
+              <Badge variant="danger" size="sm">
                 Expired
               </Badge>
             )}
