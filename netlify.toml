@@ -1,19 +1,15 @@
-# FADDL Match - Simple Netlify Configuration (Fallback)
+# FADDL Match - Optimized Netlify Configuration
 [build]
   base = "apps/web"
-  command = "rm -rf node_modules package-lock.json && npm install --legacy-peer-deps && npm run build"
+  command = "npm run build"
   functions = "netlify/functions" 
   publish = ".next"
   
 [build.environment]
-  NODE_VERSION = "18"
+  NODE_VERSION = "20"
   NPM_FLAGS = "--legacy-peer-deps"
   NEXT_PUBLIC_APP_URL = "https://faddlmatch.com"
-  # Note: Add STRIPE_PUBLISHABLE_KEY and STRIPE_SECRET_KEY in Netlify dashboard
-
-# Next.js plugin
-[[plugins]]
-  package = "@netlify/plugin-nextjs"
+  # STRIPE environment variables configured in Netlify dashboard
 
 # Security headers
 [[headers]]
