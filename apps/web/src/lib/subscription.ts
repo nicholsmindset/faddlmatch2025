@@ -381,3 +381,14 @@ export async function getSubscriptionAnalytics(userId: string) {
     throw new Error('Failed to get subscription analytics')
   }
 }
+
+/**
+ * Re-export Stripe constants and types for convenience
+ */
+export {
+  SUBSCRIPTION_PLANS,
+  SubscriptionStatus,
+  SubscriptionPlanId,
+  UserSubscription,
+  getPlanById
+} from './stripe'
