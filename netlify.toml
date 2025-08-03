@@ -1,7 +1,7 @@
 # FADDL Match - Monorepo Netlify Configuration
 [build]
   base = "apps/web"
-  command = "npm install --legacy-peer-deps && npm run build"
+  command = "npm ci --legacy-peer-deps && npm run build"
   functions = "netlify/functions" 
   publish = ".next"
   
@@ -9,6 +9,7 @@
   NODE_VERSION = "20"
   NPM_FLAGS = "--legacy-peer-deps"
   NEXT_PUBLIC_APP_URL = "https://faddlmatch.com"
+  NODE_ENV = "production"
   # STRIPE environment variables configured in Netlify dashboard
 
 # Security headers
