@@ -17,7 +17,7 @@ import {
 /**
  * 📊 Database subscription interface
  */
-interface DatabaseSubscription {
+export interface DatabaseSubscription {
   id: string
   user_id: string
   stripe_customer_id: string
@@ -389,6 +389,13 @@ export {
   SUBSCRIPTION_PLANS,
   SubscriptionStatus,
   SubscriptionPlanId,
+  SubscriptionPlan,
   UserSubscription,
-  getPlanById
+  getPlanById,
+  formatPrice,
+  validateIslamicCompliance,
+  StripeEventType
 } from './stripe'
+
+// Re-export the DatabaseSubscription interface
+export type { DatabaseSubscription }

@@ -56,8 +56,8 @@ async function handleSubscriptionCreated(subscription: Stripe.Subscription): Pro
 
     // Update to active status
     await updateSubscriptionStatus(subscription.id, SubscriptionStatus.ACTIVE, {
-      currentPeriodStart: new Date(subscription.current_period_start * 1000),
-      currentPeriodEnd: new Date(subscription.current_period_end * 1000)
+      currentPeriodStart: new Date((subscription as any).current_period_start * 1000),
+      currentPeriodEnd: new Date((subscription as any).current_period_end * 1000)
     })
 
     console.log(`[WEBHOOK] Successfully created subscription for user ${userId}`)
@@ -78,9 +78,9 @@ async function handleSubscriptionUpdated(subscription: Stripe.Subscription): Pro
     const status = mapStripeStatus(subscription.status)
     
     await updateSubscriptionStatus(subscription.id, status, {
-      currentPeriodStart: new Date(subscription.current_period_start * 1000),
-      currentPeriodEnd: new Date(subscription.current_period_end * 1000),
-      canceledAt: subscription.canceled_at ? new Date(subscription.canceled_at * 1000) : null
+      currentPeriodStart: new Date((subscription as any).current_period_start * 1000),
+      currentPeriodEnd: new Date((subscription as any).current_period_end * 1000),
+      canceledAt: (subscription as any).canceled_at ? new Date((subscription as any).canceled_at * 1000) : null
     })
 
     console.log(`[WEBHOOK] Successfully updated subscription ${subscription.id} to status ${status}`)
