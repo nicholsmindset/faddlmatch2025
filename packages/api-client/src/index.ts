@@ -5,7 +5,8 @@
  */
 
 import { createClient, SupabaseClient } from '@supabase/supabase-js'
-import type { Database } from '@faddlmatch/types'
+// Database types will be imported at runtime
+type Database = any
 
 // Import services for enhanced client
 import { MessagingService } from './services/messaging'
@@ -484,15 +485,7 @@ export function createEnhancedFaddlMatchClient(config: ApiClientConfig & { userI
   }
 }
 
-// Export legacy types for backward compatibility
-export type {
-  Database,
-  ApiClientConfig,
-  ApiResponse,
-  CreateProfileRequest,
-  MatchGenerationRequest,
-  SendMessageRequest,
-  UserSyncRequest
-}
+// Export Database type
+export type { Database }
 
 export default FaddlMatchApiClient

@@ -6,7 +6,10 @@
   "module": "dist/index.esm.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "build": "tsup src/index.ts --format cjs,esm --dts",
+    "build": "npm run build:clean && npm run build:compile && npm run build:verify",
+    "build:clean": "rm -rf dist",
+    "build:compile": "tsup src/index.ts --format cjs,esm --dts",
+    "build:verify": "test -f dist/index.js && test -f dist/index.d.ts && echo \"✅ API client build verified\"",
     "dev": "tsup src/index.ts --format cjs,esm --dts --watch",
     "lint": "eslint src/**/*.ts",
     "type-check": "tsc --noEmit"

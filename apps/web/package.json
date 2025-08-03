@@ -6,6 +6,12 @@
     "dev": "next dev",
     "build": "npm run build:deps && next build",
     "build:deps": "cd ../../packages/types && npm run type-check && cd ../api-client && npm run build && cd ../ai-integration && npm run build",
+    
+    "netlify:install:web": "echo \"📦 Installing web app dependencies with workspace resolution\" && npm install --legacy-peer-deps --include-workspace-root",
+    "netlify:build": "npm run netlify:verify:workspace && npm run netlify:install:web && npm run build",
+    "netlify:verify:workspace": "echo \"🔍 Verifying workspace packages are built\" && test -f ../../packages/api-client/dist/index.js && test -f ../../packages/ai-integration/dist/index.js && echo \"✅ Workspace packages ready\"",
+    "netlify:debug:deps": "echo \"🔍 Debugging dependency resolution\" && npm list --depth=0 | head -20 && echo \"\nCritical deps check:\" && ls -la node_modules/@faddl* 2>/dev/null || echo \"Workspace deps not found\" && ls -la node_modules/tailwindcss 2>/dev/null || echo \"TailwindCSS not found\"",
+    
     "start": "next start",
     "lint": "next lint",
     "type-check": "tsc --noEmit",

@@ -41,7 +41,13 @@
       "Bash(git remote get-url:*)",
       "Bash(git config:*)",
       "Bash(git reset:*)",
-      "Bash(cp:*)"
+      "Bash(cp:*)",
+      "Bash(npm ls:*)",
+      "Bash(grep:*)",
+      "Bash(npm run lint:*)",
+      "Bash(npm run netlify:install:*)",
+      "Bash(./build-netlify.sh)",
+      "Bash(npm run netlify:build:web:*)"
     ],
     "deny": []
   }

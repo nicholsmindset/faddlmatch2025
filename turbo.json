@@ -7,7 +7,24 @@
   "pipeline": {
     "build": {
       "dependsOn": ["^build"],
-      "outputs": [".next/**", "!.next/cache/**", "dist/**"]
+      "outputs": [".next/**", "!.next/cache/**", "dist/**"],
+      "env": ["NODE_ENV", "NETLIFY_BUILD"]
+    },
+    "build:clean": {
+      "cache": false
+    },
+    "build:compile": {
+      "dependsOn": ["build:clean"],
+      "outputs": ["dist/**"]
+    },
+    "build:verify": {
+      "dependsOn": ["build:compile"],
+      "cache": false
+    },
+    "netlify:build": {
+      "dependsOn": ["^build"],
+      "outputs": [".next/**", "!.next/cache/**"],
+      "cache": false
     },
     "dev": {
       "cache": false,

@@ -74,7 +74,7 @@ export class CostOptimizer {
     }
     
     // Reset daily costs at midnight
-    this.scheduleDaily Reset()
+    this.scheduleDailyReset()
   }
 
   /**
@@ -550,7 +550,7 @@ export class CostOptimizer {
   /**
    * Reset daily costs (called at midnight)
    */
-  private scheduleDaily Reset(): void {
+  private scheduleDailyReset(): void {
     const now = new Date()
     const tomorrow = new Date(now)
     tomorrow.setDate(tomorrow.getDate() + 1)
