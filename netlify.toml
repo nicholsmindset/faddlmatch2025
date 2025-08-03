@@ -1,9 +1,9 @@
 # FADDL Match - Netlify Configuration
 [build]
-  base = "apps/web"
-  command = "npm run build"
-  functions = "netlify/functions"
-  publish = ".next"
+  base = "."
+  command = "npm install && npx turbo build --filter=@faddl/web"
+  functions = "apps/web/netlify/functions"
+  publish = "apps/web/.next"
   
 [build.environment]
   NODE_VERSION = "18"
@@ -54,5 +54,5 @@
 
 # Dev settings
 [dev]
-  command = "cd apps/web && npm run dev"
+  command = "npm run dev"
   port = 3000
