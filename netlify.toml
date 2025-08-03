@@ -1,7 +1,7 @@
-# FADDL Match - Optimized Netlify Configuration
+# FADDL Match - Monorepo Netlify Configuration
 [build]
   base = "apps/web"
-  command = "npm run build"
+  command = "npm install --legacy-peer-deps && npm run build"
   functions = "netlify/functions" 
   publish = ".next"
   
