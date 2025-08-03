@@ -2,7 +2,7 @@
 # Optimized for workspace dependency resolution
 [build]
   base = "."
-  command = "chmod +x netlify-emergency-build.sh && ./netlify-emergency-build.sh"
+  command = "chmod +x netlify-production-build.sh && ./netlify-production-build.sh"
   functions = "netlify/functions" 
   publish = "apps/web/.next"
   
