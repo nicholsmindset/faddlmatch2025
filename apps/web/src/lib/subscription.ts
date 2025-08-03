@@ -389,4 +389,3 @@ export async function getSubscriptionAnalytics(userId: string) {
  */
 export { SUBSCRIPTION_PLANS, SubscriptionStatus, getPlanById } from './stripe'
 export type { SubscriptionPlanId, SubscriptionPlan, UserSubscription } from './stripe'
-export type { DatabaseSubscription }

@@ -4,10 +4,8 @@
  */
 
 import React from 'react'
-import { Suspense } from 'react'
 import { CheckCircle, Heart, ArrowRight } from 'lucide-react'
 import Link from 'next/link'
-import { motion } from 'framer-motion'
 
 /**
  * 🎉 Success page content
@@ -15,49 +13,24 @@ import { motion } from 'framer-motion'
 function SuccessContent() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-blue-50 to-purple-50 flex items-center justify-center p-4">
-      <motion.div
-        className="max-w-2xl mx-auto text-center"
-        initial={{ opacity: 0, scale: 0.9 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.6 }}
-      >
+      <div className="max-w-2xl mx-auto text-center animate-in fade-in duration-500">
         {/* Success Icon */}
-        <motion.div
-          className="inline-flex items-center justify-center w-24 h-24 bg-green-100 rounded-full mb-8"
-          initial={{ scale: 0 }}
-          animate={{ scale: 1 }}
-          transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
-        >
+        <div className="inline-flex items-center justify-center w-24 h-24 bg-green-100 rounded-full mb-8">
           <CheckCircle className="w-12 h-12 text-green-600" />
-        </motion.div>
+        </div>
 
         {/* Main Heading */}
-        <motion.h1
-          className="text-4xl md:text-5xl font-bold text-gray-900 mb-4"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
-        >
+        <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
           Welcome to Your Journey! 🎉
-        </motion.h1>
+        </h1>
 
-        <motion.p
-          className="text-xl text-gray-600 mb-8"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4 }}
-        >
+        <p className="text-xl text-gray-600 mb-8">
           Your subscription has been successfully activated. 
           May Allah bless you in finding your perfect match.
-        </motion.p>
+        </p>
 
         {/* Success Details */}
-        <motion.div
-          className="bg-white rounded-2xl p-8 shadow-lg border border-green-200 mb-8"
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.5 }}
-        >
+        <div className="bg-white rounded-2xl p-8 shadow-lg border border-green-200 mb-8">
           <h2 className="text-2xl font-semibold text-gray-900 mb-6">
             What happens next?
           </h2>
@@ -99,15 +72,10 @@ function SuccessContent() {
               </div>
             </div>
           </div>
-        </motion.div>
+        </div>
 
         {/* Islamic Blessing */}
-        <motion.div
-          className="bg-gradient-to-r from-green-100 to-blue-100 rounded-xl p-6 mb-8"
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 0.6 }}
-        >
+        <div className="bg-gradient-to-r from-green-100 to-blue-100 rounded-xl p-6 mb-8">
           <div className="flex items-center justify-center space-x-2 mb-2">
             <Heart className="w-5 h-5 text-green-600" />
             <span className="font-semibold text-gray-900">Islamic Blessing</span>
@@ -118,15 +86,10 @@ function SuccessContent() {
             that you may dwell in tranquility with them, and He has put love and mercy between your hearts."
           </p>
           <p className="text-sm text-gray-600 mt-2">- Quran 30:21</p>
-        </motion.div>
+        </div>
 
         {/* Action Buttons */}
-        <motion.div
-          className="flex flex-col sm:flex-row gap-4 justify-center"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.7 }}
-        >
+        <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <Link
             href="/dashboard"
             className="inline-flex items-center justify-center px-8 py-4 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-700 transition-colors shadow-lg hover:shadow-xl"
@@ -142,15 +105,10 @@ function SuccessContent() {
             View Matches
             <Heart className="w-5 h-5 ml-2" />
           </Link>
-        </motion.div>
+        </div>
 
         {/* Support Information */}
-        <motion.div
-          className="mt-12 text-center"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.8 }}
-        >
+        <div className="mt-12 text-center">
           <p className="text-gray-600 text-sm mb-2">
             Need help getting started? Our support team is here for you.
           </p>
@@ -160,23 +118,15 @@ function SuccessContent() {
           >
             Contact Support
           </Link>
-        </motion.div>
-      </motion.div>
+        </div>
+      </div>
     </div>
   )
 }
 
 /**
- * 📄 Main page component with Suspense
+ * 📄 Main page component
  */
 export default function SubscriptionSuccessPage() {
-  return (
-    <Suspense fallback={
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-      </div>
-    }>
-      <SuccessContent />
-    </Suspense>
-  )
+  return <SuccessContent />
 }
