@@ -8,10 +8,12 @@ import { createAdminClient } from './supabase/server'
 import { getStripeServer } from './stripe'
 import {
   SUBSCRIPTION_PLANS,
-  SubscriptionPlanId,
   SubscriptionStatus,
-  UserSubscription,
   getPlanById
+} from './stripe'
+import type {
+  SubscriptionPlanId,
+  UserSubscription
 } from './stripe'
 
 /**
@@ -383,19 +385,8 @@ export async function getSubscriptionAnalytics(userId: string) {
 }
 
 /**
- * Re-export Stripe constants and types for convenience
+ * Re-export essential Stripe types and constants
  */
-export {
-  SUBSCRIPTION_PLANS,
-  SubscriptionStatus,
-  SubscriptionPlanId,
-  SubscriptionPlan,
-  UserSubscription,
-  getPlanById,
-  formatPrice,
-  validateIslamicCompliance,
-  StripeEventType
-} from './stripe'
-
-// Re-export the DatabaseSubscription interface
+export { SUBSCRIPTION_PLANS, SubscriptionStatus, getPlanById } from './stripe'
+export type { SubscriptionPlanId, SubscriptionPlan, UserSubscription } from './stripe'
 export type { DatabaseSubscription }

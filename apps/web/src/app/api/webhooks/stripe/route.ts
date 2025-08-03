@@ -114,11 +114,11 @@ async function handleSubscriptionDeleted(subscription: Stripe.Subscription): Pro
  */
 async function handlePaymentSucceeded(invoice: Stripe.Invoice): Promise<void> {
   try {
-    if (!invoice.subscription) {
+    if (!(invoice as any).subscription) {
       return // Not a subscription payment
     }
 
-    const subscriptionId = invoice.subscription as string
+    const subscriptionId = (invoice as any).subscription as string
     console.log(`[WEBHOOK] Processing payment succeeded for subscription ${subscriptionId}`)
 
     // Ensure subscription is active
@@ -136,11 +136,11 @@ async function handlePaymentSucceeded(invoice: Stripe.Invoice): Promise<void> {
  */
 async function handlePaymentFailed(invoice: Stripe.Invoice): Promise<void> {
   try {
-    if (!invoice.subscription) {
+    if (!(invoice as any).subscription) {
       return // Not a subscription payment
     }
 
-    const subscriptionId = invoice.subscription as string
+    const subscriptionId = (invoice as any).subscription as string
     console.log(`[WEBHOOK] Processing payment failed for subscription ${subscriptionId}`)
 
     // Mark subscription as past due
