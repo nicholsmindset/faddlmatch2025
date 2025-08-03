@@ -1,7 +1,7 @@
 # FADDL Match - Netlify Configuration
 [build]
   base = "."
-  command = "chmod +x netlify-complete-build.sh && ./netlify-complete-build.sh"
+  command = "chmod +x netlify-ultimate-build.sh && ./netlify-ultimate-build.sh"
   publish = "apps/web/.next"
 
 [build.environment]
