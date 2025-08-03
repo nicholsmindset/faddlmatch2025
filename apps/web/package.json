@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "npm run build:deps && next build",
+    "build:deps": "cd ../../packages/types && npm run type-check && cd ../api-client && npm run build && cd ../ai-integration && npm run build",
     "start": "next start",
     "lint": "next lint",
     "type-check": "tsc --noEmit",
@@ -14,6 +15,9 @@
     "clean": "rm -rf .next"
   },
   "dependencies": {
+    "@faddl/types": "file:../../packages/types",
+    "@faddlmatch/api-client": "file:../../packages/api-client",
+    "@faddl-match/ai-integration": "file:../../packages/ai-integration",
     "@clerk/nextjs": "^5.3.3",
     "@hookform/resolvers": "^3.3.2",
     "@radix-ui/react-avatar": "^1.0.4",

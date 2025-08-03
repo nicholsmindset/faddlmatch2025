@@ -3,16 +3,16 @@
  * Secure Stripe integration for FADDL Match subscription system
  */
 
-import { loadStripe } from '@stripe/stripe-js'
-import Stripe from 'stripe'
+import { loadStripe, Stripe } from '@stripe/stripe-js'
+import StripeServer from 'stripe'
 import { getStripeConfig } from './env'
 
 /**
  * 🌐 Client-side Stripe instance (browser)
  */
-let stripePromise: Promise<any> | null = null
+let stripePromise: Promise<Stripe | null> | null = null
 
-export const getStripe = () => {
+export const getStripe = (): Promise<Stripe | null> => {
   if (!stripePromise) {
     const { publishableKey } = getStripeConfig()
     stripePromise = loadStripe(publishableKey)
@@ -23,12 +23,13 @@ export const getStripe = () => {
 /**
  * 🔐 Server-side Stripe instance
  */
-let stripeServerInstance: Stripe | null = null
+let stripeServerInstance: StripeServer | null = null
 
-export const getStripeServer = (): Stripe => {
+export const getStripeServer = (): StripeServer => {
   if (!stripeServerInstance) {
     const { secretKey } = getStripeConfig()
-    stripeServerInstance = new Stripe(secretKey, {
+    stripeServerInstance = new StripeServer(secretKey, {
+      apiVersion: '2025-07-30.basil',
       typescript: true,
     })
   }
