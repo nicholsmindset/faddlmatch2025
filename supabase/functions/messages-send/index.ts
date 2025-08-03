@@ -1,5 +1,7 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts"
 import { createClient } from 'jsr:@supabase/supabase-js@2'
+import { authenticateRequest, monitorSecurityEvents } from '../_shared/jwt-validation.ts'
+import { withMonitoring, initializeMonitoring, recordError } from '../_shared/monitoring.ts'
 
 interface SendMessageRequest {
   conversationId: string
@@ -151,7 +153,7 @@ async function checkRateLimit(
   }
 }
 
-Deno.serve(async (req) => {
+Deno.serve(withMonitoring('messages-send', async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders })
   }
@@ -163,32 +165,32 @@ Deno.serve(async (req) => {
     )
   }
 
+  const monitoringContext = initializeMonitoring('messages-send', req)
+
   try {
-    const supabaseClient = createClient(
-      Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+    // Authenticate request with comprehensive JWT validation
+    const auth = await authenticateRequest(req)
+    if (!auth.authenticated) {
+      return new Response(
+        JSON.stringify({ 
+          error: auth.error,
+          error_code: auth.errorCode,
+          security_notice: 'Authentication failed - all attempts are logged'
+        }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      )
+    }
+
+    const { userId, sessionId, supabaseClient } = auth
+    
+    // Update monitoring context with user info
+    monitoringContext.userId = userId
+    monitoringContext.sessionId = sessionId
+    
+    // Monitor security events in background
+    monitorSecurityEvents(supabaseClient).catch(err => 
+      console.error('Security monitoring error:', err)
     )
-
-    // Authentication check
-    const authHeader = req.headers.get('authorization')
-    if (!authHeader?.startsWith('Bearer ')) {
-      return new Response(
-        JSON.stringify({ error: 'Missing or invalid authorization' }),
-        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      )
-    }
-
-    // Get user ID from token (simplified - in production, verify JWT)
-    const token = authHeader.replace('Bearer ', '')
-    // For now, extract user ID from token payload (implement proper JWT verification)
-    const userId = req.headers.get('x-user-id') // Temporary workaround
-
-    if (!userId) {
-      return new Response(
-        JSON.stringify({ error: 'User ID not found in request' }),
-        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      )
-    }
 
     const request: SendMessageRequest = await req.json()
 
@@ -353,6 +355,7 @@ Deno.serve(async (req) => {
 
   } catch (error) {
     console.error('Message send error:', error)
+    await recordError(monitoringContext, error, undefined, req, 'high')
     return new Response(
       JSON.stringify({ error: 'Internal server error' }),
       { 
@@ -361,4 +364,4 @@ Deno.serve(async (req) => {
       }
     )
   }
-})
+}))

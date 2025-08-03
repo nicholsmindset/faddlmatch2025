@@ -1,6 +1,5 @@
 import { useState, useCallback } from 'react'
 import { useUser } from '@clerk/nextjs'
-// import { createFaddlMatchClient } from '@faddlmatch/api-client' // TODO: Fix API client build
 
 interface OnboardingData {
   basicInfo?: {

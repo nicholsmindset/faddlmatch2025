@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { Button } from '@/components/ui/Button'
-import { Select } from '@/components/ui/Select'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/Select'
 import {
   Popover,
   PopoverContent,
@@ -119,12 +119,17 @@ export function MatchesFilters() {
             </label>
             <Select
               value={filters.location}
-              onChange={(e) => handleFilterChange('location', e.target.value)}
+              onValueChange={(value) => handleFilterChange('location', value)}
             >
-              <option value="">Any location</option>
-              <option value="same-city">Same city</option>
-              <option value="same-state">Same state</option>
-              <option value="same-country">Same country</option>
+              <SelectTrigger>
+                <SelectValue placeholder="Any location" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="">Any location</SelectItem>
+                <SelectItem value="same-city">Same city</SelectItem>
+                <SelectItem value="same-state">Same state</SelectItem>
+                <SelectItem value="same-country">Same country</SelectItem>
+              </SelectContent>
             </Select>
           </div>
 
@@ -135,13 +140,18 @@ export function MatchesFilters() {
             </label>
             <Select
               value={filters.education}
-              onChange={(e) => handleFilterChange('education', e.target.value)}
+              onValueChange={(value) => handleFilterChange('education', value)}
             >
-              <option value="">Any education</option>
-              <option value="high-school">High School</option>
-              <option value="bachelors">Bachelor's Degree</option>
-              <option value="masters">Master's Degree</option>
-              <option value="doctorate">Doctorate</option>
+              <SelectTrigger>
+                <SelectValue placeholder="Any education" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="">Any education</SelectItem>
+                <SelectItem value="high-school">High School</SelectItem>
+                <SelectItem value="bachelors">Bachelor's Degree</SelectItem>
+                <SelectItem value="masters">Master's Degree</SelectItem>
+                <SelectItem value="doctorate">Doctorate</SelectItem>
+              </SelectContent>
             </Select>
           </div>
 
@@ -152,12 +162,17 @@ export function MatchesFilters() {
             </label>
             <Select
               value={filters.religiousLevel}
-              onChange={(e) => handleFilterChange('religiousLevel', e.target.value)}
+              onValueChange={(value) => handleFilterChange('religiousLevel', value)}
             >
-              <option value="">Any level</option>
-              <option value="learning">Learning & Growing</option>
-              <option value="practicing">Practicing</option>
-              <option value="devout">Very Devout</option>
+              <SelectTrigger>
+                <SelectValue placeholder="Any level" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="">Any level</SelectItem>
+                <SelectItem value="learning">Learning & Growing</SelectItem>
+                <SelectItem value="practicing">Practicing</SelectItem>
+                <SelectItem value="devout">Very Devout</SelectItem>
+              </SelectContent>
             </Select>
           </div>
 

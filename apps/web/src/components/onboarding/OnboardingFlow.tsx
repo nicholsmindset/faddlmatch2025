@@ -45,8 +45,8 @@ export function OnboardingFlow() {
       // Final step - submit profile
       try {
         await submitProfile()
-        // Show success animation
-        setTimeout(() => router.push('/dashboard'), 2000)
+        // Show success animation then redirect to pricing
+        setTimeout(() => router.push('/pricing'), 2000)
       } catch (error) {
         console.error('Profile submission failed:', error)
       }
@@ -83,11 +83,11 @@ export function OnboardingFlow() {
             transition={{ delay: 0.4 }}
           >
             <h2 className="text-3xl font-bold text-neutral-900 mb-4">
-              Welcome to FADDL Match! 🎉
+              Profile Complete! 🎉
             </h2>
             <p className="text-lg text-neutral-600 mb-6 max-w-md mx-auto">
-              Your profile is complete and you're ready to find your perfect match.
-              We're redirecting you to your dashboard...
+              Your basic profile is ready! Now choose a plan to unlock all features 
+              and start finding your perfect match...
             </p>
             <div className="flex justify-center">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600"></div>

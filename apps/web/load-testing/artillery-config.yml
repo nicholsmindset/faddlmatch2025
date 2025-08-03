@@ -1,0 +1,235 @@
+# 🎯 Artillery Load Testing Configuration
+# Alternative testing tool for different scenarios
+
+config:
+  target: "{{ $env.BASE_URL || 'http://localhost:3000' }}"
+  http:
+    timeout: 10000
+    headers:
+      User-Agent: "FADDL-Match-LoadTest/1.0"
+  
+  # Test phases simulating different load patterns
+  phases:
+    # Warm-up phase
+    - duration: 60
+      arrivalRate: 5
+      name: "Warm-up"
+    
+    # Normal load
+    - duration: 300
+      arrivalRate: 20
+      name: "Normal Load"
+    
+    # Peak load
+    - duration: 600
+      arrivalRate: 50
+      name: "Peak Load"
+    
+    # Stress test
+    - duration: 300
+      arrivalRate: 100
+      name: "Stress Test"
+    
+    # Cool down
+    - duration: 120
+      arrivalRate: 5
+      name: "Cool Down"
+
+  # Variables for dynamic testing
+  variables:
+    supabaseUrl: "{{ $env.SUPABASE_URL }}"
+    apiKey: "{{ $env.SUPABASE_ANON_KEY }}"
+
+  # Metrics collection
+  metrics:
+    - name: "auth_errors"
+      expression: "response.statusCode >= 400 && response.statusCode < 500"
+    - name: "server_errors"
+      expression: "response.statusCode >= 500"
+    - name: "slow_responses"
+      expression: "response.time > 1000"
+
+scenarios:
+  # Health check scenario
+  - name: "Health Check"
+    weight: 10
+    flow:
+      - get:
+          url: "/api/health"
+          expect:
+            - statusCode: 200
+            - hasProperty: "status"
+          capture:
+            - json: "$.timestamp"
+              as: "healthTimestamp"
+
+  # Authentication flow scenario
+  - name: "User Authentication"
+    weight: 25
+    flow:
+      - function: "generateUserData"
+      - post:
+          url: "{{ supabaseUrl }}/functions/v1/auth-sync-user"
+          headers:
+            apikey: "{{ apiKey }}"
+            Authorization: "Bearer {{ apiKey }}"
+            Content-Type: "application/json"
+          json:
+            userId: "{{ userId }}"
+            email: "{{ email }}"
+            firstName: "{{ firstName }}"
+          expect:
+            - statusCode: [200, 409]  # 409 = already exists
+          capture:
+            - json: "$.success"
+              as: "authSuccess"
+
+  # Profile management scenario
+  - name: "Profile Operations"
+    weight: 30
+    flow:
+      - function: "generateUserData"
+      - function: "generateProfileData"
+      
+      # Create profile
+      - post:
+          url: "{{ supabaseUrl }}/functions/v1/profile-create"
+          headers:
+            apikey: "{{ apiKey }}"
+            Authorization: "Bearer {{ apiKey }}"
+            Content-Type: "application/json"
+          json:
+            userId: "{{ userId }}"
+            basicInfo: "{{ basicInfo }}"
+            religiousInfo: "{{ religiousInfo }}"
+            personalInfo: "{{ personalInfo }}"
+            familyInfo: "{{ familyInfo }}"
+            preferences: "{{ preferences }}"
+          expect:
+            - statusCode: [200, 409]
+      
+      # Update profile
+      - post:
+          url: "{{ supabaseUrl }}/functions/v1/profile-update"
+          headers:
+            apikey: "{{ apiKey }}"
+            Authorization: "Bearer {{ apiKey }}"
+            Content-Type: "application/json"
+          json:
+            userId: "{{ userId }}"
+            basicInfo:
+              bio: "Updated profile during load test"
+          expect:
+            - statusCode: 200
+
+  # Matching system scenario
+  - name: "Matching System"
+    weight: 20
+    flow:
+      - function: "generateUserData"
+      - post:
+          url: "{{ supabaseUrl }}/functions/v1/matches-generate"
+          headers:
+            apikey: "{{ apiKey }}"
+            Authorization: "Bearer {{ apiKey }}"
+            Content-Type: "application/json"
+          json:
+            userId: "{{ userId }}"
+            limit: 10
+          expect:
+            - statusCode: 200
+          capture:
+            - json: "$.matches"
+              as: "generatedMatches"
+
+  # Messaging scenario
+  - name: "Messaging System"
+    weight: 15
+    flow:
+      - function: "generateUserData"
+      - post:
+          url: "{{ supabaseUrl }}/functions/v1/messages-send"
+          headers:
+            apikey: "{{ apiKey }}"
+            Authorization: "Bearer {{ apiKey }}"
+            Content-Type: "application/json"
+          json:
+            conversationId: "conv-{{ userId }}-test"
+            content: "{{ messageContent }}"
+            messageType: "text"
+          expect:
+            - statusCode: 200
+
+# Custom functions for generating test data
+functions:
+  generateUserData: |
+    function(req, context, next) {
+      const userId = `test-user-${Math.floor(Math.random() * 10000)}`;
+      const firstName = `TestUser${Math.floor(Math.random() * 1000)}`;
+      const email = `${firstName.toLowerCase()}@faddlmatch-test.com`;
+      
+      context.vars.userId = userId;
+      context.vars.firstName = firstName;
+      context.vars.email = email;
+      
+      return next();
+    }
+
+  generateProfileData: |
+    function(req, context, next) {
+      const genders = ['male', 'female'];
+      const cities = ['London', 'Manchester', 'Birmingham', 'Leeds', 'Glasgow'];
+      const occupations = ['Engineer', 'Teacher', 'Doctor', 'Accountant', 'Designer'];
+      const religiousLevels = ['learning', 'practicing', 'devout'];
+      const prayerFrequencies = ['rarely', 'sometimes', 'regularly', 'always'];
+      const educationLevels = ['high_school', 'bachelors', 'masters', 'doctorate'];
+      
+      context.vars.basicInfo = {
+        age: Math.floor(Math.random() * 15) + 20, // 20-35
+        gender: genders[Math.floor(Math.random() * genders.length)],
+        location_city: cities[Math.floor(Math.random() * cities.length)],
+        location_country: 'UK',
+        bio: 'Load testing profile - seeking marriage within Islamic values'
+      };
+      
+      context.vars.religiousInfo = {
+        religious_level: religiousLevels[Math.floor(Math.random() * religiousLevels.length)],
+        prayer_frequency: prayerFrequencies[Math.floor(Math.random() * prayerFrequencies.length)]
+      };
+      
+      context.vars.personalInfo = {
+        education_level: educationLevels[Math.floor(Math.random() * educationLevels.length)],
+        occupation: occupations[Math.floor(Math.random() * occupations.length)],
+        interests: ['reading', 'traveling', 'cooking'],
+        languages: ['english', 'arabic'],
+        seeking_marriage_timeline: 'within_year'
+      };
+      
+      context.vars.familyInfo = {
+        guardian_enabled: Math.random() > 0.5,
+        family_values: ['respect', 'honesty', 'kindness'],
+        children_preference: 'maybe'
+      };
+      
+      context.vars.preferences = {
+        age_range: [18, 35],
+        location_radius_km: 100
+      };
+      
+      const messages = [
+        'Assalamu alaikum, how are you?',
+        'Hope you are doing well, insha\'Allah',
+        'Would like to get to know you better',
+        'May Allah bless you and your family'
+      ];
+      
+      context.vars.messageContent = messages[Math.floor(Math.random() * messages.length)];
+      
+      return next();
+    }
+
+# Performance expectations
+expect:
+  - duration: 3000  # Max test duration in seconds
+  - p95: 1000      # 95% of requests under 1 second
+  - maxErrorRate: 0.01  # Less than 1% error rate

@@ -1,0 +1,104 @@
+{
+  "name": "faddl-match-load-testing",
+  "version": "1.0.0",
+  "description": "Comprehensive load testing suite for FADDL Match real-time messaging system with Islamic compliance focus",
+  "main": "realtime-messaging-load-test.js",
+  "scripts": {
+    "test:light": "ts-node run-messaging-load-test.ts run --scenario light",
+    "test:moderate": "ts-node run-messaging-load-test.ts run --scenario moderate",
+    "test:heavy": "ts-node run-messaging-load-test.ts run --scenario production_peak",
+    "test:stress": "ts-node run-messaging-load-test.ts run --scenario stress_test",
+    "test:islamic": "ts-node run-messaging-load-test.ts run --scenario islamic_compliance_focus",
+    "test:mobile": "ts-node run-messaging-load-test.ts run --scenario mobile_focus",
+    "validate": "ts-node run-messaging-load-test.ts validate",
+    "monitor": "ts-node run-messaging-load-test.ts monitor",
+    "analyze": "ts-node run-messaging-load-test.ts analyze",
+    "build": "tsc",
+    "lint": "eslint . --ext .ts",
+    "lint:fix": "eslint . --ext .ts --fix"
+  },
+  "keywords": [
+    "load-testing",
+    "websocket",
+    "real-time",
+    "messaging",
+    "islamic",
+    "halal",
+    "compliance",
+    "mobile",
+    "performance",
+    "supabase",
+    "faddl",
+    "matrimonial"
+  ],
+  "author": "FADDL Match Development Team",
+  "license": "MIT",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.39.0",
+    "commander": "^11.1.0",
+    "dotenv": "^16.3.1",
+    "enquirer": "^2.4.1",
+    "ws": "^8.14.2"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "@types/ws": "^8.5.10",
+    "@typescript-eslint/eslint-plugin": "^6.13.0",
+    "@typescript-eslint/parser": "^6.13.0",
+    "eslint": "^8.54.0",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.3.2"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/faddlmatch/faddlmatch-v1.git",
+    "directory": "tests/load-testing"
+  },
+  "bugs": {
+    "url": "https://github.com/faddlmatch/faddlmatch-v1/issues"
+  },
+  "homepage": "https://github.com/faddlmatch/faddlmatch-v1#readme",
+  "bin": {
+    "faddl-load-test": "./run-messaging-load-test.ts"
+  },
+  "files": [
+    "*.ts",
+    "*.js",
+    "*.d.ts",
+    "load-test-config.json",
+    "README.md"
+  ],
+  "config": {
+    "test_environments": {
+      "local": "http://localhost:54321",
+      "staging": "https://staging-project.supabase.co",
+      "production": "https://production-project.supabase.co"
+    },
+    "default_scenario": "moderate",
+    "output_directory": "./test-results",
+    "cleanup_after_test": true
+  },
+  "eslintConfig": {
+    "parser": "@typescript-eslint/parser",
+    "plugins": ["@typescript-eslint"],
+    "extends": [
+      "eslint:recommended",
+      "@typescript-eslint/recommended"
+    ],
+    "rules": {
+      "@typescript-eslint/no-unused-vars": "warn",
+      "@typescript-eslint/no-explicit-any": "warn",
+      "prefer-const": "error",
+      "no-var": "error"
+    }
+  },
+  "prettier": {
+    "semi": false,
+    "singleQuote": true,
+    "tabWidth": 2,
+    "trailingComma": "es5"
+  }
+}

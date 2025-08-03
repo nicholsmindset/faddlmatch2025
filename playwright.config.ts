@@ -6,7 +6,7 @@ import { defineConfig, devices } from '@playwright/test';
  * Focus: Real-time messaging, Guardian oversight, Islamic compliance
  */
 export default defineConfig({
-  testDir: './tests/e2e',
+  testDir: './tests',
   
   /* Run tests in files in parallel */
   fullyParallel: true,
@@ -28,8 +28,8 @@ export default defineConfig({
     ['line']
   ],
   
-  /* Global test timeout */
-  timeout: 30 * 1000,
+  /* Global test timeout - extended for security tests */
+  timeout: 60 * 1000,
   expect: {
     /* Timeout for expect() calls */
     timeout: 10 * 1000,
@@ -63,11 +63,96 @@ export default defineConfig({
       testMatch: /.*\.setup\.ts/,
     },
     
+    // Security Tests - Critical Priority
     {
-      name: 'chromium',
+      name: 'security-auth-flow',
+      testMatch: 'tests/security/auth-security-test-suite.ts',
+      use: { ...devices['Desktop Chrome'] },
+      dependencies: ['setup'],
+    },
+    
+    {
+      name: 'security-webhooks',
+      testMatch: 'tests/security/webhook-security-tests.ts',
+      use: { ...devices['Desktop Chrome'] },
+      dependencies: ['setup'],
+    },
+    
+    {
+      name: 'security-vulnerability-assessment',
+      testMatch: 'tests/security/vulnerability-assessment.ts',
+      use: { ...devices['Desktop Chrome'] },
+      dependencies: ['setup'],
+    },
+    
+    {
+      name: 'security-monitoring',
+      testMatch: 'tests/security/auth-monitoring-tests.ts',
+      use: { ...devices['Desktop Chrome'] },
+      dependencies: ['setup'],
+    },
+    
+    // Performance Tests
+    {
+      name: 'performance-auth',
+      testMatch: 'tests/performance/auth-performance-tests.ts',
       use: { 
         ...devices['Desktop Chrome'],
-        // Enable performance monitoring
+        video: 'off', // Disable video for performance tests
+        trace: 'off', // Disable trace for performance tests
+      },
+      dependencies: ['setup'],
+    },
+    
+    // Reliability Tests
+    {
+      name: 'reliability-auth',
+      testMatch: 'tests/reliability/auth-reliability-tests.ts',
+      use: { 
+        ...devices['Desktop Chrome'],
+        actionTimeout: 60000, // Longer timeout for reliability tests
+        navigationTimeout: 60000,
+      },
+      dependencies: ['setup'],
+      timeout: 120000, // 2 minute timeout for chaos engineering tests
+    },
+
+    // Cross-browser security testing
+    {
+      name: 'security-firefox',
+      testMatch: 'tests/security/auth-security-test-suite.ts',
+      use: { ...devices['Desktop Firefox'] },
+      dependencies: ['setup'],
+    },
+
+    {
+      name: 'security-webkit',
+      testMatch: 'tests/security/auth-security-test-suite.ts',
+      use: { ...devices['Desktop Safari'] },
+      dependencies: ['setup'],
+    },
+
+    // Mobile security testing
+    {
+      name: 'security-mobile-chrome',
+      testMatch: 'tests/security/auth-security-test-suite.ts',
+      use: { ...devices['Pixel 5'] },
+      dependencies: ['setup'],
+    },
+
+    {
+      name: 'security-mobile-safari',
+      testMatch: 'tests/security/auth-security-test-suite.ts',
+      use: { ...devices['iPhone 12'] },
+      dependencies: ['setup'],
+    },
+
+    // E2E Tests (existing)
+    {
+      name: 'e2e-chromium',
+      testMatch: 'tests/e2e/**/*.ts',
+      use: { 
+        ...devices['Desktop Chrome'],
         deviceScaleFactor: 1,
         hasTouch: false,
         isMobile: false,
@@ -76,72 +161,30 @@ export default defineConfig({
     },
 
     {
-      name: 'firefox',
-      use: { 
-        ...devices['Desktop Firefox'] 
-      },
+      name: 'e2e-firefox',
+      testMatch: 'tests/e2e/**/*.ts',
+      use: { ...devices['Desktop Firefox'] },
       dependencies: ['setup'],
     },
 
     {
-      name: 'webkit',
-      use: { 
-        ...devices['Desktop Safari'] 
-      },
+      name: 'e2e-webkit',
+      testMatch: 'tests/e2e/**/*.ts',
+      use: { ...devices['Desktop Safari'] },
       dependencies: ['setup'],
     },
 
-    /* Mobile testing */
     {
-      name: 'Mobile Chrome',
-      use: { 
-        ...devices['Pixel 5'] 
-      },
+      name: 'e2e-mobile-chrome',
+      testMatch: 'tests/e2e/**/*.ts',
+      use: { ...devices['Pixel 5'] },
       dependencies: ['setup'],
     },
     
     {
-      name: 'Mobile Safari',
-      use: { 
-        ...devices['iPhone 12'] 
-      },
-      dependencies: ['setup'],
-    },
-
-    /* Islamic compliance specific testing */
-    {
-      name: 'islamic-compliance',
-      testDir: './tests/e2e/compliance',
-      use: { 
-        ...devices['Desktop Chrome'],
-        // Extended timeout for content moderation tests
-        actionTimeout: 15 * 1000,
-      },
-      dependencies: ['setup'],
-    },
-
-    /* Performance testing */
-    {
-      name: 'performance',
-      testDir: './tests/e2e/performance',
-      use: { 
-        ...devices['Desktop Chrome'],
-        // Performance monitoring configuration
-        video: 'off', // Disable video for performance tests
-        trace: 'off', // Disable trace for performance tests
-      },
-      dependencies: ['setup'],
-    },
-
-    /* Real-time messaging tests */
-    {
-      name: 'real-time',
-      testDir: './tests/e2e/messaging',
-      use: { 
-        ...devices['Desktop Chrome'],
-        // Real-time test configuration
-        actionTimeout: 5 * 1000, // Faster timeouts for real-time tests
-      },
+      name: 'e2e-mobile-safari',
+      testMatch: 'tests/e2e/**/*.ts',
+      use: { ...devices['iPhone 12'] },
       dependencies: ['setup'],
     },
   ],
@@ -157,6 +200,6 @@ export default defineConfig({
       },
 
   /* Global setup and teardown */
-  globalSetup: require.resolve('./tests/config/global-setup.ts'),
-  globalTeardown: require.resolve('./tests/config/global-teardown.ts'),
+  globalSetup: require.resolve('./tests/global-setup.ts'),
+  globalTeardown: require.resolve('./tests/global-teardown.ts'),
 });

@@ -16,7 +16,7 @@ const mockMatches = [
     location: 'Singapore Central',
     profession: 'Teacher',
     photos: [{ url: '/api/placeholder/400/600', visibility: 'public' as const }],
-    bio: 'Practicing Muslimah seeking a kind and practicing husband for marriage...',
+    bio: 'Practicing Muslimah seeking a kind and practicing husband for marriage. Love teaching and helping children learn.',
     compatibility: { score: 92, strengths: ['Same religious level', 'Similar interests', 'Compatible age'] },
     lastActive: new Date(),
     verified: true,
@@ -24,11 +24,125 @@ const mockMatches = [
     religiousLevel: 'practicing',
     educationLevel: 'bachelors'
   },
-  // Add more mock profiles...
+  {
+    id: '2',
+    name: 'Fatima Al-Zahra',
+    age: 24,
+    location: 'Singapore East',
+    profession: 'Doctor',
+    photos: [{ url: '/api/placeholder/400/600', visibility: 'public' as const }],
+    bio: 'Medical doctor who believes in the importance of family and faith. Looking for a partner who shares Islamic values.',
+    compatibility: { score: 88, strengths: ['Education compatibility', 'Religious alignment', 'Family values'] },
+    lastActive: new Date(Date.now() - 3600000),
+    verified: true,
+    premiumMember: false,
+    religiousLevel: 'devout',
+    educationLevel: 'masters'
+  },
+  {
+    id: '3',
+    name: 'Zara Malik',
+    age: 28,
+    location: 'Singapore West',
+    profession: 'Engineer',
+    photos: [{ url: '/api/placeholder/400/600', visibility: 'public' as const }],
+    bio: 'Software engineer with a passion for technology and Islamic studies. Seeking a life partner for both Dunya and Akhirah.',
+    compatibility: { score: 85, strengths: ['Career compatibility', 'Age range', 'Shared interests'] },
+    lastActive: new Date(Date.now() - 7200000),
+    verified: true,
+    premiumMember: true,
+    religiousLevel: 'practicing',
+    educationLevel: 'masters'
+  },
+  {
+    id: '4',
+    name: 'Mariam Hassan',
+    age: 30,
+    location: 'Singapore North',
+    profession: 'Pharmacist',
+    photos: [{ url: '/api/placeholder/400/600', visibility: 'public' as const }],
+    bio: 'Pharmacist who values Islamic principles and family life. Looking for a practicing Muslim for a blessed marriage.',
+    compatibility: { score: 79, strengths: ['Religious compatibility', 'Professional background', 'Age compatibility'] },
+    lastActive: new Date(Date.now() - 14400000),
+    verified: true,
+    premiumMember: true,
+    religiousLevel: 'practicing',
+    educationLevel: 'bachelors'
+  }
 ]
 
 export function MatchesView() {
   const [activeTab, setActiveTab] = useState('daily')
+  const [matches, setMatches] = useState(mockMatches)
+  const [loading, setLoading] = useState(false)
+
+  const handleLike = async (profileId: string) => {
+    setLoading(true)
+    try {
+      // In a real app, this would call the API to record the interest
+      console.log('Expressing interest in profile:', profileId)
+      
+      // Show success feedback
+      alert('Interest expressed! They will be notified if there\'s mutual interest.')
+      
+      // Optionally remove from current view or mark as liked
+      // setMatches(prev => prev.filter(m => m.id !== profileId))
+      
+    } catch (error) {
+      console.error('Failed to express interest:', error)
+      alert('Failed to express interest. Please try again.')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handlePass = async (profileId: string) => {
+    setLoading(true)
+    try {
+      // In a real app, this would call the API to record the pass
+      console.log('Passing on profile:', profileId)
+      
+      // Remove from current matches
+      setMatches(prev => prev.filter(m => m.id !== profileId))
+      
+    } catch (error) {
+      console.error('Failed to pass on profile:', error)
+      alert('Failed to pass. Please try again.')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleMessage = async (profileId: string) => {
+    try {
+      // In a real app, this would navigate to messaging or check if messaging is allowed
+      console.log('Starting conversation with profile:', profileId)
+      
+      // Check if they've mutually liked first
+      alert('You can only message after both parties have expressed interest. Please like their profile first!')
+      
+    } catch (error) {
+      console.error('Failed to start conversation:', error)
+    }
+  }
+
+  const getFilteredMatches = () => {
+    // Filter matches based on active tab
+    switch (activeTab) {
+      case 'daily':
+        return matches // All matches for daily view
+      case 'mutual':
+        return matches.filter(m => m.id === '1') // Mock: only show mutual interests
+      case 'recent':
+        return matches.filter(m => Date.now() - m.lastActive.getTime() < 24 * 60 * 60 * 1000) // Last 24 hours
+      case 'nearby':
+        return matches.filter(m => m.location.includes('Singapore')) // Same city
+      default:
+        return matches
+    }
+  }
+
+  const filteredMatches = getFilteredMatches()
 
   return (
     <div className="space-y-6">
@@ -65,14 +179,15 @@ export function MatchesView() {
                 Today's Matches Are Ready! 🌟
               </h2>
               <p className="text-sm text-primary-700">
-                We found {mockMatches.length} compatible profiles based on your preferences.
+                We found {filteredMatches.length} compatible profiles based on your preferences.
               </p>
             </motion.div>
           )}
 
           {/* Match Grid */}
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {mockMatches.map((match, index) => (
+          {filteredMatches.length > 0 ? (
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+              {filteredMatches.map((match, index) => (
               <motion.div
                 key={match.id}
                 initial={{ opacity: 0, scale: 0.9 }}
@@ -81,14 +196,28 @@ export function MatchesView() {
               >
                 <ProfileCard
                   profile={match}
-                  onLike={() => console.log('Liked:', match.id)}
-                  onPass={() => console.log('Passed:', match.id)}
-                  onMessage={() => console.log('Message:', match.id)}
+                  onLike={() => handleLike(match.id)}
+                  onPass={() => handlePass(match.id)}
+                  onMessage={() => handleMessage(match.id)}
                   variant="grid"
                 />
-              </motion.div>
-            ))}
-          </div>
+                </motion.div>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-12">
+              <Heart className="h-16 w-16 text-neutral-300 mx-auto mb-4" />
+              <h3 className="text-lg font-semibold text-neutral-900 mb-2">
+                No matches found
+              </h3>
+              <p className="text-neutral-600">
+                {activeTab === 'mutual' && 'No mutual interests yet. Keep liking profiles!'}
+                {activeTab === 'recent' && 'No recently active matches.'}
+                {activeTab === 'nearby' && 'No nearby matches found.'}
+                {activeTab === 'daily' && 'Check back later for new matches!'}
+              </p>
+            </div>
+          )}
         </TabsContent>
       </Tabs>
     </div>

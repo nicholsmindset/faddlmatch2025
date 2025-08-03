@@ -2,7 +2,7 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { Input } from '@/components/ui/Input'
-import { Select } from '@/components/ui/Select'
+import { FormSelect } from '@/components/ui/FormSelect'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/RadioGroup'
 import { Label } from '@/components/ui/Label'
 import { Button } from '@/components/ui/Button'
@@ -85,7 +85,7 @@ export function BasicInfoStep({ data, onUpdate, onNext }: BasicInfoStepProps) {
       </div>
 
       {/* Year of Birth */}
-      <Select
+      <FormSelect
         label="Year of Birth"
         placeholder="Select your birth year"
         {...register('yearOfBirth', { 
@@ -99,7 +99,7 @@ export function BasicInfoStep({ data, onUpdate, onNext }: BasicInfoStepProps) {
             {year}
           </option>
         ))}
-      </Select>
+      </FormSelect>
 
       {/* Gender Selection */}
       <div>
@@ -135,7 +135,7 @@ export function BasicInfoStep({ data, onUpdate, onNext }: BasicInfoStepProps) {
       </div>
 
       {/* Location in Singapore */}
-      <Select
+      <FormSelect
         label="Location in Singapore"
         placeholder="Select your region"
         {...register('location')}
@@ -147,7 +147,7 @@ export function BasicInfoStep({ data, onUpdate, onNext }: BasicInfoStepProps) {
         <option value="east">East (Tampines, Pasir Ris, Bedok)</option>
         <option value="west">West (Jurong, Clementi, Bukit Batok)</option>
         <option value="central">Central (Orchard, Bugis, City Hall)</option>
-      </Select>
+      </FormSelect>
 
       {/* Bio */}
       <div>

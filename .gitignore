@@ -118,3 +118,5 @@ playwright/.cache/
 
 # Turbo
 .turbo/
+# Local Netlify folder
+.netlify

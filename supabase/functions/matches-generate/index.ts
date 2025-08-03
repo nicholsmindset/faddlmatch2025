@@ -1,5 +1,6 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts"
 import { createClient } from 'jsr:@supabase/supabase-js@2'
+import { withMonitoring, initializeMonitoring, recordError } from '../_shared/monitoring.ts'
 
 interface MatchGenerationRequest {
   userId: string
@@ -185,7 +186,7 @@ async function validateHalalInteraction(
   return true
 }
 
-Deno.serve(async (req) => {
+Deno.serve(withMonitoring('matches-generate', async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders })
   }
@@ -196,6 +197,8 @@ Deno.serve(async (req) => {
       { status: 405, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     )
   }
+
+  const monitoringContext = initializeMonitoring('matches-generate', req)
 
   try {
     const supabaseClient = createClient(
@@ -343,6 +346,7 @@ Deno.serve(async (req) => {
 
   } catch (error) {
     console.error('Match generation error:', error)
+    await recordError(monitoringContext, error, undefined, req, 'high')
     return new Response(
       JSON.stringify({ error: 'Internal server error' }),
       { 
@@ -351,4 +355,4 @@ Deno.serve(async (req) => {
       }
     )
   }
-})
+}))

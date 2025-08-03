@@ -1,5 +1,6 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts"
 import { createClient } from 'jsr:@supabase/supabase-js@2'
+import { withMonitoring, initializeMonitoring, recordPerformanceMetrics, recordError } from '../_shared/monitoring.ts'
 
 interface ClerkWebhookEvent {
   type: string
@@ -29,11 +30,13 @@ const corsHeaders = {
   'Access-Control-Allow-Methods': 'POST, OPTIONS',
 }
 
-Deno.serve(async (req) => {
+Deno.serve(withMonitoring('auth-sync-user', async (req) => {
   // Handle CORS preflight
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders })
   }
+
+  const monitoringContext = initializeMonitoring('auth-sync-user', req)
 
   try {
     // Initialize Supabase client
@@ -55,17 +58,14 @@ Deno.serve(async (req) => {
         const { error } = await supabaseClient
           .from('users')
           .upsert({
-            clerk_id: userData.id,
+            id: userData.id,
             email: userData.email_addresses[0]?.email_address,
-            first_name: userData.first_name,
-            last_name: userData.last_name,
-            avatar_url: userData.image_url,
             created_at: new Date(userData.created_at).toISOString(),
             updated_at: new Date(userData.updated_at).toISOString(),
-            subscription_tier: 'free', // Default tier
-            profile_status: 'incomplete' // Require profile completion
+            subscription_tier: 'basic', // Default tier
+            status: 'active'
           }, {
-            onConflict: 'clerk_id'
+            onConflict: 'id'
           })
 
         if (error) {
@@ -130,16 +130,13 @@ Deno.serve(async (req) => {
       const { error } = await supabaseClient
         .from('users')
         .upsert({
-          clerk_id: syncRequest.userId,
+          id: syncRequest.userId,
           email: syncRequest.email,
-          first_name: syncRequest.firstName,
-          last_name: syncRequest.lastName,
-          avatar_url: syncRequest.imageUrl,
           updated_at: new Date().toISOString(),
-          subscription_tier: 'free',
-          profile_status: 'incomplete'
+          subscription_tier: 'basic',
+          status: 'active'
         }, {
-          onConflict: 'clerk_id'
+          onConflict: 'id'
         })
 
       if (error) {
@@ -175,6 +172,7 @@ Deno.serve(async (req) => {
 
   } catch (error) {
     console.error('Auth sync error:', error)
+    await recordError(monitoringContext, error, undefined, req, 'high')
     return new Response(
       JSON.stringify({ error: 'Internal server error' }),
       { 
@@ -183,4 +181,4 @@ Deno.serve(async (req) => {
       }
     )
   }
-})
+}))

@@ -3,6 +3,37 @@
 @tailwind utilities;
 
 @layer base {
+  /* Enhanced smooth scrolling and focus management */
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  /* Focus management for accessibility */
+  :focus-visible {
+    outline: 2px solid hsl(var(--ring));
+    outline-offset: 2px;
+  }
+  
+  /* Reduced motion for accessibility */
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+  
+  /* Smooth scrolling targets */
+  .scroll-mt-20 {
+    scroll-margin-top: 5rem;
+  }
+  
   :root {
     --background: 0 0% 100%;
     --foreground: 0 0% 10%;

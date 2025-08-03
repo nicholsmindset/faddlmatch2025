@@ -1,0 +1,10 @@
+{
+  "timestamp": "2025-08-03T07:12:53.326741",
+  "site_url": "http://localhost:3000",
+  "tests": {},
+  "performance": {},
+  "console_errors": [],
+  "screenshots": [],
+  "responsive_tests": {},
+  "error": "Page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3000/\nCall log:\n  - navigating to \"http://localhost:3000/\", waiting until \"networkidle\"\n"
+}

@@ -1,0 +1,283 @@
+{
+  "testScenarios": {
+    "development": {
+      "name": "Development Testing",
+      "description": "Light load testing for development environment",
+      "maxWebSocketConnections": 25,
+      "concurrentConversations": 50,
+      "messagesPerMinute": 500,
+      "testDurationMinutes": 5,
+      "guardiansToSimulate": 5,
+      "moderationRulesTests": 50,
+      "halalContentPercentage": 90,
+      "mobileDevicesCount": 10,
+      "regions": ["singapore"],
+      "networkConditions": [
+        { "name": "WiFi", "latency": 10, "bandwidth": 500, "packetLoss": 0.05 }
+      ]
+    },
+    
+    "staging": {
+      "name": "Staging Environment Testing",
+      "description": "Moderate load testing for staging environment validation",
+      "maxWebSocketConnections": 100,
+      "concurrentConversations": 250,
+      "messagesPerMinute": 2500,
+      "testDurationMinutes": 15,
+      "guardiansToSimulate": 15,
+      "moderationRulesTests": 250,
+      "halalContentPercentage": 85,
+      "mobileDevicesCount": 50,
+      "regions": ["singapore", "malaysia"],
+      "networkConditions": [
+        { "name": "5G", "latency": 20, "bandwidth": 1000, "packetLoss": 0.01 },
+        { "name": "4G", "latency": 50, "bandwidth": 100, "packetLoss": 0.1 },
+        { "name": "WiFi", "latency": 10, "bandwidth": 500, "packetLoss": 0.05 }
+      ]
+    },
+
+    "production_light": {
+      "name": "Production Light Load",
+      "description": "Light production load testing to validate system readiness",
+      "maxWebSocketConnections": 200,
+      "concurrentConversations": 500,
+      "messagesPerMinute": 5000,
+      "testDurationMinutes": 30,
+      "guardiansToSimulate": 25,
+      "moderationRulesTests": 500,
+      "halalContentPercentage": 80,
+      "mobileDevicesCount": 100,
+      "regions": ["singapore", "malaysia", "indonesia"],
+      "networkConditions": [
+        { "name": "5G", "latency": 20, "bandwidth": 1000, "packetLoss": 0.01 },
+        { "name": "4G", "latency": 50, "bandwidth": 100, "packetLoss": 0.1 },
+        { "name": "3G", "latency": 200, "bandwidth": 10, "packetLoss": 1 },
+        { "name": "WiFi", "latency": 10, "bandwidth": 500, "packetLoss": 0.05 }
+      ]
+    },
+
+    "production_peak": {
+      "name": "Production Peak Load",
+      "description": "Peak load testing simulating highest expected traffic",
+      "maxWebSocketConnections": 500,
+      "concurrentConversations": 1000,
+      "messagesPerMinute": 10000,
+      "testDurationMinutes": 45,
+      "guardiansToSimulate": 50,
+      "moderationRulesTests": 1000,
+      "halalContentPercentage": 75,
+      "mobileDevicesCount": 250,
+      "regions": ["singapore", "malaysia", "indonesia", "brunei"],
+      "networkConditions": [
+        { "name": "5G", "latency": 20, "bandwidth": 1000, "packetLoss": 0.01 },
+        { "name": "4G", "latency": 50, "bandwidth": 100, "packetLoss": 0.1 },
+        { "name": "3G", "latency": 200, "bandwidth": 10, "packetLoss": 1 },
+        { "name": "WiFi", "latency": 10, "bandwidth": 500, "packetLoss": 0.05 }
+      ]
+    },
+
+    "stress_test": {
+      "name": "Stress Testing",
+      "description": "Extreme load testing to find system breaking points",
+      "maxWebSocketConnections": 1000,
+      "concurrentConversations": 2000,
+      "messagesPerMinute": 20000,
+      "testDurationMinutes": 60,
+      "guardiansToSimulate": 100,
+      "moderationRulesTests": 2000,
+      "halalContentPercentage": 70,
+      "mobileDevicesCount": 500,
+      "regions": ["singapore", "malaysia", "indonesia", "brunei"],
+      "networkConditions": [
+        { "name": "5G", "latency": 20, "bandwidth": 1000, "packetLoss": 0.01 },
+        { "name": "4G", "latency": 50, "bandwidth": 100, "packetLoss": 0.1 },
+        { "name": "3G", "latency": 200, "bandwidth": 10, "packetLoss": 1 },
+        { "name": "WiFi", "latency": 10, "bandwidth": 500, "packetLoss": 0.05 }
+      ]
+    },
+
+    "islamic_compliance_focus": {
+      "name": "Islamic Compliance Focused Testing",
+      "description": "Specialized testing for Islamic compliance features under load",
+      "maxWebSocketConnections": 300,
+      "concurrentConversations": 600,
+      "messagesPerMinute": 6000,
+      "testDurationMinutes": 30,
+      "guardiansToSimulate": 75,
+      "moderationRulesTests": 1500,
+      "halalContentPercentage": 60,
+      "mobileDevicesCount": 150,
+      "culturalSensitivityTests": 500,
+      "prayerTimeTestingEnabled": true,
+      "regions": ["singapore", "malaysia", "indonesia", "brunei"],
+      "networkConditions": [
+        { "name": "4G", "latency": 50, "bandwidth": 100, "packetLoss": 0.1 },
+        { "name": "WiFi", "latency": 10, "bandwidth": 500, "packetLoss": 0.05 }
+      ]
+    },
+
+    "mobile_focus": {
+      "name": "Mobile Device Focused Testing",
+      "description": "Specialized testing for mobile messaging behavior",
+      "maxWebSocketConnections": 400,
+      "concurrentConversations": 800,
+      "messagesPerMinute": 8000,
+      "testDurationMinutes": 45,
+      "guardiansToSimulate": 40,
+      "moderationRulesTests": 800,
+      "halalContentPercentage": 80,
+      "mobileDevicesCount": 400,
+      "mobileTestingFocus": true,
+      "regions": ["singapore", "malaysia", "indonesia", "brunei"],
+      "networkConditions": [
+        { "name": "5G", "latency": 20, "bandwidth": 1000, "packetLoss": 0.01 },
+        { "name": "4G", "latency": 50, "bandwidth": 100, "packetLoss": 0.1 },
+        { "name": "3G", "latency": 200, "bandwidth": 10, "packetLoss": 1 }
+      ]
+    }
+  },
+
+  "performanceTargets": {
+    "messageDeliveryLatency": {
+      "p50": 50,
+      "p95": 100,
+      "p99": 200,
+      "max": 500
+    },
+    "webSocketConnectionTime": {
+      "average": 2000,
+      "max": 5000
+    },
+    "messageThroughput": {
+      "minPerMinute": 1000,
+      "targetPerMinute": 10000
+    },
+    "connectionStability": {
+      "minUptimePercentage": 99.5,
+      "maxConnectionDrops": 10
+    },
+    "islamicCompliance": {
+      "moderationAccuracy": 95,
+      "maxModerationTime": 200,
+      "guardianNotificationLatency": 300,
+      "culturalSensitivityScore": 90
+    },
+    "mobilePerformance": {
+      "pushNotificationDeliveryRate": 95,
+      "maxPushNotificationLatency": 3000,
+      "offlineMessageSyncTime": 5000,
+      "minBatteryEfficiencyScore": 80
+    }
+  },
+
+  "testEnvironments": {
+    "local": {
+      "supabaseUrl": "http://localhost:54321",
+      "websocketUrl": "ws://localhost:54321/realtime/v1/websocket",
+      "description": "Local development environment"
+    },
+    "staging": {
+      "supabaseUrl": "https://staging-project.supabase.co",
+      "websocketUrl": "wss://staging-project.supabase.co/realtime/v1/websocket",
+      "description": "Staging environment"
+    },
+    "production": {
+      "supabaseUrl": "https://production-project.supabase.co", 
+      "websocketUrl": "wss://production-project.supabase.co/realtime/v1/websocket",
+      "description": "Production environment (use with extreme caution)"
+    }
+  },
+
+  "testData": {
+    "userProfiles": {
+      "total": 1000,
+      "genderDistribution": {
+        "male": 50,
+        "female": 50
+      },
+      "ageDistribution": {
+        "25-30": 30,
+        "31-35": 25,
+        "36-40": 20,
+        "41-45": 15,
+        "46+": 10
+      },
+      "regionDistribution": {
+        "singapore": 40,
+        "malaysia": 35,
+        "indonesia": 20,
+        "brunei": 5
+      }
+    },
+    "messageTemplates": {
+      "halal": [
+        "Assalamu alaikum! I hope you're having a blessed day.",
+        "Wa alaikum assalam. Thank you for your interest in getting to know me better.",
+        "I come from a practicing family and maintain regular prayers.",
+        "Family is very important to me. What about your family background?",
+        "I try to follow Islamic values in all aspects of my life.",
+        "What Islamic practices are most important to you?",
+        "I believe in the importance of halal relationships.",
+        "May Allah bless your search for a righteous spouse."
+      ],
+      "guardian_review": [
+        "Perhaps we could arrange a meeting with our families present?",
+        "I would like to involve my wali in our conversations.",
+        "Could we arrange a chaperoned meeting at the mosque?",
+        "Would it be appropriate to meet with our families?",
+        "I think we should involve our guardians in the next step."
+      ],
+      "inappropriate": [
+        "You look very beautiful in your photos.",
+        "I find you very attractive physically.",
+        "Let's meet alone for dinner tonight.",
+        "I want to kiss and hug you when we meet.",
+        "You're so sexy and gorgeous."
+      ],
+      "contact_sharing": [
+        "Here's my phone number: +65 9123-4567",
+        "Add me on WhatsApp: +60123456789",
+        "My Instagram is @username123",
+        "Follow me on Facebook: facebook.com/username",
+        "Let's chat on Telegram: @username"
+      ]
+    }
+  },
+
+  "monitoring": {
+    "metricsCollectionInterval": 5000,
+    "alertThresholds": {
+      "errorRate": 1,
+      "responseTime": 1000,
+      "connectionFailureRate": 5,
+      "moderationAccuracy": 90,
+      "guardianNotificationFailureRate": 5
+    },
+    "reportGeneration": {
+      "realTimeUpdates": true,
+      "detailedAnalysis": true,
+      "performanceGraphs": true,
+      "exportFormats": ["json", "csv", "markdown", "html"]
+    }
+  },
+
+  "safety": {
+    "maxConcurrentConnections": 1000,
+    "emergencyStopThresholds": {
+      "errorRate": 10,
+      "systemCpuUsage": 95,
+      "systemMemoryUsage": 95,
+      "databaseConnectionPoolExhaustion": 90
+    },
+    "testDataCleanup": {
+      "enabled": true,
+      "automaticCleanupAfterTest": true,
+      "retentionPeriodHours": 24
+    },
+    "rateLimiting": {
+      "enabled": true,
+      "requestsPerSecond": 100,
+      "burstCapacity": 200
+    }
+  }
+}

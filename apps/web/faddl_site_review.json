@@ -1,0 +1,59 @@
+{
+  "timestamp": "2025-08-03T07:17:13.691140",
+  "site_url": "http://localhost:3000",
+  "tests": {
+    "page_title": "FADDL Match - Halal Marriage Platform",
+    "header_present": true,
+    "navigation_items": 1,
+    "buttons": 3,
+    "links": 3,
+    "islamic_branding": 4,
+    "islamic_terms_found": [
+      "halal",
+      "islamic",
+      "muslim",
+      "matrimonial"
+    ]
+  },
+  "performance": {
+    "desktop": {
+      "loadTime": 0,
+      "domContentLoaded": 0,
+      "totalTime": 1179.8999999985099,
+      "firstPaint": 1040,
+      "firstContentfulPaint": 1040
+    },
+    "mobile": {
+      "loadTime": 0,
+      "totalTime": 179.60000000149012
+    }
+  },
+  "console_errors": [],
+  "screenshots": [
+    "desktop_homepage.png",
+    "tablet_homepage.png",
+    "mobile_homepage.png"
+  ],
+  "responsive_tests": {
+    "tablet": {
+      "nav_present": false,
+      "header_present": true
+    },
+    "mobile": {
+      "nav_present": false,
+      "header_present": true,
+      "mobile_menu_button": false
+    }
+  },
+  "page_sections": {
+    "headings": {
+      "h1": 1,
+      "h2": 1,
+      "h3": 4
+    },
+    "footer": true,
+    "hero section": true,
+    "call-to-action": true,
+    "value propositions": true
+  }
+}

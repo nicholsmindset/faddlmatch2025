@@ -1,5 +1,7 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts"
 import { createClient } from 'jsr:@supabase/supabase-js@2'
+import { authenticateRequest, monitorSecurityEvents } from '../_shared/jwt-validation.ts'
+import { withMonitoring, initializeMonitoring, recordError } from '../_shared/monitoring.ts'
 
 interface CreateProfileRequest {
   userId: string
@@ -205,7 +207,7 @@ async function generateProfileEmbedding(profile: CreateProfileRequest): Promise<
   return mockEmbedding
 }
 
-Deno.serve(async (req) => {
+Deno.serve(withMonitoring('profile-create', async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders })
   }
@@ -217,27 +219,42 @@ Deno.serve(async (req) => {
     )
   }
 
-  try {
-    const supabaseClient = createClient(
-      Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
-    )
+  const monitoringContext = initializeMonitoring('profile-create', req)
 
-    // Authentication check
-    const authHeader = req.headers.get('authorization')
-    if (!authHeader?.startsWith('Bearer ')) {
+  try {
+    // Authenticate request with comprehensive JWT validation
+    const auth = await authenticateRequest(req)
+    if (!auth.authenticated) {
       return new Response(
-        JSON.stringify({ error: 'Missing or invalid authorization' }),
+        JSON.stringify({ 
+          error: auth.error,
+          error_code: auth.errorCode,
+          security_notice: 'Authentication failed - all attempts are logged'
+        }),
         { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       )
     }
 
+    const { userId: clerkUserId, sessionId, supabaseClient } = auth
+    
+    // Update monitoring context with user info
+    monitoringContext.userId = clerkUserId
+    monitoringContext.sessionId = sessionId
+    
+    // Monitor security events in background
+    monitorSecurityEvents(supabaseClient).catch(err => 
+      console.error('Security monitoring error:', err)
+    )
+
     const profileData: CreateProfileRequest = await req.json()
 
-    if (!profileData.userId) {
+    if (!profileData.userId || profileData.userId !== clerkUserId) {
       return new Response(
-        JSON.stringify({ error: 'User ID is required' }),
-        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        JSON.stringify({ 
+          error: 'User ID mismatch - cannot create profile for different user',
+          security_notice: 'Potential user impersonation attempt logged'
+        }),
+        { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       )
     }
 
@@ -245,7 +262,7 @@ Deno.serve(async (req) => {
     const { data: existingUser, error: userError } = await supabaseClient
       .from('users')
       .select('id, clerk_id')
-      .eq('clerk_id', profileData.userId)
+      .eq('clerk_id', clerkUserId)
       .single()
 
     if (userError || !existingUser) {
@@ -380,6 +397,7 @@ Deno.serve(async (req) => {
 
   } catch (error) {
     console.error('Profile creation error:', error)
+    await recordError(monitoringContext, error, undefined, req, 'high')
     return new Response(
       JSON.stringify({ error: 'Internal server error' }),
       { 
@@ -388,4 +406,4 @@ Deno.serve(async (req) => {
       }
     )
   }
-})
+}))

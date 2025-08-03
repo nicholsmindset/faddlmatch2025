@@ -2,7 +2,7 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { Input } from '@/components/ui/Input'
-import { Select } from '@/components/ui/Select'
+import { FormSelect } from '@/components/ui/FormSelect'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/RadioGroup'
 import { Label } from '@/components/ui/Label'
 import { Button } from '@/components/ui/Button'
@@ -136,7 +136,7 @@ export function FamilySituationStep({ data, onUpdate, onNext }: FamilySituationS
           Education & Career
         </h4>
         
-        <Select
+        <FormSelect
           label="Education Level"
           {...register('education_level')}
           error={errors.education_level?.message}
@@ -147,7 +147,7 @@ export function FamilySituationStep({ data, onUpdate, onNext }: FamilySituationS
           <option value="bachelors">Bachelor's Degree</option>
           <option value="masters">Master's Degree</option>
           <option value="doctorate">Doctorate/PhD</option>
-        </Select>
+        </FormSelect>
 
         <Input
           label="Occupation"
