@@ -61,7 +61,7 @@ export async function getUserSubscription(userId: string): Promise<UserSubscript
   try {
     const supabase = createClient()
     
-    const { data, error } = await supabase
+    const { data, error } = await (supabase as any)
       .from('user_subscriptions')
       .select('*')
       .eq('user_id', userId)
@@ -116,7 +116,7 @@ export async function createSubscription(
       canceled_at: null
     }
 
-    const { data, error } = await supabase
+    const { data, error } = await (supabase as any)
       .from('user_subscriptions')
       .insert(subscriptionData)
       .select()
@@ -165,7 +165,7 @@ export async function updateSubscriptionStatus(
       updateData.canceled_at = metadata.canceledAt ? metadata.canceledAt.toISOString() : null
     }
 
-    const { error } = await supabase
+    const { error } = await (supabase as any)
       .from('user_subscriptions')
       .update(updateData)
       .eq('stripe_subscription_id', subscriptionId)
