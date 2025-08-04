@@ -101,7 +101,7 @@ cat > src/components/ui/Button.tsx << 'EOF'
 import React from 'react';
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: 'primary' | 'secondary' | 'ghost';
+  variant?: 'primary' | 'secondary' | 'ghost' | 'outline';
   size?: 'sm' | 'md' | 'lg';
   children: React.ReactNode;
 }
@@ -119,6 +119,7 @@ export const Button: React.FC<ButtonProps> = ({
     primary: 'bg-blue-600 text-white hover:bg-blue-700',
     secondary: 'bg-gray-200 text-gray-900 hover:bg-gray-300',
     ghost: 'hover:bg-gray-100 hover:text-gray-900',
+    outline: 'border border-gray-300 bg-transparent hover:bg-gray-100',
   };
   
   const sizes = {
@@ -144,7 +145,7 @@ cat > src/components/ui/Badge.tsx << 'EOF'
 import React from 'react';
 
 interface BadgeProps {
-  variant?: 'default' | 'secondary' | 'success' | 'warning' | 'error';
+  variant?: 'default' | 'secondary' | 'success' | 'warning' | 'error' | 'primary';
   children: React.ReactNode;
   className?: string;
 }
@@ -158,6 +159,7 @@ export const Badge: React.FC<BadgeProps> = ({
   
   const variants = {
     default: 'bg-gray-100 text-gray-900',
+    primary: 'bg-blue-100 text-blue-900',
     secondary: 'bg-blue-100 text-blue-900',
     success: 'bg-green-100 text-green-900',
     warning: 'bg-yellow-100 text-yellow-900',
@@ -170,6 +172,67 @@ export const Badge: React.FC<BadgeProps> = ({
     </span>
   );
 };
+EOF
+
+# Create Card component
+echo "📝 Creating Card component"
+cat > src/components/ui/Card.tsx << 'EOF'
+import React from 'react';
+
+interface CardProps {
+  children: React.ReactNode;
+  className?: string;
+}
+
+export const Card: React.FC<CardProps> = ({ children, className = '' }) => {
+  return (
+    <div className={`bg-white rounded-lg shadow-md p-6 ${className}`}>
+      {children}
+    </div>
+  );
+};
+
+export const CardHeader: React.FC<CardProps> = ({ children, className = '' }) => {
+  return (
+    <div className={`mb-4 ${className}`}>
+      {children}
+    </div>
+  );
+};
+
+export const CardTitle: React.FC<CardProps> = ({ children, className = '' }) => {
+  return (
+    <h3 className={`text-lg font-semibold ${className}`}>
+      {children}
+    </h3>
+  );
+};
+
+export const CardContent: React.FC<CardProps> = ({ children, className = '' }) => {
+  return (
+    <div className={className}>
+      {children}
+    </div>
+  );
+};
+EOF
+
+# Create additional UI components that might be needed
+echo "📝 Creating additional UI components"
+
+# Create a general button variant if needed
+cat > src/components/ui/button.tsx << 'EOF'
+export * from './Button';
+EOF
+
+# Create a general badge variant if needed
+cat > src/components/ui/badge.tsx << 'EOF'
+export * from './Badge';
+EOF
+
+# Create a general card variant if needed
+cat > src/components/ui/card.tsx << 'EOF'
+export * from './Card';
 EOF
 
 # Create UserContext
@@ -308,6 +371,514 @@ const nextConfig = {
 }
 
 module.exports = nextConfig
+EOF
+
+# Create Input component
+echo "📝 Creating Input component"
+cat > src/components/ui/Input.tsx << 'EOF'
+import React from 'react';
+
+interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
+  error?: boolean;
+}
+
+export const Input: React.FC<InputProps> = ({ 
+  className = '', 
+  error = false,
+  ...props 
+}) => {
+  return (
+    <input
+      className={`flex h-10 w-full rounded-md border ${error ? 'border-red-500' : 'border-gray-300'} bg-white px-3 py-2 text-sm ring-offset-white file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-gray-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-950 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 ${className}`}
+      {...props}
+    />
+  );
+};
+EOF
+
+# Create Label component
+echo "📝 Creating Label component"
+cat > src/components/ui/Label.tsx << 'EOF'
+import React from 'react';
+
+interface LabelProps extends React.LabelHTMLAttributes<HTMLLabelElement> {
+  required?: boolean;
+}
+
+export const Label: React.FC<LabelProps> = ({ 
+  children, 
+  className = '', 
+  required = false,
+  ...props 
+}) => {
+  return (
+    <label
+      className={`text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 ${className}`}
+      {...props}
+    >
+      {children}
+      {required && <span className="text-red-500 ml-1">*</span>}
+    </label>
+  );
+};
+EOF
+
+# Create RadioGroup component
+echo "📝 Creating RadioGroup component"
+cat > src/components/ui/RadioGroup.tsx << 'EOF'
+import React, { createContext, useContext } from 'react';
+
+interface RadioGroupContextType {
+  value: string;
+  onChange: (value: string) => void;
+  name: string;
+}
+
+const RadioGroupContext = createContext<RadioGroupContextType | undefined>(undefined);
+
+interface RadioGroupProps {
+  value: string;
+  onValueChange: (value: string) => void;
+  children: React.ReactNode;
+  className?: string;
+  name?: string;
+}
+
+export const RadioGroup: React.FC<RadioGroupProps> = ({ 
+  value, 
+  onValueChange, 
+  children, 
+  className = '',
+  name = Math.random().toString(36).substr(2, 9)
+}) => {
+  return (
+    <RadioGroupContext.Provider value={{ value, onChange: onValueChange, name }}>
+      <div className={`grid gap-2 ${className}`}>
+        {children}
+      </div>
+    </RadioGroupContext.Provider>
+  );
+};
+
+interface RadioGroupItemProps {
+  value: string;
+  id?: string;
+  className?: string;
+}
+
+export const RadioGroupItem: React.FC<RadioGroupItemProps> = ({ 
+  value: itemValue, 
+  id,
+  className = '' 
+}) => {
+  const context = useContext(RadioGroupContext);
+  if (!context) throw new Error('RadioGroupItem must be used within RadioGroup');
+  
+  const { value, onChange, name } = context;
+  const isChecked = value === itemValue;
+  const inputId = id || `radio-${itemValue}`;
+
+  return (
+    <input
+      type="radio"
+      id={inputId}
+      name={name}
+      value={itemValue}
+      checked={isChecked}
+      onChange={() => onChange(itemValue)}
+      className={`h-4 w-4 text-blue-600 focus:ring-blue-500 ${className}`}
+    />
+  );
+};
+EOF
+
+# Create FormSelect component
+echo "📝 Creating FormSelect component"
+cat > src/components/ui/FormSelect.tsx << 'EOF'
+import React from 'react';
+
+interface FormSelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
+  error?: boolean;
+}
+
+export const FormSelect: React.FC<FormSelectProps> = ({ 
+  children,
+  className = '', 
+  error = false,
+  ...props 
+}) => {
+  return (
+    <select
+      className={`flex h-10 w-full rounded-md border ${error ? 'border-red-500' : 'border-gray-300'} bg-white px-3 py-2 text-sm ring-offset-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-950 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 ${className}`}
+      {...props}
+    >
+      {children}
+    </select>
+  );
+};
+EOF
+
+# Create FormError component
+echo "📝 Creating FormError component"
+cat > src/components/ui/FormError.tsx << 'EOF'
+import React from 'react';
+
+interface FormErrorProps {
+  message?: string;
+  className?: string;
+}
+
+export const FormError: React.FC<FormErrorProps> = ({ message, className = '' }) => {
+  if (!message) return null;
+  
+  return (
+    <p className={`text-sm text-red-600 mt-1 ${className}`}>
+      {message}
+    </p>
+  );
+};
+EOF
+
+# Create Switch component
+echo "📝 Creating Switch component"
+cat > src/components/ui/Switch.tsx << 'EOF'
+import React from 'react';
+
+interface SwitchProps {
+  checked: boolean;
+  onCheckedChange: (checked: boolean) => void;
+  disabled?: boolean;
+  className?: string;
+}
+
+export const Switch: React.FC<SwitchProps> = ({ 
+  checked, 
+  onCheckedChange, 
+  disabled = false,
+  className = '' 
+}) => {
+  return (
+    <button
+      type="button"
+      role="switch"
+      aria-checked={checked}
+      onClick={() => !disabled && onCheckedChange(!checked)}
+      disabled={disabled}
+      className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
+        checked ? 'bg-blue-600' : 'bg-gray-200'
+      } ${disabled ? 'cursor-not-allowed opacity-50' : ''} ${className}`}
+    >
+      <span
+        aria-hidden="true"
+        className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
+          checked ? 'translate-x-5' : 'translate-x-0'
+        }`}
+      />
+    </button>
+  );
+};
+EOF
+
+# Create lowercase exports for all components
+echo "📝 Creating lowercase exports"
+cat > src/components/ui/input.tsx << 'EOF'
+export * from './Input';
+EOF
+
+cat > src/components/ui/label.tsx << 'EOF'
+export * from './Label';
+EOF
+
+cat > src/components/ui/radiogroup.tsx << 'EOF'
+export * from './RadioGroup';
+EOF
+
+cat > src/components/ui/formselect.tsx << 'EOF'
+export * from './FormSelect';
+EOF
+
+cat > src/components/ui/formerror.tsx << 'EOF'
+export * from './FormError';
+EOF
+
+cat > src/components/ui/switch.tsx << 'EOF'
+export * from './Switch';
+EOF
+
+# Create Tabs component
+echo "📝 Creating Tabs component"
+cat > src/components/ui/Tabs.tsx << 'EOF'
+import React, { createContext, useContext, useState } from 'react';
+
+interface TabsContextType {
+  value: string;
+  onValueChange: (value: string) => void;
+}
+
+const TabsContext = createContext<TabsContextType | undefined>(undefined);
+
+interface TabsProps {
+  defaultValue?: string;
+  value?: string;
+  onValueChange?: (value: string) => void;
+  children: React.ReactNode;
+  className?: string;
+}
+
+export const Tabs: React.FC<TabsProps> = ({ 
+  defaultValue = '', 
+  value: controlledValue, 
+  onValueChange, 
+  children, 
+  className = '' 
+}) => {
+  const [uncontrolledValue, setUncontrolledValue] = useState(defaultValue);
+  const value = controlledValue !== undefined ? controlledValue : uncontrolledValue;
+  
+  const handleValueChange = (newValue: string) => {
+    if (controlledValue === undefined) {
+      setUncontrolledValue(newValue);
+    }
+    onValueChange?.(newValue);
+  };
+
+  return (
+    <TabsContext.Provider value={{ value, onValueChange: handleValueChange }}>
+      <div className={className}>
+        {children}
+      </div>
+    </TabsContext.Provider>
+  );
+};
+
+export const TabsList: React.FC<{ children: React.ReactNode; className?: string }> = ({ 
+  children, 
+  className = '' 
+}) => {
+  return (
+    <div className={`inline-flex h-10 items-center justify-center rounded-md bg-gray-100 p-1 ${className}`}>
+      {children}
+    </div>
+  );
+};
+
+export const TabsTrigger: React.FC<{ value: string; children: React.ReactNode; className?: string }> = ({ 
+  value: triggerValue, 
+  children, 
+  className = '' 
+}) => {
+  const context = useContext(TabsContext);
+  if (!context) throw new Error('TabsTrigger must be used within Tabs');
+  
+  const { value, onValueChange } = context;
+  const isActive = value === triggerValue;
+
+  return (
+    <button
+      onClick={() => onValueChange(triggerValue)}
+      className={`inline-flex items-center justify-center whitespace-nowrap rounded-sm px-3 py-1.5 text-sm font-medium ring-offset-white transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-950 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 ${
+        isActive ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-700 hover:text-gray-900'
+      } ${className}`}
+    >
+      {children}
+    </button>
+  );
+};
+
+export const TabsContent: React.FC<{ value: string; children: React.ReactNode; className?: string }> = ({ 
+  value: contentValue, 
+  children, 
+  className = '' 
+}) => {
+  const context = useContext(TabsContext);
+  if (!context) throw new Error('TabsContent must be used within Tabs');
+  
+  const { value } = context;
+  if (value !== contentValue) return null;
+
+  return (
+    <div className={`mt-2 ${className}`}>
+      {children}
+    </div>
+  );
+};
+EOF
+
+# Create tabs lowercase export
+cat > src/components/ui/tabs.tsx << 'EOF'
+export * from './Tabs';
+EOF
+
+# Create Progress component
+echo "📝 Creating Progress component"
+cat > src/components/ui/Progress.tsx << 'EOF'
+import React from 'react';
+
+interface ProgressProps {
+  value?: number;
+  max?: number;
+  className?: string;
+}
+
+export const Progress: React.FC<ProgressProps> = ({ 
+  value = 0, 
+  max = 100,
+  className = '' 
+}) => {
+  const percentage = Math.min(Math.max((value / max) * 100, 0), 100);
+  
+  return (
+    <div className={`relative h-4 w-full overflow-hidden rounded-full bg-gray-200 ${className}`}>
+      <div
+        className="h-full w-full flex-1 bg-blue-600 transition-all"
+        style={{ transform: `translateX(-${100 - percentage}%)` }}
+      />
+    </div>
+  );
+};
+EOF
+
+# Create Slider component (noticed S might be Slider)
+echo "📝 Creating Slider component"
+cat > src/components/ui/Slider.tsx << 'EOF'
+import React from 'react';
+
+interface SliderProps {
+  value: number[];
+  onValueChange: (value: number[]) => void;
+  max?: number;
+  min?: number;
+  step?: number;
+  disabled?: boolean;
+  className?: string;
+}
+
+export const Slider: React.FC<SliderProps> = ({ 
+  value, 
+  onValueChange,
+  max = 100,
+  min = 0,
+  step = 1,
+  disabled = false,
+  className = '' 
+}) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    onValueChange([Number(e.target.value)]);
+  };
+  
+  return (
+    <input
+      type="range"
+      value={value[0] || 0}
+      onChange={handleChange}
+      max={max}
+      min={min}
+      step={step}
+      disabled={disabled}
+      className={`w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer ${disabled ? 'opacity-50 cursor-not-allowed' : ''} ${className}`}
+    />
+  );
+};
+EOF
+
+# Create Textarea component
+echo "📝 Creating Textarea component"
+cat > src/components/ui/Textarea.tsx << 'EOF'
+import React from 'react';
+
+interface TextareaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
+  error?: boolean;
+}
+
+export const Textarea: React.FC<TextareaProps> = ({ 
+  className = '', 
+  error = false,
+  ...props 
+}) => {
+  return (
+    <textarea
+      className={`flex min-h-[80px] w-full rounded-md border ${error ? 'border-red-500' : 'border-gray-300'} bg-white px-3 py-2 text-sm ring-offset-white placeholder:text-gray-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-950 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 ${className}`}
+      {...props}
+    />
+  );
+};
+EOF
+
+# Create more lowercase exports
+echo "📝 Creating more lowercase exports"
+cat > src/components/ui/progress.tsx << 'EOF'
+export * from './Progress';
+EOF
+
+cat > src/components/ui/slider.tsx << 'EOF'
+export * from './Slider';
+EOF
+
+cat > src/components/ui/textarea.tsx << 'EOF'
+export * from './Textarea';
+EOF
+
+# Create UpgradePrompt component
+echo "📝 Creating UpgradePrompt component"
+mkdir -p src/components/dashboard
+cat > src/components/dashboard/UpgradePrompt.tsx << 'EOF'
+import React from 'react';
+import Link from 'next/link';
+import { Button } from '@/components/ui/Button';
+import { Sparkles, Heart, Eye, MessageCircle } from 'lucide-react';
+
+interface UpgradePromptProps {
+  type: 'daily-limit' | 'profile-views' | 'success-story';
+}
+
+export const UpgradePrompt: React.FC<UpgradePromptProps> = ({ type }) => {
+  const prompts = {
+    'daily-limit': {
+      icon: Heart,
+      title: 'Unlock Unlimited Matches',
+      description: 'You\'ve reached your daily limit. Upgrade to see unlimited matches every day!',
+      color: 'text-pink-600',
+      bgColor: 'bg-pink-50',
+    },
+    'profile-views': {
+      icon: Eye,
+      title: 'See Who Viewed Your Profile',
+      description: 'Multiple people viewed your profile. Upgrade to see who\'s interested!',
+      color: 'text-blue-600',
+      bgColor: 'bg-blue-50',
+    },
+    'success-story': {
+      icon: Sparkles,
+      title: 'Join 2,000+ Success Stories',
+      description: 'Many couples found their soulmate here. Start your journey today!',
+      color: 'text-purple-600',
+      bgColor: 'bg-purple-50',
+    },
+  };
+
+  const prompt = prompts[type];
+  const Icon = prompt.icon;
+
+  return (
+    <div className={`rounded-xl p-6 border ${prompt.bgColor} border-neutral-100`}>
+      <div className="flex items-start space-x-4">
+        <div className={`w-12 h-12 ${prompt.bgColor} rounded-full flex items-center justify-center flex-shrink-0`}>
+          <Icon className={`w-6 h-6 ${prompt.color}`} />
+        </div>
+        <div className="flex-1">
+          <h3 className="font-semibold text-neutral-900 mb-2">{prompt.title}</h3>
+          <p className="text-sm text-neutral-600 mb-4">{prompt.description}</p>
+          <Link href="/subscription">
+            <Button variant="primary" size="sm" className="gap-2">
+              <MessageCircle className="w-4 h-4" />
+              Upgrade Now
+            </Button>
+          </Link>
+        </div>
+      </div>
+    </div>
+  );
+};
 EOF
 
 # Create a simplified middleware.ts to avoid Clerk import issues
