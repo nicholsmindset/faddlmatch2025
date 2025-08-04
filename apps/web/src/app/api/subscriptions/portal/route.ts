@@ -30,9 +30,16 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // 📝 Parse and validate request
-    const body = await request.json()
-    const { returnUrl } = portalRequestSchema.parse(body)
+    // 📝 Parse and validate request (handle empty body)
+    let returnUrl: string | undefined
+    try {
+      const body = await request.json()
+      const parsed = portalRequestSchema.parse(body)
+      returnUrl = parsed.returnUrl
+    } catch (err) {
+      // Handle empty body - just use default return URL
+      returnUrl = undefined
+    }
 
     // 🔍 Get user's subscription
     const subscription = await getUserSubscription(userId)
@@ -59,8 +66,10 @@ export async function POST(request: NextRequest) {
     console.log(`[API] Created portal session for user ${userId}`)
 
     return NextResponse.json({
-      portalUrl,
-      customerId: subscription.stripeCustomerId
+      url: portalUrl,
+      portalUrl, // Keep both for compatibility
+      customerId: subscription.stripeCustomerId,
+      success: true
     })
 
   } catch (error) {

@@ -47,7 +47,14 @@
       "Bash(npm run lint:*)",
       "Bash(npm run netlify:install:*)",
       "Bash(./build-netlify.sh)",
-      "Bash(npm run netlify:build:web:*)"
+      "Bash(npm run netlify:build:web:*)",
+      "Bash(git clone:*)",
+      "Bash(./setup.sh:*)",
+      "Bash(./agent-os/setup-claude-code.sh:*)",
+      "Bash(./setup-claude-code.sh:*)",
+      "Bash(nslookup:*)",
+      "Bash(npm run test:*)",
+      "Bash(git checkout:*)"
     ],
     "deny": []
   }

@@ -9,6 +9,7 @@ import { Label } from '@/components/ui/Label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/Select'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/Tabs'
 import { Badge } from '@/components/ui/Badge'
+import { ImageUpload } from '@/components/ui/ImageUpload'
 import { 
   User, 
   Heart, 
@@ -38,6 +39,8 @@ export function ProfileEditor() {
     gender: 'male',
     location: '',
     bio: '',
+    profilePhoto: '',
+    profilePhotoPath: '',
     
     // Religious Info
     religious_level: 'practicing',
@@ -172,6 +175,29 @@ export function ProfileEditor() {
 
         {/* Basic Information */}
         <TabsContent value="basic" className="p-6 space-y-6">
+          {/* Profile Photo Upload */}
+          <div className="mb-8">
+            <Label className="mb-4 block text-center">
+              Profile Photo
+            </Label>
+            <ImageUpload
+              currentImage={formData.profilePhoto}
+              userId={user?.id || ''}
+              userName={`${formData.firstName} ${formData.lastName}`.trim() || 'User'}
+              onImageChange={(url, path) => {
+                setFormData(prev => ({
+                  ...prev,
+                  profilePhoto: url || '',
+                  profilePhotoPath: path || ''
+                }))
+              }}
+              isPrivate={true}
+              size="lg"
+              className="mx-auto"
+              showPrivacyToggle={true}
+            />
+          </div>
+          
           <div className="grid md:grid-cols-2 gap-6">
             <div className="space-y-2">
               <Label htmlFor="firstName">First Name</Label>
@@ -277,8 +303,6 @@ export function ProfileEditor() {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="rarely">Rarely</SelectItem>
-                  <SelectItem value="sometimes">Sometimes</SelectItem>
                   <SelectItem value="regularly">Regularly</SelectItem>
                   <SelectItem value="always">Always</SelectItem>
                 </SelectContent>

@@ -1,22 +1,20 @@
 /**
- * 🛒 Checkout Session API
- * Create Stripe checkout sessions for FADDL Match subscriptions
+ * 🛒 Production Checkout Session API
+ * Secure checkout with validation, rate limiting, and comprehensive error handling
  */
 
 import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@clerk/nextjs/server'
-import { z } from 'zod'
 import { createCheckoutSession, SUBSCRIPTION_PLANS } from '@/lib/subscription'
 import { isProduction } from '@/lib/env'
+import { createRateLimiter, withRateLimit } from '@/lib/middleware/rate-limit'
+import { withValidation, ValidationSchemas } from '@/lib/middleware/validation'
+import { withMetrics, recordSecurityIncident } from '@/lib/monitoring/metrics'
+import { createIdempotencyHandler, withIdempotency } from '@/lib/middleware/idempotency'
 
-/**
- * 📝 Request validation schema
- */
-const checkoutRequestSchema = z.object({
-  planId: z.enum(['INTENTION', 'PATIENCE', 'RELIANCE']),
-  successUrl: z.string().url().optional(),
-  cancelUrl: z.string().url().optional()
-})
+// Initialize middleware
+const rateLimiter = createRateLimiter('CHECKOUT_CREATE')
+const idempotencyHandler = createIdempotencyHandler('CHECKOUT_CREATE')
 
 /**
  * 🛒 Create checkout session

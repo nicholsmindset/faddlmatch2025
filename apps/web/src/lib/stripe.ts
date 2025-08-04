@@ -62,17 +62,18 @@ export const SUBSCRIPTION_PLANS = {
     id: 'patience',
     name: 'Patience',
     description: 'Most popular choice for serious seekers',
-    price: 18,
-    currency: 'usd',
+    price: 29,
+    currency: 'sgd',
     interval: 'month',
     features: [
       'Unlimited matches',
       'See who likes you',
       'Advanced filters',
       'Priority support',
-      'Enhanced messaging'
+      'Enhanced messaging',
+      'Islamic compatibility scoring'
     ],
-    stripePriceId: process.env.STRIPE_PATIENCE_PRICE_ID || 'price_patience_monthly',
+    stripePriceId: process.env.STRIPE_PATIENCE_PRICE_ID || '',
     isPopular: true,
     isHalal: true
   },
@@ -80,18 +81,19 @@ export const SUBSCRIPTION_PLANS = {
     id: 'reliance',
     name: 'Reliance',
     description: 'Premium experience for committed users',
-    price: 23,
-    currency: 'usd',
+    price: 59,
+    currency: 'sgd',
     interval: 'month',
     features: [
       'Everything in Patience',
       'Video calls (Halal supervised)',
       'Profile boost',
       'Family scheduler',
-      'Advisor chat',
-      'Priority matching'
+      'Dedicated advisor chat',
+      'Priority matching',
+      'Guardian communication tools'
     ],
-    stripePriceId: process.env.STRIPE_RELIANCE_PRICE_ID || 'price_reliance_monthly',
+    stripePriceId: process.env.STRIPE_RELIANCE_PRICE_ID || '',
     isPopular: false,
     isHalal: true
   }
@@ -111,10 +113,10 @@ export const getPlanById = (planId: string): SubscriptionPlan | null => {
 /**
  * 💰 Format price for display
  */
-export const formatPrice = (price: number, currency: string = 'usd'): string => {
+export const formatPrice = (price: number, currency: string = 'sgd'): string => {
   if (price === 0) return 'Free'
   
-  return new Intl.NumberFormat('en-US', {
+  return new Intl.NumberFormat('en-SG', {
     style: 'currency',
     currency: currency.toUpperCase(),
     minimumFractionDigits: 0,

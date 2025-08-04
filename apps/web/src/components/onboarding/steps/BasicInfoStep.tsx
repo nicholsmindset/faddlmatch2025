@@ -1,12 +1,14 @@
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
+import { useUser } from '@clerk/nextjs'
 import { Input } from '@/components/ui/Input'
 import { FormSelect } from '@/components/ui/FormSelect'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/RadioGroup'
 import { Label } from '@/components/ui/Label'
 import { Button } from '@/components/ui/Button'
 import { FormError } from '@/components/ui/FormError'
+import { ImageUpload } from '@/components/ui/ImageUpload'
 
 const basicInfoSchema = z.object({
   firstName: z.string().min(2, 'First name must be at least 2 characters'),
@@ -22,7 +24,9 @@ const basicInfoSchema = z.object({
   }),
   bio: z.string()
     .min(50, 'Bio must be at least 50 characters')
-    .max(500, 'Bio must not exceed 500 characters')
+    .max(500, 'Bio must not exceed 500 characters'),
+  profilePhoto: z.string().optional(),
+  profilePhotoPath: z.string().optional()
 })
 
 type BasicInfoData = z.infer<typeof basicInfoSchema>
@@ -34,6 +38,7 @@ interface BasicInfoStepProps {
 }
 
 export function BasicInfoStep({ data, onUpdate, onNext }: BasicInfoStepProps) {
+  const { user } = useUser()
   const {
     register,
     handleSubmit,
@@ -44,6 +49,11 @@ export function BasicInfoStep({ data, onUpdate, onNext }: BasicInfoStepProps) {
     resolver: zodResolver(basicInfoSchema),
     defaultValues: data.basicInfo || {}
   })
+
+  const handlePhotoChange = (url: string | null, path: string | null) => {
+    setValue('profilePhoto', url || '')
+    setValue('profilePhotoPath', path || '')
+  }
 
   const onSubmit = (values: BasicInfoData) => {
     onUpdate({ basicInfo: values })
@@ -56,13 +66,37 @@ export function BasicInfoStep({ data, onUpdate, onNext }: BasicInfoStepProps) {
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
       {/* Header */}
-      <div className="text-center mb-6">
-        <h3 className="text-lg font-semibold text-neutral-900 mb-2">
-          Tell us about yourself
+      <div className="text-center mb-8">
+        <h3 className="text-2xl font-bold text-gray-900 mb-2">
+          Welcome to FADDL Match
         </h3>
-        <p className="text-sm text-neutral-600">
-          This information helps us find your ideal marriage partner
+        <p className="text-green-600 font-medium mb-2">
+          Assalamu Alaikum & Welcome
         </p>
+        <p className="text-gray-600 max-w-md mx-auto">
+          FADDL is designed specifically for divorced and widowed Muslims in Singapore seeking meaningful remarriage connections. We combine Islamic values with modern technology to help you find your life partner.
+        </p>
+        <div className="mt-4 p-3 bg-green-50 rounded-lg">
+          <p className="text-sm text-green-800 italic">
+            "And among His signs is that He created for you mates from among yourselves, that you may dwell in tranquility with them..." - Quran 30:21
+          </p>
+        </div>
+      </div>
+
+      {/* Profile Photo Upload */}
+      <div className="mb-8">
+        <Label className="mb-4 block text-center">
+          Profile Photo
+        </Label>
+        <ImageUpload
+          currentImage={watch('profilePhoto')}
+          userId={user?.id || ''}
+          userName={`${watch('firstName') || ''} ${watch('lastName') || ''}`.trim() || 'User'}
+          onImageChange={handlePhotoChange}
+          isPrivate={true}
+          size="lg"
+          className="mx-auto"
+        />
       </div>
 
       {/* Name Fields */}

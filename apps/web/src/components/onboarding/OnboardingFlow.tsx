@@ -10,6 +10,7 @@ import { FamilySituationStep } from './steps/FamilySituationStep'
 import { ReligiousPracticeStep } from './steps/ReligiousPracticeStep'
 import { useOnboarding } from '@/hooks/useOnboarding'
 import { ChevronLeft, Sparkles } from 'lucide-react'
+import PackageSelection from '@/components/subscription/PackageSelection'
 
 const STEPS = [
   { 
@@ -35,6 +36,7 @@ const STEPS = [
 export function OnboardingFlow() {
   const router = useRouter()
   const [currentStep, setCurrentStep] = useState(0)
+  const [showPackageSelection, setShowPackageSelection] = useState(false)
   const { data, updateData, submitProfile, isSubmitting, error } = useOnboarding()
   
   const progress = ((currentStep + 1) / STEPS.length) * 100
@@ -45,8 +47,8 @@ export function OnboardingFlow() {
       // Final step - submit profile
       try {
         await submitProfile()
-        // Show success animation then redirect to pricing
-        setTimeout(() => router.push('/pricing'), 2000)
+        // Show success animation then show package selection
+        setTimeout(() => setShowPackageSelection(true), 2000)
       } catch (error) {
         console.error('Profile submission failed:', error)
       }
@@ -57,6 +59,18 @@ export function OnboardingFlow() {
 
   const handleBack = () => {
     setCurrentStep(prev => Math.max(0, prev - 1))
+  }
+
+  // Show package selection after profile completion
+  if (showPackageSelection) {
+    return (
+      <PackageSelection 
+        onComplete={() => {
+          setShowPackageSelection(false)
+          router.push('/dashboard')
+        }}
+      />
+    )
   }
 
   if (currentStep === STEPS.length && !error) {
@@ -86,8 +100,8 @@ export function OnboardingFlow() {
               Profile Complete! 🎉
             </h2>
             <p className="text-lg text-neutral-600 mb-6 max-w-md mx-auto">
-              Your basic profile is ready! Now choose a plan to unlock all features 
-              and start finding your perfect match...
+              Your profile is being prepared! Get ready to choose your perfect plan 
+              and start your halal matrimonial journey...
             </p>
             <div className="flex justify-center">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600"></div>

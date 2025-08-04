@@ -12,7 +12,7 @@ const religiousInfoSchema = z.object({
   religious_level: z.enum(['learning', 'practicing', 'devout'], {
     required_error: 'Please select your religious commitment level'
   }),
-  prayer_frequency: z.enum(['rarely', 'sometimes', 'regularly', 'always'], {
+  prayer_frequency: z.enum(['regularly', 'always'], {
     required_error: 'Please select your prayer frequency'
   }),
   hijab_preference: z.enum(['required', 'preferred', 'optional']).optional(),
@@ -68,8 +68,6 @@ export function ReligiousPracticeStep({ data, onUpdate, onNext }: ReligiousPract
   ]
 
   const prayerFrequencies = [
-    { value: 'rarely', label: 'Rarely', description: 'Occasionally' },
-    { value: 'sometimes', label: 'Sometimes', description: 'Few times a week' },
     { value: 'regularly', label: 'Regularly', description: 'Most daily prayers' },
     { value: 'always', label: 'Always', description: 'All five daily prayers' }
   ]

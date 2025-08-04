@@ -22,6 +22,9 @@ const familySituationSchema = z.object({
     required_error: 'Please select your education level'
   }),
   occupation: z.string().min(2, 'Please enter your occupation'),
+  ethnicity: z.enum(['malay', 'chinese', 'indian', 'eurasian', 'other'], {
+    required_error: 'Please select your family background/ethnicity'
+  }),
   interests: z.array(z.string()).min(1, 'Please select at least one interest'),
   languages: z.array(z.string()).min(1, 'Please select at least one language'),
   seeking_marriage_timeline: z.enum(['immediately', 'within_year', 'within_two_years', 'when_ready'], {
@@ -156,6 +159,20 @@ export function FamilySituationStep({ data, onUpdate, onNext }: FamilySituationS
           error={errors.occupation?.message}
           required
         />
+
+        <FormSelect
+          label="Family Background/Ethnicity"
+          {...register('ethnicity')}
+          error={errors.ethnicity?.message}
+          required
+        >
+          <option value="">Select your family background</option>
+          <option value="malay">Malay</option>
+          <option value="chinese">Chinese</option>
+          <option value="indian">Indian</option>
+          <option value="eurasian">Eurasian</option>
+          <option value="other">Other</option>
+        </FormSelect>
       </div>
 
       {/* Family Values */}
