@@ -22,7 +22,7 @@ import { useState, useEffect } from 'react'
 
 export function DashboardContent() {
   const { user } = useUser()
-  const { profile, loading } = useUserContext()
+  const { user: contextUser, isLoading: loading } = useUserContext()
   const [userPlan, setUserPlan] = useState('intention') // Default to free plan
   const [isNewUser, setIsNewUser] = useState(false)
 
@@ -267,7 +267,7 @@ export function DashboardContent() {
                       <Button size="sm" variant="primary">
                         Interest
                       </Button>
-                      <Button size="sm" variant="outline">
+                      <Button size="sm" variant="secondary">
                         Pass
                       </Button>
                     </div>
