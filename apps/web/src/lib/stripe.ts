@@ -62,8 +62,8 @@ export const SUBSCRIPTION_PLANS = {
     id: 'patience',
     name: 'Patience',
     description: 'Most popular choice for serious seekers',
-    price: 18,
-    currency: 'usd',
+    price: 29,
+    currency: 'sgd',
     interval: 'month',
     features: [
       'Unlimited matches',
@@ -80,8 +80,8 @@ export const SUBSCRIPTION_PLANS = {
     id: 'reliance',
     name: 'Reliance',
     description: 'Premium experience for committed users',
-    price: 23,
-    currency: 'usd',
+    price: 59,
+    currency: 'sgd',
     interval: 'month',
     features: [
       'Everything in Patience',
@@ -111,10 +111,13 @@ export const getPlanById = (planId: string): SubscriptionPlan | null => {
 /**
  * 💰 Format price for display
  */
-export const formatPrice = (price: number, currency: string = 'usd'): string => {
+export const formatPrice = (price: number, currency: string = 'sgd'): string => {
   if (price === 0) return 'Free'
   
-  return new Intl.NumberFormat('en-US', {
+  // Use Singapore locale for SGD, US locale for others
+  const locale = currency.toLowerCase() === 'sgd' ? 'en-SG' : 'en-US'
+  
+  return new Intl.NumberFormat(locale, {
     style: 'currency',
     currency: currency.toUpperCase(),
     minimumFractionDigits: 0,
