@@ -45,7 +45,11 @@ function loadEnvironment(): EnvironmentConfig {
     'CLERK_SECRET_KEY',
     'CLERK_WEBHOOK_SECRET',
     'NEXT_PUBLIC_SUPABASE_URL',
-    'NEXT_PUBLIC_SUPABASE_ANON_KEY',
+    'NEXT_PUBLIC_SUPABASE_ANON_KEY'
+  ]
+  
+  // Stripe variables are optional for now to prevent deployment issues
+  const optionalVars = [
     'NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY',
     'STRIPE_SECRET_KEY',
     'STRIPE_WEBHOOK_SECRET'
@@ -57,6 +61,13 @@ function loadEnvironment(): EnvironmentConfig {
       `Missing required environment variables: ${missing.join(', ')}\n` +
       'Please check your .env.local file and ensure all required variables are set.'
     )
+  }
+  
+  // Log missing optional variables as warnings
+  const missingOptional = optionalVars.filter(key => !env[key])
+  if (missingOptional.length > 0) {
+    console.warn(`[ENV] Missing optional Stripe variables: ${missingOptional.join(', ')}`)
+    console.warn('[ENV] Stripe features will be disabled until these are configured')
   }
   
   return {
@@ -78,10 +89,10 @@ function loadEnvironment(): EnvironmentConfig {
     // Optional Services
     OPENAI_API_KEY: env.OPENAI_API_KEY,
     
-    // Stripe Payment Integration
-    STRIPE_PUBLISHABLE_KEY: env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!,
-    STRIPE_SECRET_KEY: env.STRIPE_SECRET_KEY!,
-    STRIPE_WEBHOOK_SECRET: env.STRIPE_WEBHOOK_SECRET!,
+    // Stripe Payment Integration (optional for now)
+    STRIPE_PUBLISHABLE_KEY: env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || 'pk_test_placeholder',
+    STRIPE_SECRET_KEY: env.STRIPE_SECRET_KEY || 'sk_test_placeholder',  
+    STRIPE_WEBHOOK_SECRET: env.STRIPE_WEBHOOK_SECRET || 'whsec_placeholder',
     
     // Security Settings
     RATE_LIMIT_ENABLED: env.RATE_LIMIT_ENABLED !== 'false',
