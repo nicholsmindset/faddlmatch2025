@@ -120,3 +120,4 @@ playwright/.cache/
 .turbo/
 # Local Netlify folder
 .netlify
+agent-os/
