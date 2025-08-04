@@ -50,6 +50,13 @@
   status = 200
   force = true
 
+# Clerk webhook fallback to Netlify function
+[[redirects]]
+  from = "/api/webhooks/clerk"
+  to = "/.netlify/functions/clerk-webhook"
+  status = 200
+  force = false
+
 # Dev settings
 [dev]
   command = "npm run dev"

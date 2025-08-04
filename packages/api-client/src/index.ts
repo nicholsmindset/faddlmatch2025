@@ -229,20 +229,20 @@ export class FaddlMatchApiClient {
         body: body ? JSON.stringify(body) : undefined
       })
 
-      const data = await response.json()
+      const data = await response.json() as any
 
       if (!response.ok) {
         return {
           success: false,
-          error: data.error || `HTTP ${response.status}`,
-          ...data
+          error: data?.error || `HTTP ${response.status}`,
+          ...(typeof data === 'object' && data !== null ? data : {})
         }
       }
 
       return {
         success: true,
         data,
-        ...data
+        ...(typeof data === 'object' && data !== null ? data : {})
       }
     } catch (error) {
       return {

@@ -9,6 +9,20 @@ import { ratelimit } from '@/lib/ratelimit'
  * 🔒 Secure Clerk Webhook Handler
  * Enhanced security with rate limiting and validation
  */
+
+// Handle OPTIONS preflight requests
+export async function OPTIONS(req: NextRequest) {
+  return new NextResponse(null, {
+    status: 200,
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'POST, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type, svix-id, svix-timestamp, svix-signature',
+      'Access-Control-Max-Age': '86400'
+    }
+  })
+}
+
 export async function POST(req: NextRequest) {
   const startTime = Date.now()
   const clientIP = req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || 'unknown'
@@ -44,6 +58,14 @@ export async function POST(req: NextRequest) {
     const svix_id = headerPayload.get('svix-id')
     const svix_timestamp = headerPayload.get('svix-timestamp')
     const svix_signature = headerPayload.get('svix-signature')
+
+    // Debug headers for troubleshooting
+    logWebhookEvent('HEADERS_RECEIVED', {
+      svix_id: svix_id ? 'present' : 'missing',
+      svix_timestamp: svix_timestamp ? 'present' : 'missing',
+      svix_signature: svix_signature ? 'present' : 'missing',
+      allHeaders: Object.fromEntries(Array.from(headerPayload.entries()))
+    })
 
     // 🚨 Validate required Svix headers
     if (!svix_id || !svix_timestamp || !svix_signature) {
@@ -195,6 +217,12 @@ export async function POST(req: NextRequest) {
         received: true, 
         timestamp: new Date().toISOString(),
         eventType: type
+      }, {
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Methods': 'POST',
+          'Access-Control-Allow-Headers': 'Content-Type, svix-id, svix-timestamp, svix-signature'
+        }
       })
       
     } catch (error) {

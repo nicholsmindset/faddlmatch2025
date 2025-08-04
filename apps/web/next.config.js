@@ -69,6 +69,9 @@ const nextConfig = {
       ]
     }
   },
+
+  // Ensure API routes are handled properly
+  trailingSlash: false,
   
   async redirects() {
     return [
