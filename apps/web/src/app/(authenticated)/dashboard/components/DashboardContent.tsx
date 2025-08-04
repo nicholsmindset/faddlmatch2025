@@ -5,6 +5,7 @@ import { useUser } from '@clerk/nextjs'
 import { useUserContext } from '@/contexts/UserContext'
 import { Button } from '@/components/ui/Button'
 import { Badge } from '@/components/ui/Badge'
+import { UpgradePrompt } from '@/components/dashboard/UpgradePrompt'
 import { 
   Heart, 
   MessageCircle, 
@@ -17,17 +18,45 @@ import {
   User,
   Shield
 } from 'lucide-react'
+import { useState, useEffect } from 'react'
 
 export function DashboardContent() {
   const { user } = useUser()
   const { profile, loading } = useUserContext()
+  const [userPlan, setUserPlan] = useState('intention') // Default to free plan
+  const [isNewUser, setIsNewUser] = useState(false)
 
-  // Mock data for demonstration
+  // Fetch user's subscription status
+  useEffect(() => {
+    const fetchSubscriptionStatus = async () => {
+      try {
+        const response = await fetch('/api/subscriptions/status')
+        if (response.ok) {
+          const data = await response.json()
+          setUserPlan(data.planId.toLowerCase())
+        }
+      } catch (error) {
+        console.error('Failed to fetch subscription status:', error)
+      }
+    }
+
+    // Check if user is new (from URL params)
+    const urlParams = new URLSearchParams(window.location.search)
+    setIsNewUser(urlParams.get('newUser') === 'true')
+
+    if (user) {
+      fetchSubscriptionStatus()
+    }
+  }, [user])
+
+  // Mock data for demonstration - adjust based on plan
   const stats = {
-    newMatches: 3,
-    messages: 2,
+    newMatches: userPlan === 'intention' ? 3 : 8, // Free users see limited matches
+    messages: userPlan === 'intention' ? 0 : 2, // Free users can't message
     profileViews: 12,
-    profileCompletion: 85
+    profileCompletion: 85,
+    dailyMatchesUsed: userPlan === 'intention' ? 3 : 0, // Track daily limit for free users
+    dailyMatchesLimit: userPlan === 'intention' ? 5 : 999
   }
 
   const recentMatches = [
@@ -100,10 +129,26 @@ export function DashboardContent() {
         {/* Header */}
         <div className="flex justify-between items-center mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-neutral-900">
-              Assalamu Alaikum, {user?.firstName || 'Sister/Brother'}
-            </h1>
-            <p className="text-neutral-600 mt-1">Welcome back to your matrimonial journey</p>
+            <div className="flex items-center space-x-3 mb-2">
+              <h1 className="text-3xl font-bold text-neutral-900">
+                Assalamu Alaikum, {user?.firstName || 'Sister/Brother'}
+              </h1>
+              <Badge 
+                variant={userPlan === 'intention' ? 'secondary' : 'primary'}
+                className={`${
+                  userPlan === 'intention' 
+                    ? 'bg-gray-100 text-gray-700' 
+                    : userPlan === 'patience'
+                    ? 'bg-blue-100 text-blue-700'
+                    : 'bg-purple-100 text-purple-700'
+                }`}
+              >
+                {userPlan.charAt(0).toUpperCase() + userPlan.slice(1)} Plan
+              </Badge>
+            </div>
+            <p className="text-neutral-600 mt-1">
+              {isNewUser ? 'Welcome to your new halal journey!' : 'Welcome back to your matrimonial journey'}
+            </p>
           </div>
           
           {/* Check for incomplete profile */}
@@ -133,19 +178,39 @@ export function DashboardContent() {
             </div>
           </Link>
 
-          <Link href="/messages">
-            <div className="bg-white rounded-xl p-6 border border-neutral-100 hover:shadow-md transition-shadow cursor-pointer">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-neutral-600">Messages</p>
-                  <p className="text-2xl font-bold text-neutral-900">{stats.messages}</p>
+          {userPlan === 'intention' ? (
+            <Link href="/subscription">
+              <div className="bg-white rounded-xl p-6 border border-orange-200 hover:shadow-md transition-shadow cursor-pointer relative overflow-hidden">
+                <div className="absolute top-2 right-2 bg-orange-500 text-white text-xs px-2 py-1 rounded-full">
+                  Upgrade
                 </div>
-                <div className="w-12 h-12 bg-islamic-gold/10 rounded-full flex items-center justify-center">
-                  <MessageCircle className="w-6 h-6 text-islamic-gold" />
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm text-neutral-600">Messages</p>
+                    <p className="text-2xl font-bold text-neutral-900">Locked</p>
+                    <p className="text-xs text-orange-600 mt-1">Upgrade to message</p>
+                  </div>
+                  <div className="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center">
+                    <MessageCircle className="w-6 h-6 text-orange-600" />
+                  </div>
                 </div>
               </div>
-            </div>
-          </Link>
+            </Link>
+          ) : (
+            <Link href="/messages">
+              <div className="bg-white rounded-xl p-6 border border-neutral-100 hover:shadow-md transition-shadow cursor-pointer">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm text-neutral-600">Messages</p>
+                    <p className="text-2xl font-bold text-neutral-900">{stats.messages}</p>
+                  </div>
+                  <div className="w-12 h-12 bg-islamic-gold/10 rounded-full flex items-center justify-center">
+                    <MessageCircle className="w-6 h-6 text-islamic-gold" />
+                  </div>
+                </div>
+              </div>
+            </Link>
+          )}
 
           <div className="bg-white rounded-xl p-6 border border-neutral-100">
             <div className="flex items-center justify-between">
@@ -208,8 +273,40 @@ export function DashboardContent() {
                     </div>
                   </div>
                 ))}
-              </div>
+              
+              {/* Daily Matches Limit Notice for Free Users */}
+              {userPlan === 'intention' && stats.dailyMatchesUsed >= stats.dailyMatchesLimit && (
+                <div className="mt-4 p-4 bg-orange-50 border border-orange-200 rounded-lg">
+                  <div className="flex items-center space-x-2 text-orange-800">
+                    <Heart className="w-5 h-5" />
+                    <span className="font-medium">Daily limit reached!</span>
+                  </div>
+                  <p className="text-sm text-orange-700 mt-1">
+                    You've seen all 5 of today's matches. Upgrade for unlimited matches!
+                  </p>
+                </div>
+              )}
             </div>
+
+            {/* Upgrade Prompts for Free Users */}
+            {userPlan === 'intention' && (
+              <div className="space-y-6">
+                {/* Daily Limit Upgrade Prompt */}
+                {stats.dailyMatchesUsed >= 3 && (
+                  <UpgradePrompt type="daily-limit" />
+                )}
+                
+                {/* Profile Views Upgrade Prompt */}
+                {stats.profileViews > 0 && (
+                  <UpgradePrompt type="profile-views" />
+                )}
+                
+                {/* Success Story Prompt for New Users */}
+                {isNewUser && (
+                  <UpgradePrompt type="success-story" />
+                )}
+              </div>
+            )}
 
             {/* Recent Activity */}
             <div className="bg-white rounded-xl p-6 border border-neutral-100">

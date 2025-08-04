@@ -125,38 +125,14 @@ export function useMessages(): UseMessagesReturn {
       setIsLoading(true)
       setError(null)
 
-      // Simulate API delay
-      await new Promise(resolve => setTimeout(resolve, 1000))
+      const response = await fetch('/api/messages')
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch conversations')
+      }
 
-      // In production, this would be a Supabase query like:
-      /*
-      const { data, error } = await supabase
-        .from('conversations')
-        .select(`
-          id,
-          created_at,
-          updated_at,
-          match_status,
-          guardian_approval_required,
-          participant:users!conversations_participant_id_fkey(
-            id,
-            first_name,
-            avatar_url,
-            is_online,
-            last_seen
-          ),
-          last_message:messages(
-            content,
-            created_at,
-            sender_id,
-            moderation_status
-          ),
-          unread_count:messages(count)
-        `)
-        .order('updated_at', { ascending: false })
-      */
-
-      setConversations(MOCK_CONVERSATIONS)
+      const data = await response.json()
+      setConversations(data.conversations || MOCK_CONVERSATIONS)
     } catch (err) {
       console.error('Failed to fetch conversations:', err)
       setError('Failed to load conversations. Please try again.')

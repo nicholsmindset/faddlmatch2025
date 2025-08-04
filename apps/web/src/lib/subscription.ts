@@ -207,16 +207,59 @@ export async function createCheckoutSession(
   cancelUrl: string
 ): Promise<string> {
   try {
-    // TODO: Implement proper Stripe integration
-    // For now, return a mock URL to prevent 500 errors
-    console.log(`[STRIPE] Mock checkout session for user ${userId}, plan ${planId}`)
+    const stripe = getStripeServer()
+    const plan = getPlanById(planId)
     
-    // Return a safe redirect to subscription page
-    return `${successUrl}?mock=true&plan=${planId.toLowerCase()}`
+    if (!plan) {
+      throw new Error(`Invalid plan ID: ${planId}`)
+    }
+
+    if (!plan.stripePriceId) {
+      throw new Error(`No Stripe price ID configured for plan: ${planId}`)
+    }
+
+    console.log(`[STRIPE] Creating checkout session for user ${userId}, plan ${planId}`)
+
+    // Create checkout session
+    const session = await stripe.checkout.sessions.create({
+      mode: 'subscription',
+      payment_method_types: ['card'],
+      line_items: [
+        {
+          price: plan.stripePriceId,
+          quantity: 1,
+        },
+      ],
+      customer_email: undefined, // Let Stripe collect email
+      metadata: {
+        userId,
+        planId,
+        platform: 'faddl-match',
+        createdAt: new Date().toISOString()
+      },
+      subscription_data: {
+        metadata: {
+          userId,
+          planId,
+          platform: 'faddl-match'
+        }
+      },
+      success_url: `${successUrl}?session_id={CHECKOUT_SESSION_ID}&plan=${planId.toLowerCase()}`,
+      cancel_url: `${cancelUrl}?canceled=true&plan=${planId.toLowerCase()}`,
+      allow_promotion_codes: true,
+      billing_address_collection: 'auto',
+      customer_creation: 'always',
+    })
+
+    if (!session.url) {
+      throw new Error('Failed to create checkout session URL')
+    }
+
+    console.log(`[STRIPE] Created checkout session ${session.id} for user ${userId}`)
+    return session.url
   } catch (error) {
     console.error('[STRIPE] Error creating checkout session:', error)
-    // Return safe fallback instead of throwing
-    return `${successUrl}?error=checkout_failed&plan=${planId.toLowerCase()}`
+    throw new Error('Failed to create checkout session')
   }
 }
 

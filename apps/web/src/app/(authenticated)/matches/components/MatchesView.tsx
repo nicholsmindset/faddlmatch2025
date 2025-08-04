@@ -1,13 +1,14 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { ProfileCard } from '@/components/profile/ProfileCard'
 import { Button } from '@/components/ui/Button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/Tabs'
-import { Sparkles, Heart, Clock, Users } from 'lucide-react'
+import { Sparkles, Heart, Clock, Users, Loader2 } from 'lucide-react'
+import { toast } from 'sonner'
 
-// Mock data - replace with API integration
+// Keep mock data as fallback
 const mockMatches = [
   {
     id: '1',
@@ -73,76 +74,114 @@ const mockMatches = [
 
 export function MatchesView() {
   const [activeTab, setActiveTab] = useState('daily')
-  const [matches, setMatches] = useState(mockMatches)
-  const [loading, setLoading] = useState(false)
+  const [matches, setMatches] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [actionLoading, setActionLoading] = useState(false)
 
-  const handleLike = async (profileId: string) => {
-    setLoading(true)
+  // Fetch matches from API
+  const fetchMatches = async (type: string = 'daily') => {
     try {
-      // In a real app, this would call the API to record the interest
-      console.log('Expressing interest in profile:', profileId)
+      setLoading(true)
+      const response = await fetch(`/api/matches?type=${type}`)
       
-      // Show success feedback
-      alert('Interest expressed! They will be notified if there\'s mutual interest.')
+      if (!response.ok) {
+        throw new Error('Failed to fetch matches')
+      }
       
-      // Optionally remove from current view or mark as liked
-      // setMatches(prev => prev.filter(m => m.id !== profileId))
-      
+      const data = await response.json()
+      setMatches(data.matches || mockMatches) // Fallback to mock data
     } catch (error) {
-      console.error('Failed to express interest:', error)
-      alert('Failed to express interest. Please try again.')
+      console.error('Error fetching matches:', error)
+      setMatches(mockMatches) // Use mock data on error
+      toast.error('Failed to load matches. Using demo data.')
     } finally {
       setLoading(false)
     }
   }
 
-  const handlePass = async (profileId: string) => {
-    setLoading(true)
+  useEffect(() => {
+    fetchMatches(activeTab)
+  }, [activeTab])
+
+  const handleLike = async (profileId: string) => {
+    setActionLoading(true)
     try {
-      // In a real app, this would call the API to record the pass
-      console.log('Passing on profile:', profileId)
+      const response = await fetch('/api/matches', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          action: 'like',
+          targetUserId: profileId
+        })
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to express interest')
+      }
+
+      const data = await response.json()
       
-      // Remove from current matches
+      if (data.isMutualMatch) {
+        toast.success('🎉 It\'s a match! You can now start messaging.')
+      } else {
+        toast.success('Interest expressed! They will be notified if there\'s mutual interest.')
+      }
+      
+      // Remove from current matches view
       setMatches(prev => prev.filter(m => m.id !== profileId))
       
     } catch (error) {
-      console.error('Failed to pass on profile:', error)
-      alert('Failed to pass. Please try again.')
+      console.error('Failed to express interest:', error)
+      toast.error('Failed to express interest. Please try again.')
     } finally {
-      setLoading(false)
+      setActionLoading(false)
+    }
+  }
+
+  const handlePass = async (profileId: string) => {
+    setActionLoading(true)
+    try {
+      const response = await fetch('/api/matches', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          action: 'pass',
+          targetUserId: profileId
+        })
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to pass profile')
+      }
+      
+      // Remove from current matches
+      setMatches(prev => prev.filter(m => m.id !== profileId))
+      toast.success('Profile passed')
+      
+    } catch (error) {
+      console.error('Failed to pass on profile:', error)
+      toast.error('Failed to pass. Please try again.')
+    } finally {
+      setActionLoading(false)
     }
   }
 
   const handleMessage = async (profileId: string) => {
     try {
-      // In a real app, this would navigate to messaging or check if messaging is allowed
-      console.log('Starting conversation with profile:', profileId)
-      
-      // Check if they've mutually liked first
-      alert('You can only message after both parties have expressed interest. Please like their profile first!')
-      
+      // Navigate to messages with this profile
+      window.location.href = `/messages?conversation=${profileId}`
     } catch (error) {
       console.error('Failed to start conversation:', error)
+      toast.error('Failed to start conversation')
     }
   }
 
-  const getFilteredMatches = () => {
-    // Filter matches based on active tab
-    switch (activeTab) {
-      case 'daily':
-        return matches // All matches for daily view
-      case 'mutual':
-        return matches.filter(m => m.id === '1') // Mock: only show mutual interests
-      case 'recent':
-        return matches.filter(m => Date.now() - m.lastActive.getTime() < 24 * 60 * 60 * 1000) // Last 24 hours
-      case 'nearby':
-        return matches.filter(m => m.location.includes('Singapore')) // Same city
-      default:
-        return matches
-    }
-  }
-
-  const filteredMatches = getFilteredMatches()
+  // API handles filtering, so we just return matches
+  const filteredMatches = matches
 
   return (
     <div className="space-y-6">
@@ -169,7 +208,7 @@ export function MatchesView() {
 
         <TabsContent value={activeTab} className="mt-6">
           {/* Welcome Message */}
-          {activeTab === 'daily' && mockMatches.length > 0 && (
+          {activeTab === 'daily' && filteredMatches.length > 0 && !loading && (
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -184,8 +223,16 @@ export function MatchesView() {
             </motion.div>
           )}
 
+          {/* Loading State */}
+          {loading && (
+            <div className="flex items-center justify-center py-12">
+              <Loader2 className="h-8 w-8 animate-spin text-primary-600" />
+              <span className="ml-2 text-neutral-600">Loading matches...</span>
+            </div>
+          )}
+
           {/* Match Grid */}
-          {filteredMatches.length > 0 ? (
+          {!loading && filteredMatches.length > 0 ? (
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
               {filteredMatches.map((match, index) => (
               <motion.div
@@ -195,16 +242,24 @@ export function MatchesView() {
                 transition={{ delay: index * 0.05, duration: 0.3 }}
               >
                 <ProfileCard
-                  profile={match}
+                  profile={{
+                    ...match,
+                    name: `${match.first_name} ${match.last_name}`,
+                    lastActive: new Date(match.last_active),
+                    premiumMember: match.premium_member,
+                    religiousLevel: match.religious_level,
+                    educationLevel: match.education_level
+                  }}
                   onLike={() => handleLike(match.id)}
                   onPass={() => handlePass(match.id)}
                   onMessage={() => handleMessage(match.id)}
                   variant="grid"
+                  loading={actionLoading}
                 />
                 </motion.div>
               ))}
             </div>
-          ) : (
+          ) : !loading && (
             <div className="text-center py-12">
               <Heart className="h-16 w-16 text-neutral-300 mx-auto mb-4" />
               <h3 className="text-lg font-semibold text-neutral-900 mb-2">

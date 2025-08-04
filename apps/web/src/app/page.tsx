@@ -5,8 +5,9 @@ import Link from 'next/link'
 import { useUser, SignInButton } from '@clerk/nextjs'
 import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
-import { Heart, Shield, MessageCircle, Users, Quote, Star, CheckCircle, ArrowRight, Menu, X } from 'lucide-react'
+import { Heart, Shield, MessageCircle, Users, Quote, Star, CheckCircle, ArrowRight, Menu, X, Sparkles } from 'lucide-react'
 import { PricingSection } from '@/components/subscription/PricingSection'
+import { PlanSelectionButton } from '@/components/subscription/PlanSelectionButton'
 import { useState } from 'react'
 
 export default function SimplePage() {
@@ -209,6 +210,133 @@ export default function SimplePage() {
                 <span className="text-sm font-medium">Meaningful Connections</span>
               </div>
             </motion.div>
+          </motion.div>
+        </section>
+
+        {/* Plan Selection Section - Prominent */}
+        <section className="py-16 bg-gradient-to-br from-blue-50 to-purple-50">
+          <motion.div
+            className="max-w-6xl mx-auto text-center px-4"
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+          >
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+              Choose Your{' '}
+              <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                Halal Journey
+              </span>
+            </h2>
+            <p className="text-lg text-gray-600 mb-12 max-w-2xl mx-auto">
+              Start free and upgrade when you're ready. All plans designed with Islamic values at heart.
+            </p>
+
+            {/* Quick Plan Cards */}
+            <div className="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+              {/* Intention Plan - Free */}
+              <motion.div
+                className="bg-white rounded-2xl p-6 shadow-lg border-2 border-green-200 relative"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.2 }}
+              >
+                <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
+                  <span className="bg-green-500 text-white px-4 py-1 rounded-full text-sm font-semibold">
+                    ✨ Start Free
+                  </span>
+                </div>
+                <div className="text-center">
+                  <Heart className="w-12 h-12 text-green-600 mx-auto mb-4" />
+                  <h3 className="text-xl font-bold text-gray-900 mb-2">Intention</h3>
+                  <div className="text-3xl font-bold text-gray-900 mb-4">Free</div>
+                  <ul className="text-sm text-gray-600 space-y-2 mb-6">
+                    <li>• 5 daily matches</li>
+                    <li>• Basic messaging</li>
+                    <li>• Profile creation</li>
+                    <li>• Islamic compliance</li>
+                  </ul>
+                  <PlanSelectionButton
+                    planId="intention"
+                    planName="Intention"
+                    buttonText="Start Free Journey"
+                    className="w-full py-3 bg-green-600 hover:bg-green-700 text-white rounded-xl font-semibold transition-colors"
+                  />
+                </div>
+              </motion.div>
+
+              {/* Patience Plan */}
+              <motion.div
+                className="bg-white rounded-2xl p-6 shadow-xl border-2 border-blue-500 relative scale-105"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.4 }}
+              >
+                <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
+                  <span className="bg-blue-500 text-white px-4 py-1 rounded-full text-sm font-semibold">
+                    ⭐ Most Popular
+                  </span>
+                </div>
+                <div className="text-center">
+                  <Star className="w-12 h-12 text-blue-600 mx-auto mb-4" />
+                  <h3 className="text-xl font-bold text-gray-900 mb-2">Patience</h3>
+                  <div className="text-3xl font-bold text-gray-900 mb-4">$29<span className="text-lg text-gray-600">/mo</span></div>
+                  <ul className="text-sm text-gray-600 space-y-2 mb-6">
+                    <li>• Unlimited matches</li>
+                    <li>• See who likes you</li>
+                    <li>• Advanced filters</li>
+                    <li>• Priority support</li>
+                  </ul>
+                  <PlanSelectionButton
+                    planId="patience"
+                    planName="Patience"
+                    buttonText="Start With Patience"
+                    className="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-semibold transition-colors"
+                  />
+                </div>
+              </motion.div>
+
+              {/* Reliance Plan */}
+              <motion.div
+                className="bg-white rounded-2xl p-6 shadow-lg border-2 border-purple-200"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.6 }}
+              >
+                <div className="text-center">
+                  <Sparkles className="w-12 h-12 text-purple-600 mx-auto mb-4" />
+                  <h3 className="text-xl font-bold text-gray-900 mb-2">Reliance</h3>
+                  <div className="text-3xl font-bold text-gray-900 mb-4">$59<span className="text-lg text-gray-600">/mo</span></div>
+                  <ul className="text-sm text-gray-600 space-y-2 mb-6">
+                    <li>• Everything in Patience</li>
+                    <li>• Video calls (Halal)</li>
+                    <li>• Profile boost</li>
+                    <li>• Advisor chat</li>
+                  </ul>
+                  <PlanSelectionButton
+                    planId="reliance"
+                    planName="Reliance"
+                    buttonText="Start With Reliance"
+                    className="w-full py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-xl font-semibold transition-colors"
+                  />
+                </div>
+              </motion.div>
+            </div>
+
+            {/* Trust Indicators */}
+            <div className="flex flex-wrap justify-center gap-8 mt-12 pt-8 border-t border-gray-300">
+              <div className="flex items-center space-x-2 text-gray-600">
+                <Shield className="w-5 h-5 text-green-500" />
+                <span className="text-sm font-medium">100% Halal Compliant</span>
+              </div>
+              <div className="flex items-center space-x-2 text-gray-600">
+                <Heart className="w-5 h-5 text-red-500" />
+                <span className="text-sm font-medium">10,000+ Success Stories</span>
+              </div>
+              <div className="flex items-center space-x-2 text-gray-600">
+                <Users className="w-5 h-5 text-blue-500" />
+                <span className="text-sm font-medium">50,000+ Active Members</span>
+              </div>
+            </div>
           </motion.div>
         </section>
 

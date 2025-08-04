@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useUser } from '@clerk/nextjs'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
@@ -17,13 +17,17 @@ import {
   Lock,
   Trash2,
   Save,
-  AlertTriangle
+  AlertTriangle,
+  CreditCard,
+  ExternalLink
 } from 'lucide-react'
 
 export function SettingsInterface() {
   const { user } = useUser()
   const [saving, setSaving] = useState(false)
   const [activeTab, setActiveTab] = useState('account')
+  const [subscriptionData, setSubscriptionData] = useState(null)
+  const [loadingPortal, setLoadingPortal] = useState(false)
 
   // Settings state
   const [settings, setSettings] = useState({
@@ -76,6 +80,54 @@ export function SettingsInterface() {
     }
   }
 
+  // Fetch subscription data when component mounts
+  useEffect(() => {
+    if (user) {
+      fetchSubscriptionData()
+    }
+  }, [user])
+
+  const fetchSubscriptionData = async () => {
+    try {
+      const response = await fetch('/api/subscriptions/status')
+      if (response.ok) {
+        const data = await response.json()
+        setSubscriptionData(data)
+      }
+    } catch (error) {
+      console.error('Failed to fetch subscription data:', error)
+    }
+  }
+
+  const handleManageSubscription = async () => {
+    setLoadingPortal(true)
+    try {
+      const response = await fetch('/api/subscriptions/portal', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          returnUrl: window.location.href
+        })
+      })
+
+      const data = await response.json()
+      
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to create portal session')
+      }
+
+      // Redirect to Stripe customer portal
+      window.location.href = data.portalUrl
+    } catch (error) {
+      console.error('Portal error:', error)
+      alert('Failed to open subscription management. Please try again.')
+    } finally {
+      setLoadingPortal(false)
+    }
+  }
+
   const handleDeleteAccount = async () => {
     if (confirm('Are you sure you want to delete your account? This action cannot be undone.')) {
       // In a real app, call delete account API
@@ -86,10 +138,14 @@ export function SettingsInterface() {
   return (
     <div className="bg-white rounded-xl border border-neutral-100">
       <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="grid w-full grid-cols-4">
+        <TabsList className="grid w-full grid-cols-5">
           <TabsTrigger value="account" className="gap-2">
             <User className="h-4 w-4" />
             Account
+          </TabsTrigger>
+          <TabsTrigger value="subscription" className="gap-2">
+            <CreditCard className="h-4 w-4" />
+            Subscription
           </TabsTrigger>
           <TabsTrigger value="notifications" className="gap-2">
             <Bell className="h-4 w-4" />
@@ -166,6 +222,105 @@ export function SettingsInterface() {
                     <SelectItem value="Asia/Dubai">Dubai (GMT+4)</SelectItem>
                   </SelectContent>
                 </Select>
+              </div>
+            </div>
+          </div>
+        </TabsContent>
+
+        {/* Subscription Settings */}
+        <TabsContent value="subscription" className="p-6 space-y-6">
+          <div className="space-y-6">
+            <div className="text-center mb-6">
+              <h3 className="text-2xl font-semibold text-neutral-900 mb-2">Subscription Management</h3>
+              <p className="text-neutral-600">Manage your FADDL Match subscription through Stripe</p>
+            </div>
+
+            {subscriptionData ? (
+              <div className="bg-gradient-to-br from-blue-50 to-purple-50 rounded-xl p-6 border border-blue-200">
+                <div className="text-center mb-4">
+                  <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-100 rounded-full mb-4">
+                    <CreditCard className="w-8 h-8 text-blue-600" />
+                  </div>
+                  <h4 className="text-xl font-bold text-gray-900 mb-2">
+                    {subscriptionData.planId} Plan
+                  </h4>
+                  <p className="text-gray-600 mb-4">Status: {subscriptionData.status}</p>
+                  
+                  {subscriptionData.hasActiveSubscription && subscriptionData.daysRemaining > 0 && (
+                    <p className="text-sm text-gray-600">
+                      {subscriptionData.daysRemaining} days remaining in current billing cycle
+                    </p>
+                  )}
+                </div>
+
+                <div className="space-y-3">
+                  <Button 
+                    onClick={handleManageSubscription}
+                    disabled={loadingPortal}
+                    className="w-full gap-2"
+                  >
+                    {loadingPortal ? (
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                    ) : (
+                      <ExternalLink className="h-4 w-4" />
+                    )}
+                    {loadingPortal ? 'Opening Stripe Portal...' : 'Manage Subscription'}
+                  </Button>
+
+                  <div className="text-xs text-gray-500 text-center">
+                    You'll be redirected to Stripe's secure customer portal to manage your subscription, 
+                    update payment methods, view invoices, and more.
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div className="bg-gray-50 rounded-xl p-6 border border-gray-200 text-center">
+                <div className="inline-flex items-center justify-center w-16 h-16 bg-gray-200 rounded-full mb-4">
+                  <CreditCard className="w-8 h-8 text-gray-500" />
+                </div>
+                <h4 className="text-lg font-semibold text-gray-900 mb-2">No Active Subscription</h4>
+                <p className="text-gray-600 mb-4">
+                  You're currently on the free Intention plan. Upgrade to unlock premium features.
+                </p>
+                <Button 
+                  onClick={() => window.location.href = '/subscription'}
+                  className="gap-2"
+                >
+                  <CreditCard className="h-4 w-4" />
+                  View Plans & Upgrade
+                </Button>
+              </div>
+            )}
+
+            {/* Features by Plan */}
+            <div className="grid md:grid-cols-3 gap-4 mt-8">
+              <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+                <h5 className="font-semibold text-green-900 mb-2">Intention (Free)</h5>
+                <ul className="text-sm text-green-700 space-y-1">
+                  <li>• 5 daily matches</li>
+                  <li>• Basic messaging</li>
+                  <li>• Standard filters</li>
+                </ul>
+              </div>
+              
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                <h5 className="font-semibold text-blue-900 mb-2">Patience ($29/mo)</h5>
+                <ul className="text-sm text-blue-700 space-y-1">
+                  <li>• Unlimited matches</li>
+                  <li>• See who likes you</li>
+                  <li>• Advanced filters</li>
+                  <li>• Priority support</li>
+                </ul>
+              </div>
+              
+              <div className="bg-purple-50 border border-purple-200 rounded-lg p-4">
+                <h5 className="font-semibold text-purple-900 mb-2">Reliance ($59/mo)</h5>
+                <ul className="text-sm text-purple-700 space-y-1">
+                  <li>• Everything in Patience</li>
+                  <li>• Video calls</li>
+                  <li>• Profile boost</li>
+                  <li>• Advisor chat</li>
+                </ul>
               </div>
             </div>
           </div>

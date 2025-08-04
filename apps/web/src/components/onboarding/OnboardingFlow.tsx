@@ -1,7 +1,7 @@
 'use client'
 
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useState, useEffect } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Progress } from '@/components/ui/Progress'
 import { Button } from '@/components/ui/Button'
@@ -11,7 +11,8 @@ import { ReligiousPracticeStep } from './steps/ReligiousPracticeStep'
 import { useOnboarding } from '@/hooks/useOnboarding'
 import { ChevronLeft, Sparkles } from 'lucide-react'
 
-const STEPS = [
+// Full steps for paid plans
+const FULL_STEPS = [
   { 
     id: 'basic', 
     title: 'Basic Information', 
@@ -32,11 +33,53 @@ const STEPS = [
   }
 ]
 
+// Quick steps for free plan
+const QUICK_STEPS = [
+  { 
+    id: 'basic', 
+    title: 'Basic Information', 
+    component: BasicInfoStep,
+    description: 'Essential details to get started'
+  },
+  { 
+    id: 'religious', 
+    title: 'Religious Practice', 
+    component: ReligiousPracticeStep,
+    description: 'Your Islamic practice level'
+  }
+]
+
 export function OnboardingFlow() {
   const router = useRouter()
+  const searchParams = useSearchParams()
   const [currentStep, setCurrentStep] = useState(0)
+  const [selectedPlan, setSelectedPlan] = useState<string>('intention')
+  const [flowType, setFlowType] = useState<'quick' | 'full'>('full')
   const { data, updateData, submitProfile, isSubmitting, error } = useOnboarding()
+
+  // Determine which steps to use based on plan and flow
+  useEffect(() => {
+    const planFromUrl = searchParams.get('plan') || 'intention'
+    const flowFromUrl = searchParams.get('flow') || 'full'
+    
+    // Also check localStorage for plan selection
+    const storedPlan = localStorage.getItem('selectedPlan')
+    if (storedPlan) {
+      try {
+        const planData = JSON.parse(storedPlan)
+        setSelectedPlan(planData.planId.toLowerCase())
+      } catch (error) {
+        console.error('Error parsing stored plan:', error)
+      }
+    } else {
+      setSelectedPlan(planFromUrl)
+    }
+    
+    setFlowType(flowFromUrl as 'quick' | 'full')
+  }, [searchParams])
   
+  // Choose steps based on plan and flow
+  const STEPS = selectedPlan === 'intention' && flowType === 'quick' ? QUICK_STEPS : FULL_STEPS
   const progress = ((currentStep + 1) / STEPS.length) * 100
   const CurrentStepComponent = STEPS[currentStep].component
 
@@ -45,8 +88,18 @@ export function OnboardingFlow() {
       // Final step - submit profile
       try {
         await submitProfile()
-        // Show success animation then redirect to pricing
-        setTimeout(() => router.push('/pricing'), 2000)
+        
+        // Clear stored plan selection
+        localStorage.removeItem('selectedPlan')
+        
+        // Redirect based on plan selection
+        if (selectedPlan === 'intention') {
+          // Free plan - go to dashboard with upgrade prompts
+          setTimeout(() => router.push('/dashboard?newUser=true&plan=intention'), 2000)
+        } else {
+          // Paid plan - go to subscription page to complete payment
+          setTimeout(() => router.push(`/subscription?plan=${selectedPlan}`), 2000)
+        }
       } catch (error) {
         console.error('Profile submission failed:', error)
       }
@@ -104,11 +157,20 @@ export function OnboardingFlow() {
         {/* Header */}
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-neutral-900 mb-2">
-            Complete Your Profile
+            {selectedPlan === 'intention' && flowType === 'quick' 
+              ? 'Quick Setup - Get Started Free' 
+              : 'Complete Your Profile'}
           </h1>
           <p className="text-neutral-600">
-            Help us find your ideal marriage partner by sharing some information about yourself
+            {selectedPlan === 'intention' && flowType === 'quick'
+              ? 'Just a few quick details to start your free halal journey'
+              : 'Help us find your ideal marriage partner by sharing some information about yourself'}
           </p>
+          {selectedPlan !== 'intention' && (
+            <div className="mt-3 inline-flex items-center px-4 py-2 bg-blue-100 text-blue-800 rounded-full text-sm font-medium">
+              Selected: {selectedPlan.charAt(0).toUpperCase() + selectedPlan.slice(1)} Plan
+            </div>
+          )}
         </div>
 
         {/* Progress Bar */}

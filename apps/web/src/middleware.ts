@@ -9,6 +9,7 @@ const isPublicRoute = createRouteMatcher([
   '/sign-up(.*)',        // Clerk sign-up pages
   '/api/webhooks/clerk', // Webhook endpoint (validated separately)
   '/api/health',         // Health check endpoint
+  '/api/demo/(.*)',      // Demo endpoints for testing
   '/favicon.ico',        // Static assets
   '/robots.txt',
   '/sitemap.xml'
