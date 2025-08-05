@@ -1,18 +1,15 @@
-import { createClient } from '@supabase/supabase-js'
-import { cookies } from 'next/headers'
+import { createClient as createSupabaseClient } from '@supabase/supabase-js'
 
-export const createServerClient = () => {
-  const cookieStore = cookies()
-  
-  return createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        get(name: string) {
-          return cookieStore.get(name)?.value
-        },
-      },
-    }
-  )
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
+const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+
+export function createClient() {
+  return createSupabaseClient(supabaseUrl, supabaseAnonKey)
 }
+
+export function createAdminClient() {
+  return createSupabaseClient(supabaseUrl, supabaseServiceKey)
+}
+
+export { createClient as createSupabaseClient, createAdminClient as createSupabaseAdminClient }
