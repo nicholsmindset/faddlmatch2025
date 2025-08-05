@@ -47,6 +47,8 @@ cat > package.json << 'EOF'
     "@supabase/auth-helpers-nextjs": "^0.10.0",
     "@supabase/supabase-js": "^2.39.8",
     "@tanstack/react-query": "^5.28.4",
+    "@tanstack/react-query-devtools": "^5.28.4",
+    "@hookform/resolvers": "^3.3.4",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
     "lucide-react": "^0.363.0",
@@ -60,7 +62,8 @@ cat > package.json << 'EOF'
     "framer-motion": "^11.0.24",
     "react-hook-form": "^7.51.0",
     "recharts": "^2.12.2",
-    "zod": "^3.22.4"
+    "zod": "^3.22.4",
+    "sonner": "^1.4.41"
   },
   "devDependencies": {
     "@types/node": "^20.11.30",
