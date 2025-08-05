@@ -5,6 +5,62 @@ import { getAuth } from '@clerk/nextjs/server'
 const MOCK_MATCHES = new Map()
 const MOCK_LIKES = new Map()
 
+// Clean profiles without placeholder images
+const CLEAN_PROFILES = [
+  {
+    id: 'user-1',
+    first_name: 'Ahmad',
+    last_name: 'H.',
+    age: 28,
+    location: 'Central Singapore',
+    profession: 'Software Engineer',
+    photos: [],
+    bio: 'Practicing Muslim software engineer seeking a righteous partner for marriage. I enjoy technology, reading Quran, and spending time with family.',
+    compatibility: { score: 90, strengths: ['Same religious level', 'Similar profession', 'Compatible age'] },
+    last_active: new Date().toISOString(),
+    verified: true,
+    premium_member: true,
+    religious_level: 'practicing',
+    education_level: 'masters'
+  },
+  {
+    id: 'user-2',
+    first_name: 'Aisha',
+    last_name: 'R.',
+    age: 26,
+    location: 'Central Singapore',
+    profession: 'Teacher',
+    photos: [],
+    bio: 'Practicing Muslimah seeking a kind and practicing husband for marriage. Love teaching and helping children learn.',
+    compatibility: { score: 92, strengths: ['Same religious level', 'Similar interests', 'Compatible age'] },
+    last_active: new Date().toISOString(),
+    verified: true,
+    premium_member: true,
+    religious_level: 'practicing',
+    education_level: 'bachelors'
+  },
+  {
+    id: 'user-3',
+    first_name: 'Fatima',
+    last_name: 'A.',
+    age: 24,
+    location: 'East Singapore',
+    profession: 'Doctor',
+    photos: [],
+    bio: 'Medical doctor who believes in the importance of family and faith. Looking for a partner who shares Islamic values.',
+    compatibility: { score: 88, strengths: ['Education compatibility', 'Religious alignment', 'Family values'] },
+    last_active: new Date(Date.now() - 3600000).toISOString(),
+    verified: true,
+    premium_member: false,
+    religious_level: 'devout',
+    education_level: 'masters'
+  }
+]
+
+function getCleanProfiles(excludeUserId: string) {
+  return CLEAN_PROFILES.filter(profile => profile.id !== excludeUserId)
+}
+
 export async function GET(request: NextRequest) {
   try {
     const { userId } = getAuth(request)
@@ -20,19 +76,8 @@ export async function GET(request: NextRequest) {
     const userLikes = MOCK_LIKES.get(userId) || []
     const userMatches = MOCK_MATCHES.get(userId) || []
 
-    // Fetch profiles from profiles endpoint
-    const profilesResponse = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/profiles`, {
-      headers: {
-        'Authorization': request.headers.get('authorization') || '',
-        'Cookie': request.headers.get('cookie') || ''
-      }
-    })
-
-    if (!profilesResponse.ok) {
-      throw new Error('Failed to fetch profiles')
-    }
-
-    const { profiles } = await profilesResponse.json()
+    // Get profiles directly instead of internal fetch to avoid circular issues
+    const profiles = getCleanProfiles(userId)
 
     let matches = []
 

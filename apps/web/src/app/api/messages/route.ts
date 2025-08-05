@@ -1,69 +1,26 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getAuth } from '@clerk/nextjs/server'
 
-// Mock conversations database - in production, this would be Supabase
+// Mock conversations database - in production, this would be Supabase  
 const MOCK_CONVERSATIONS = new Map()
 const MOCK_MESSAGES = new Map()
 
-// Initialize some default conversations
-if (MOCK_CONVERSATIONS.size === 0) {
-  const defaultConversations = [
-    {
-      id: 'conv-1',
-      participants: ['user-1', 'user-2'],
-      match_status: 'accepted',
-      guardian_approval_required: true,
-      created_at: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(),
-      updated_at: new Date(Date.now() - 5 * 60 * 1000).toISOString()
-    },
-    {
-      id: 'conv-2',
-      participants: ['user-1', 'user-3'],
-      match_status: 'accepted',
-      guardian_approval_required: false,
-      created_at: new Date(Date.now() - 48 * 60 * 60 * 1000).toISOString(),
-      updated_at: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString()
-    }
-  ]
-
-  defaultConversations.forEach(conv => {
-    MOCK_CONVERSATIONS.set(conv.id, conv)
-  })
-
-  // Add some default messages
-  const defaultMessages = [
-    {
-      id: 'msg-1',
-      conversation_id: 'conv-1',
-      sender_id: 'user-2',
-      content: 'Assalamu alaikum! Thank you for your interest. I would love to get to know you better.',
-      moderation_status: 'approved',
-      created_at: new Date(Date.now() - 5 * 60 * 1000).toISOString()
-    },
-    {
-      id: 'msg-2',
-      conversation_id: 'conv-1',
-      sender_id: 'user-1',
-      content: 'Wa alaikum assalam! Alhamdulillah, I\'m pleased to connect with you. May Allah guide our conversation.',
-      moderation_status: 'approved',
-      created_at: new Date(Date.now() - 3 * 60 * 1000).toISOString()
-    },
-    {
-      id: 'msg-3',
-      conversation_id: 'conv-2',
-      sender_id: 'user-1',
-      content: 'I appreciate your message. May Allah guide us both in making the right decision.',
-      moderation_status: 'approved',
-      created_at: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString()
-    }
-  ]
-
-  defaultMessages.forEach(msg => {
-    const convMessages = MOCK_MESSAGES.get(msg.conversation_id) || []
-    convMessages.push(msg)
-    MOCK_MESSAGES.set(msg.conversation_id, convMessages)
-  })
+// Clean profiles for internal use
+const CLEAN_PROFILE_DATA = {
+  'user-1': { id: 'user-1', first_name: 'Ahmad', is_online: true },
+  'user-2': { id: 'user-2', first_name: 'Aisha', is_online: false },
+  'user-3': { id: 'user-3', first_name: 'Fatima', is_online: true }
 }
+
+function getCleanParticipantInfo(participantId: string) {
+  return CLEAN_PROFILE_DATA[participantId] || { 
+    id: participantId, 
+    first_name: 'User', 
+    is_online: false 
+  }
+}
+
+// Initialize empty - no default conversations for clean production start
 
 export async function GET(request: NextRequest) {
   try {
@@ -100,29 +57,8 @@ export async function GET(request: NextRequest) {
           new Date(m.created_at) > new Date(Date.now() - 60 * 60 * 1000)
         ).length
 
-        // Get participant profile from profiles API
-        const profilesResponse = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/profiles`, {
-          headers: {
-            'Authorization': request.headers.get('authorization') || '',
-            'Cookie': request.headers.get('cookie') || ''
-          }
-        })
-
-        let participant = { id: participantId, first_name: 'Unknown', is_online: false }
-        
-        if (profilesResponse.ok) {
-          const { profiles } = await profilesResponse.json()
-          const foundProfile = profiles.find(p => p.id === participantId)
-          if (foundProfile) {
-            participant = {
-              id: foundProfile.id,
-              first_name: foundProfile.first_name,
-              avatar_url: foundProfile.photos[0]?.url,
-              is_online: Date.now() - new Date(foundProfile.last_active).getTime() < 5 * 60 * 1000,
-              last_seen: foundProfile.last_active
-            }
-          }
-        }
+        // Get participant info directly without internal fetch
+        const participant = getCleanParticipantInfo(participantId)
 
         userConversations.push({
           id,
