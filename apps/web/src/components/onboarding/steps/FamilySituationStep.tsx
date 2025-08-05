@@ -57,8 +57,7 @@ const INTERESTS = [
 ]
 
 const LANGUAGES = [
-  'English', 'Arabic', 'Malay', 'Tamil', 'Mandarin', 'Hindi', 'Urdu',
-  'Bengali', 'Indonesian', 'Turkish', 'French', 'Spanish'
+  'English', 'Malay', 'Tamil', 'Mandarin', 'Arabic', 'Others'
 ]
 
 export function FamilySituationStep({ data, onUpdate, onNext }: FamilySituationStepProps) {

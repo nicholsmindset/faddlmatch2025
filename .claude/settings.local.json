@@ -49,7 +49,8 @@
       "Bash(./build-netlify.sh)",
       "Bash(npm run netlify:build:web:*)",
       "Bash(./netlify-ultimate-build.sh)",
-      "WebFetch(domain:faddlmatch.com)"
+      "WebFetch(domain:faddlmatch.com)",
+      "Bash(npx:*)"
     ],
     "deny": []
   }

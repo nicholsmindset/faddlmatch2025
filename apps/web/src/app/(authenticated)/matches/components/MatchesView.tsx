@@ -8,69 +8,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/Tabs'
 import { Sparkles, Heart, Clock, Users, Loader2 } from 'lucide-react'
 import { toast } from 'sonner'
 
-// Keep mock data as fallback
-const mockMatches = [
-  {
-    id: '1',
-    name: 'Aisha Rahman',
-    age: 26,
-    location: 'Singapore Central',
-    profession: 'Teacher',
-    photos: [{ url: '/api/placeholder/400/600', visibility: 'public' as const }],
-    bio: 'Practicing Muslimah seeking a kind and practicing husband for marriage. Love teaching and helping children learn.',
-    compatibility: { score: 92, strengths: ['Same religious level', 'Similar interests', 'Compatible age'] },
-    lastActive: new Date(),
-    verified: true,
-    premiumMember: true,
-    religiousLevel: 'practicing',
-    educationLevel: 'bachelors'
-  },
-  {
-    id: '2',
-    name: 'Fatima Al-Zahra',
-    age: 24,
-    location: 'Singapore East',
-    profession: 'Doctor',
-    photos: [{ url: '/api/placeholder/400/600', visibility: 'public' as const }],
-    bio: 'Medical doctor who believes in the importance of family and faith. Looking for a partner who shares Islamic values.',
-    compatibility: { score: 88, strengths: ['Education compatibility', 'Religious alignment', 'Family values'] },
-    lastActive: new Date(Date.now() - 3600000),
-    verified: true,
-    premiumMember: false,
-    religiousLevel: 'devout',
-    educationLevel: 'masters'
-  },
-  {
-    id: '3',
-    name: 'Zara Malik',
-    age: 28,
-    location: 'Singapore West',
-    profession: 'Engineer',
-    photos: [{ url: '/api/placeholder/400/600', visibility: 'public' as const }],
-    bio: 'Software engineer with a passion for technology and Islamic studies. Seeking a life partner for both Dunya and Akhirah.',
-    compatibility: { score: 85, strengths: ['Career compatibility', 'Age range', 'Shared interests'] },
-    lastActive: new Date(Date.now() - 7200000),
-    verified: true,
-    premiumMember: true,
-    religiousLevel: 'practicing',
-    educationLevel: 'masters'
-  },
-  {
-    id: '4',
-    name: 'Mariam Hassan',
-    age: 30,
-    location: 'Singapore North',
-    profession: 'Pharmacist',
-    photos: [{ url: '/api/placeholder/400/600', visibility: 'public' as const }],
-    bio: 'Pharmacist who values Islamic principles and family life. Looking for a practicing Muslim for a blessed marriage.',
-    compatibility: { score: 79, strengths: ['Religious compatibility', 'Professional background', 'Age compatibility'] },
-    lastActive: new Date(Date.now() - 14400000),
-    verified: true,
-    premiumMember: true,
-    religiousLevel: 'practicing',
-    educationLevel: 'bachelors'
-  }
-]
 
 export function MatchesView() {
   const [activeTab, setActiveTab] = useState('daily')
@@ -89,11 +26,11 @@ export function MatchesView() {
       }
       
       const data = await response.json()
-      setMatches(data.matches || mockMatches) // Fallback to mock data
+      setMatches(data.matches || [])
     } catch (error) {
       console.error('Error fetching matches:', error)
-      setMatches(mockMatches) // Use mock data on error
-      toast.error('Failed to load matches. Using demo data.')
+      setMatches([])
+      toast.error('Failed to load matches. Please try again.')
     } finally {
       setLoading(false)
     }

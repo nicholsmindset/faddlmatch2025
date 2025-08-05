@@ -1,12 +1,10 @@
-# FADDL Match - Netlify Configuration
 [build]
-  base = "."
-  command = "chmod +x netlify-ultimate-build.sh && ./netlify-ultimate-build.sh"
+  base = "apps/web"
+  command = "npm install && npm run build"
   publish = "apps/web/.next"
 
 [build.environment]
   NODE_VERSION = "20"
-  NPM_FLAGS = "--legacy-peer-deps"
 
 [[plugins]]
   package = "@netlify/plugin-nextjs"
@@ -21,13 +19,13 @@
     Referrer-Policy = "strict-origin-when-cross-origin"
     Strict-Transport-Security = "max-age=31536000; includeSubDomains"
 
-# Static assets caching
+# Cache static assets
 [[headers]]
   for = "/_next/static/*"
   [headers.values]
     Cache-Control = "public, max-age=31536000, immutable"
 
-# Basic redirects
+# Redirects
 [[redirects]]
   from = "/home"
   to = "/"
@@ -35,7 +33,7 @@
 
 [[redirects]]
   from = "/login"
-  to = "/auth/login" 
+  to = "/auth/login"
   status = 301
 
 [[redirects]]
@@ -43,21 +41,15 @@
   to = "/auth/signup"
   status = 301
 
-# API proxy
+# API redirects to Supabase
 [[redirects]]
   from = "/api/functions/*"
   to = "https://dvydbgjoagrzgpqdhqoq.supabase.co/functions/v1/:splat"
   status = 200
   force = true
 
-# Clerk webhook fallback to Netlify function
+# Webhook redirects
 [[redirects]]
   from = "/api/webhooks/clerk"
   to = "/.netlify/functions/clerk-webhook"
   status = 200
-  force = false
-
-# Dev settings
-[dev]
-  command = "npm run dev"
-  port = 3000

@@ -1,4 +1,6 @@
 import { useState, useEffect } from 'react'
+import { supabase } from '@/lib/supabase/client'
+import { useAuth } from '@clerk/nextjs'
 
 export interface SupervisedProfile {
   id: string
@@ -71,114 +73,79 @@ export function useGuardianData() {
   const [data, setData] = useState<GuardianData | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const { userId } = useAuth()
 
   useEffect(() => {
     fetchGuardianData()
   }, [])
 
   const fetchGuardianData = async () => {
+    if (!userId) return
+
     try {
       setLoading(true)
       setError(null)
       
-      // Simulate API call - replace with actual API
-      await new Promise(resolve => setTimeout(resolve, 1000))
-      
-      // Mock data for development
-      const mockData: GuardianData = {
-        supervisedProfiles: [
-          {
-            id: '1',
-            name: 'Aisha',
-            age: 25,
-            location: 'London, UK',
-            lastActive: new Date(Date.now() - 2 * 60 * 60 * 1000), // 2 hours ago
-            pendingMatches: 3,
-            activeConversations: 2,
-            complianceScore: 95,
-            guardianshipLevel: 'primary',
-            profileStatus: 'active',
-            privacyLevel: 'moderate'
-          },
-          {
-            id: '2',
-            name: 'Fatima',
-            age: 23,
-            location: 'Birmingham, UK',
-            lastActive: new Date(Date.now() - 24 * 60 * 60 * 1000), // 1 day ago
-            pendingMatches: 5,
-            activeConversations: 1,
-            complianceScore: 88,
-            guardianshipLevel: 'secondary',
-            profileStatus: 'active',
-            privacyLevel: 'strict'
-          }
-        ],
-        pendingApprovals: [
-          {
-            id: '1',
-            type: 'match',
-            profileId: '1',
-            profileName: 'Aisha',
-            matchName: 'Ahmed',
-            requestedAt: new Date(Date.now() - 30 * 60 * 1000), // 30 minutes ago
-            priority: 'high',
-            context: 'High compatibility match (92%) from London area',
-            requiresImmediate: false
-          },
-          {
-            id: '2',
-            type: 'meeting',
-            profileId: '1',
-            profileName: 'Aisha',
-            matchName: 'Omar',
-            requestedAt: new Date(Date.now() - 2 * 60 * 60 * 1000), // 2 hours ago
-            priority: 'high',
-            context: 'Request for chaperoned meeting at local masjid',
-            requiresImmediate: true
-          },
-          {
-            id: '3',
-            type: 'message',
-            profileId: '2',
-            profileName: 'Fatima',
-            matchName: 'Yusuf',
-            content: 'Assalamu alaikum sister, I would be honored to learn more about your family values...',
-            requestedAt: new Date(Date.now() - 45 * 60 * 1000), // 45 minutes ago
-            priority: 'medium',
-            context: 'First message from potential match',
-            requiresImmediate: false
-          }
-        ],
-        activitySummary: {
-          totalProfiles: 2,
-          pendingApprovals: 3,
-          activeConversations: 3,
-          complianceIssues: 0,
-          weeklyActivity: 87,
-          averageComplianceScore: 91.5,
-          lastReviewDate: new Date(Date.now() - 24 * 60 * 60 * 1000)
-        },
-        notifications: [
-          {
-            id: '1',
-            type: 'approval_needed',
-            message: 'New match request requires your approval',
-            timestamp: new Date(Date.now() - 30 * 60 * 1000),
-            priority: 'high',
-            read: false,
-            actionRequired: true
-          },
-          {
-            id: '2',
-            type: 'meeting_request',
-            message: 'Meeting request for Aisha needs immediate attention',
-            timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000),
-            priority: 'high',
-            read: false,
-            actionRequired: true
-          }
-        ],
+      // Get guardian relationships for current user
+      const { data: guardianRelationships, error: relationError } = await supabase
+        .from('guardian_relationships')
+        .select(`
+          id,
+          relationship_type,
+          status,
+          permissions,
+          supervised_profile:profiles!guardian_relationships_supervised_user_id_fkey(
+            user_id,
+            full_name,
+            age,
+            location,
+            last_active_at,
+            profile_active
+          )
+        `)
+        .eq('guardian_user_id', userId)
+        .eq('status', 'active')
+
+      if (relationError) {
+        throw relationError
+      }
+
+      // Transform supervised profiles
+      const supervisedProfiles: SupervisedProfile[] = (guardianRelationships || []).map(rel => ({
+        id: rel.supervised_profile?.user_id || '',
+        name: rel.supervised_profile?.full_name?.split(' ')[0] || 'User',
+        age: rel.supervised_profile?.age || 0,
+        location: rel.supervised_profile?.location || 'Unknown',
+        lastActive: new Date(rel.supervised_profile?.last_active_at || Date.now()),
+        pendingMatches: 0, // TODO: Calculate from matches table
+        activeConversations: 0, // TODO: Calculate from messages table
+        complianceScore: 85, // TODO: Calculate compliance score
+        guardianshipLevel: rel.relationship_type as 'primary' | 'secondary' | 'observer',
+        profileStatus: rel.supervised_profile?.profile_active ? 'active' : 'paused',
+        privacyLevel: 'moderate' // TODO: Get from profile settings
+      }))
+
+      // Get pending approvals (placeholder for now)
+      const pendingApprovals: PendingApproval[] = []
+
+      // Calculate activity summary
+      const activitySummary: ActivitySummary = {
+        totalProfiles: supervisedProfiles.length,
+        pendingApprovals: pendingApprovals.length,
+        activeConversations: 0, // TODO: Calculate from real data
+        complianceIssues: 0,
+        weeklyActivity: 0,
+        averageComplianceScore: supervisedProfiles.length > 0 
+          ? supervisedProfiles.reduce((sum, p) => sum + p.complianceScore, 0) / supervisedProfiles.length 
+          : 0,
+        lastReviewDate: new Date()
+      }
+
+      const guardianData: GuardianData = {
+        supervisedProfiles,
+        pendingApprovals,
+        activitySummary,
+        notifications: [], // TODO: Implement notifications system
         guardianSettings: {
           notificationPreferences: {
             email: true,
@@ -195,7 +162,7 @@ export function useGuardianData() {
         }
       }
       
-      setData(mockData)
+      setData(guardianData)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load guardian data')
     } finally {

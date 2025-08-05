@@ -7,14 +7,14 @@ import { Providers } from './providers'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata = {
-  title: 'FADDL Match - Find Your Halal Life Partner | Islamic Matrimonial Platform Singapore',
-  description: 'A respectful, Islamic matrimonial platform designed for divorced and widowed Muslims in Singapore seeking meaningful remarriage with family involvement and Islamic values at the center.',
+  title: 'FADDLmatch - Find Your Halal Life Partner | Islamic Matrimonial Platform Singapore',
+  description: 'A trusted matrimonial platform for divorced and widowed Muslims in Singapore - facilitating meaningful marriage with a clear commitment to Islamic values.',
   keywords: 'halal marriage, islamic matrimonial, muslim marriage singapore, divorced muslim remarriage, widowed muslim marriage, islamic values, halal relationships',
   openGraph: {
-    title: 'FADDL Match - Find Your Halal Life Partner',
-    description: 'A respectful, Islamic matrimonial platform for divorced and widowed Muslims seeking meaningful remarriage.',
+    title: 'FADDLmatch - Find Your Halal Life Partner',
+    description: 'A trusted matrimonial platform for divorced and widowed Muslims seeking meaningful marriage.',
     url: 'https://faddlmatch.com',
-    siteName: 'FADDL Match',
+    siteName: 'FADDLmatch',
     locale: 'en_SG',
     type: 'website',
   },

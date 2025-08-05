@@ -20,6 +20,9 @@ const basicInfoSchema = z.object({
   location: z.enum(['north', 'south', 'east', 'west', 'central'], {
     required_error: 'Please select your location'
   }),
+  ethnicity: z.enum(['malay', 'chinese', 'indian', 'eurasian'], {
+    required_error: 'Please select your ethnicity'
+  }),
   bio: z.string()
     .min(50, 'Bio must be at least 50 characters')
     .max(500, 'Bio must not exceed 500 characters')
@@ -147,6 +150,20 @@ export function BasicInfoStep({ data, onUpdate, onNext }: BasicInfoStepProps) {
         <option value="east">East (Tampines, Pasir Ris, Bedok)</option>
         <option value="west">West (Jurong, Clementi, Bukit Batok)</option>
         <option value="central">Central (Orchard, Bugis, City Hall)</option>
+      </FormSelect>
+
+      {/* Ethnicity/Family Background */}
+      <FormSelect
+        label="Family Background / Ethnicity"
+        placeholder="Select your ethnicity"
+        {...register('ethnicity')}
+        error={errors.ethnicity?.message}
+        required
+      >
+        <option value="malay">Malay</option>
+        <option value="chinese">Chinese</option>
+        <option value="indian">Indian</option>
+        <option value="eurasian">Eurasian</option>
       </FormSelect>
 
       {/* Bio */}

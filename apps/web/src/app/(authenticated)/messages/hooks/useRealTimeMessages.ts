@@ -1,6 +1,8 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
+import { supabase } from '@/lib/supabase/client'
+import { useAuth } from '@clerk/nextjs'
 
 interface Message {
   id: string
@@ -52,91 +54,8 @@ interface UseRealTimeMessagesReturn {
   connectionStatus: ConnectionStatus
 }
 
-// Mock data for development
-const MOCK_MESSAGES: Message[] = [
-  {
-    id: '1',
-    content: 'Assalamu alaikum! Thank you for your interest in getting to know me better.',
-    sender_id: 'user-2',
-    created_at: new Date(Date.now() - 1000 * 60 * 60 * 2).toISOString(),
-    message_type: 'text',
-    moderation_status: 'approved',
-    sender: {
-      id: 'user-2',
-      first_name: 'Aisha',
-      avatar_url: undefined
-    }
-  },
-  {
-    id: '2',
-    content: 'Wa alaikum assalam! I appreciate your message. I would love to learn more about your faith journey and family background.',
-    sender_id: 'current-user',
-    created_at: new Date(Date.now() - 1000 * 60 * 60).toISOString(),
-    message_type: 'text',
-    moderation_status: 'approved',
-    sender: {
-      id: 'current-user',
-      first_name: 'You',
-      avatar_url: undefined
-    }
-  },
-  {
-    id: '3',
-    content: 'That sounds wonderful! I come from a practicing family and we maintain regular prayers and Islamic values. What about your religious practices?',
-    sender_id: 'user-2',
-    created_at: new Date(Date.now() - 1000 * 60 * 30).toISOString(),
-    message_type: 'text',
-    moderation_status: 'approved',
-    sender: {
-      id: 'user-2',
-      first_name: 'Aisha',
-      avatar_url: undefined
-    }
-  },
-  {
-    id: '4',
-    content: 'Alhamdulillah, I try to maintain my five daily prayers and read Quran regularly. Family is very important to me as well. Perhaps we could arrange a meeting with our families present?',
-    sender_id: 'current-user',
-    created_at: new Date(Date.now() - 1000 * 60 * 10).toISOString(),
-    message_type: 'text',
-    moderation_status: 'guardian_review',
-    moderation_notes: 'Consider involving your guardian before making meeting arrangements as per Islamic guidelines.',
-    sender: {
-      id: 'current-user',
-      first_name: 'You',
-      avatar_url: undefined
-    }
-  },
-  {
-    id: '5',
-    content: 'That would be perfect! I would love for our families to meet. Let me speak with my father about arranging something appropriate.',
-    sender_id: 'user-2',
-    created_at: new Date(Date.now() - 1000 * 60 * 5).toISOString(),
-    message_type: 'text',
-    moderation_status: 'approved',
-    sender: {
-      id: 'user-2',
-      first_name: 'Aisha',
-      avatar_url: undefined
-    }
-  }
-]
 
-const MOCK_PARTICIPANT: Participant = {
-  id: 'user-2',
-  first_name: 'Aisha',
-  avatar_url: undefined,
-  is_online: true,
-  is_typing: false
-}
-
-const MOCK_CONVERSATION: Conversation = {
-  id: '1',
-  match_status: 'accepted',
-  guardian_approval_required: true
-}
-
-export function useRealTimeMessages(conversationId: string): UseRealTimeMessagesReturn {
+export function useRealTimeMessages(matchId: string): UseRealTimeMessagesReturn {
   const [messages, setMessages] = useState<Message[]>([])
   const [participant, setParticipant] = useState<Participant | null>(null)
   const [conversation, setConversation] = useState<Conversation | null>(null)
@@ -146,9 +65,10 @@ export function useRealTimeMessages(conversationId: string): UseRealTimeMessages
   
   const subscriptionRef = useRef<any>(null)
   const typingTimeoutRef = useRef<NodeJS.Timeout>()
+  const { userId } = useAuth()
 
   useEffect(() => {
-    if (!conversationId) return
+    if (!matchId || !userId) return
 
     const loadConversationData = async () => {
       try {
@@ -156,50 +76,90 @@ export function useRealTimeMessages(conversationId: string): UseRealTimeMessages
         setError(null)
         setConnectionStatus('connecting')
 
-        // Simulate loading delay
-        await new Promise(resolve => setTimeout(resolve, 800))
-
-        // In production, this would be Supabase queries:
-        /*
-        // Load messages
+        // Load messages for this match
         const { data: messagesData, error: messagesError } = await supabase
           .from('messages')
           .select(`
             id,
-            content,
+            message_text,
             sender_id,
+            receiver_id,
             created_at,
             message_type,
-            moderation_status,
-            moderation_notes,
-            reply_to_id,
-            read_at,
-            sender:users(id, first_name, avatar_url),
-            reply_to:messages(id, content, sender:users(first_name))
+            is_read,
+            read_at
           `)
-          .eq('conversation_id', conversationId)
+          .eq('match_id', matchId)
           .order('created_at', { ascending: true })
 
-        // Load conversation details
-        const { data: conversationData, error: convError } = await supabase
-          .from('conversations')
+        if (messagesError) {
+          throw messagesError
+        }
+
+        // Get match details and participant info
+        const { data: matchData, error: matchError } = await supabase
+          .from('matches')
           .select(`
             id,
-            user1_id,
-            user2_id,
-            match_status,
-            guardian_approval_required,
-            user1:users!user1_id(id, first_name, avatar_url, is_online, last_seen),
-            user2:users!user2_id(id, first_name, avatar_url, is_online, last_seen)
+            user_id,
+            matched_user_id,
+            mutual_match,
+            status,
+            user_profile:profiles!matches_user_id_fkey(
+              user_id,
+              full_name,
+              profile_photos
+            ),
+            matched_profile:profiles!matches_matched_user_id_fkey(
+              user_id,
+              full_name,
+              profile_photos
+            )
           `)
-          .eq('id', conversationId)
+          .eq('id', matchId)
           .single()
-        */
 
-        // Mock data for development
-        setMessages(MOCK_MESSAGES)
-        setParticipant(MOCK_PARTICIPANT)
-        setConversation(MOCK_CONVERSATION)
+        if (matchError) {
+          throw matchError
+        }
+
+        // Determine participant (the other user)
+        const isUserInitiator = matchData.user_id === userId
+        const otherUserId = isUserInitiator ? matchData.matched_user_id : matchData.user_id
+        const otherProfile = isUserInitiator ? matchData.matched_profile : matchData.user_profile
+
+        // Transform messages
+        const transformedMessages: Message[] = (messagesData || []).map(msg => ({
+          id: msg.id,
+          content: msg.message_text,
+          sender_id: msg.sender_id,
+          created_at: msg.created_at,
+          message_type: msg.message_type as 'text' | 'photo' | 'audio',
+          moderation_status: 'approved' as const,
+          read_at: msg.read_at,
+          sender: {
+            id: msg.sender_id,
+            first_name: msg.sender_id === userId ? 'You' : (otherProfile?.full_name?.split(' ')[0] || 'User'),
+            avatar_url: msg.sender_id === userId ? undefined : (otherProfile?.profile_photos?.[0] || undefined)
+          }
+        }))
+
+        setMessages(transformedMessages)
+        
+        setParticipant({
+          id: otherUserId,
+          first_name: otherProfile?.full_name?.split(' ')[0] || 'User',
+          avatar_url: otherProfile?.profile_photos?.[0] || undefined,
+          is_online: false, // TODO: Implement online status
+          is_typing: false
+        })
+
+        setConversation({
+          id: matchId,
+          match_status: matchData.mutual_match ? 'accepted' : 'pending',
+          guardian_approval_required: true // Default for Islamic app
+        })
+
         setConnectionStatus('connected')
 
         // Setup real-time subscription
@@ -215,64 +175,70 @@ export function useRealTimeMessages(conversationId: string): UseRealTimeMessages
     }
 
     const setupRealtimeSubscription = () => {
-      // In production, this would be a Supabase real-time subscription:
-      /*
+      // Real-time subscription for new messages
       subscriptionRef.current = supabase
-        .channel(`conversation-${conversationId}`)
+        .channel(`match-${matchId}`)
         .on('postgres_changes', {
           event: 'INSERT',
           schema: 'public',
           table: 'messages',
-          filter: `conversation_id=eq.${conversationId}`
-        }, (payload) => {
-          const newMessage = payload.new as Message
+          filter: `match_id=eq.${matchId}`
+        }, async (payload) => {
+          const newMessageData = payload.new as any
+          
+          // Get sender profile for display
+          const { data: senderProfile } = await supabase
+            .from('profiles')
+            .select('user_id, full_name, profile_photos')
+            .eq('user_id', newMessageData.sender_id)
+            .single()
+
+          const newMessage: Message = {
+            id: newMessageData.id,
+            content: newMessageData.message_text,
+            sender_id: newMessageData.sender_id,
+            created_at: newMessageData.created_at,
+            message_type: newMessageData.message_type,
+            moderation_status: 'approved',
+            read_at: newMessageData.read_at,
+            sender: {
+              id: newMessageData.sender_id,
+              first_name: newMessageData.sender_id === userId ? 'You' : (senderProfile?.full_name?.split(' ')[0] || 'User'),
+              avatar_url: newMessageData.sender_id === userId ? undefined : (senderProfile?.profile_photos?.[0] || undefined)
+            }
+          }
+          
           setMessages(prev => [...prev, newMessage])
         })
         .on('postgres_changes', {
           event: 'UPDATE',
           schema: 'public',
           table: 'messages',
-          filter: `conversation_id=eq.${conversationId}`
+          filter: `match_id=eq.${matchId}`
         }, (payload) => {
-          const updatedMessage = payload.new as Message
+          const updatedMessageData = payload.new as any
           setMessages(prev => prev.map(msg => 
-            msg.id === updatedMessage.id ? updatedMessage : msg
+            msg.id === updatedMessageData.id ? {
+              ...msg,
+              is_read: updatedMessageData.is_read,
+              read_at: updatedMessageData.read_at
+            } : msg
           ))
         })
-        .on('presence', { event: 'sync' }, () => {
-          // Handle user presence updates
-        })
-        .on('broadcast', { event: 'typing' }, (payload) => {
-          handleTypingIndicator(payload)
-        })
         .subscribe()
-      */
-
-      // Mock real-time simulation
-      const interval = setInterval(() => {
-        // Simulate random typing
-        if (Math.random() < 0.1) {
-          setParticipant(prev => prev ? { ...prev, is_typing: true } : null)
-          setTimeout(() => {
-            setParticipant(prev => prev ? { ...prev, is_typing: false } : null)
-          }, 3000)
-        }
-      }, 10000)
-
-      return () => clearInterval(interval)
     }
 
     loadConversationData()
 
     return () => {
       if (subscriptionRef.current) {
-        // supabase.removeChannel(subscriptionRef.current)
+        supabase.removeChannel(subscriptionRef.current)
       }
       if (typingTimeoutRef.current) {
         clearTimeout(typingTimeoutRef.current)
       }
     }
-  }, [conversationId])
+  }, [matchId, userId])
 
   const handleTypingIndicator = (payload: any) => {
     const { user_id, is_typing } = payload.payload

@@ -1,99 +1,51 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getAuth } from '@clerk/nextjs/server'
+import { createClient } from '@supabase/supabase-js'
 
-// Mock database - in production, this would be Supabase
-const MOCK_PROFILES = [
-  {
-    id: 'user-1',
-    first_name: 'Ahmad',
-    last_name: 'H.',
-    age: 28,
-    location: 'Central Singapore',
-    profession: 'Software Engineer',
-    photos: [],
-    bio: 'Practicing Muslim software engineer seeking a righteous partner for marriage. I enjoy technology, reading Quran, and spending time with family.',
-    compatibility: { score: 90, strengths: ['Same religious level', 'Similar profession', 'Compatible age'] },
-    last_active: new Date().toISOString(),
-    verified: true,
-    premium_member: true,
-    religious_level: 'practicing',
-    education_level: 'masters',
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString()
-  },
-  {
-    id: 'user-2',
-    first_name: 'Aisha',
-    last_name: 'R.',
-    age: 26,
-    location: 'Central Singapore',
-    profession: 'Teacher',
-    photos: [],
-    bio: 'Practicing Muslimah seeking a kind and practicing husband for marriage. Love teaching and helping children learn.',
-    compatibility: { score: 92, strengths: ['Same religious level', 'Similar interests', 'Compatible age'] },
-    last_active: new Date().toISOString(),
-    verified: true,
-    premium_member: true,
-    religious_level: 'practicing',
-    education_level: 'bachelors',
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString()
-  },
-  {
-    id: 'user-3',
-    first_name: 'Fatima',
-    last_name: 'A.',
-    age: 24,
-    location: 'East Singapore',
-    profession: 'Doctor',
-    photos: [],
-    bio: 'Medical doctor who believes in the importance of family and faith. Looking for a partner who shares Islamic values.',
-    compatibility: { score: 88, strengths: ['Education compatibility', 'Religious alignment', 'Family values'] },
-    last_active: new Date(Date.now() - 3600000).toISOString(),
-    verified: true,
-    premium_member: false,
-    religious_level: 'devout',
-    education_level: 'masters',
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString()
-  },
-  {
-    id: 'user-4',
-    first_name: 'Zara',
-    last_name: 'M.',
-    age: 28,
-    location: 'West Singapore',
-    profession: 'Engineer',
-    photos: [],
-    bio: 'Software engineer with a passion for technology and Islamic studies. Seeking a life partner for both Dunya and Akhirah.',
-    compatibility: { score: 85, strengths: ['Career compatibility', 'Age range', 'Shared interests'] },
-    last_active: new Date(Date.now() - 7200000).toISOString(),
-    verified: true,
-    premium_member: true,
-    religious_level: 'practicing',
-    education_level: 'masters',
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString()
-  },
-  {
-    id: 'user-5',
-    first_name: 'Mariam',
-    last_name: 'H.',
-    age: 30,
-    location: 'North Singapore',
-    profession: 'Pharmacist',
-    photos: [],
-    bio: 'Pharmacist who values Islamic principles and family life. Looking for a practicing Muslim for a blessed marriage.',
-    compatibility: { score: 79, strengths: ['Religious compatibility', 'Professional background', 'Age compatibility'] },
-    last_active: new Date(Date.now() - 14400000).toISOString(),
-    verified: true,
-    premium_member: true,
-    religious_level: 'practicing',
-    education_level: 'bachelors',
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString()
+// Initialize Supabase client
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY!
+)
+
+// Helper function to calculate compatibility score
+function calculateCompatibilityScore(user1: any, user2: any): { score: number, strengths: string[] } {
+  let score = 60 // Base score
+  const strengths: string[] = []
+
+  // Age compatibility (±5 years gets bonus)
+  const ageDiff = Math.abs(user1.age - user2.age)
+  if (ageDiff <= 5) {
+    score += 15
+    strengths.push('Compatible age range')
   }
-]
+
+  // Religious practice level
+  if (user1.religious_practice_level === user2.religious_practice_level) {
+    score += 20
+    strengths.push('Same religious practice level')
+  }
+
+  // Education level compatibility
+  if (user1.education_level === user2.education_level) {
+    score += 10
+    strengths.push('Similar education background')
+  }
+
+  // Location proximity
+  if (user1.location === user2.location) {
+    score += 10
+    strengths.push('Same location')
+  }
+
+  // Family situation compatibility
+  if (user1.family_situation === user2.family_situation) {
+    score += 5
+    strengths.push('Compatible family situation')
+  }
+
+  return { score: Math.min(score, 100), strengths }
+}
 
 export async function GET(request: NextRequest) {
   try {
@@ -107,41 +59,116 @@ export async function GET(request: NextRequest) {
     const page = parseInt(searchParams.get('page') || '1')
     const limit = parseInt(searchParams.get('limit') || '10')
     const filter = searchParams.get('filter') || 'all'
+    const profileId = searchParams.get('profileId')
 
-    // Filter out current user's profile from matches
-    let profiles = MOCK_PROFILES.filter(profile => profile.id !== userId)
+    // If requesting a specific profile
+    if (profileId) {
+      const { data: profile, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('user_id', profileId)
+        .single()
+
+      if (error) {
+        console.error('Error fetching profile:', error)
+        return NextResponse.json({ error: 'Profile not found' }, { status: 404 })
+      }
+
+      return NextResponse.json({ profile })
+    }
+
+    // Get current user's profile for compatibility calculation
+    const { data: currentUserProfile } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('user_id', userId)
+      .single()
+
+    if (!currentUserProfile) {
+      return NextResponse.json({
+        profiles: [],
+        total: 0,
+        page,
+        limit,
+        hasMore: false,
+        message: 'Please complete your profile first'
+      })
+    }
+
+    // Get opposite gender profiles
+    const oppositeGender = currentUserProfile.gender === 'male' ? 'female' : 'male'
+    
+    let query = supabase
+      .from('profiles')
+      .select('*')
+      .eq('gender', oppositeGender)
+      .eq('profile_active', true)
+      .neq('user_id', userId)
 
     // Apply filters
     switch (filter) {
       case 'recent':
-        profiles = profiles.filter(p => 
-          Date.now() - new Date(p.last_active).getTime() < 24 * 60 * 60 * 1000
-        )
+        const dayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString()
+        query = query.gte('last_active_at', dayAgo)
         break
       case 'nearby':
-        profiles = profiles.filter(p => p.location.includes('Singapore'))
+        query = query.eq('location', currentUserProfile.location)
         break
       case 'premium':
-        profiles = profiles.filter(p => p.premium_member)
+        query = query.neq('subscription_tier', 'free')
+        break
+      case 'practicing':
+        query = query.in('religious_practice_level', ['practicing', 'devout'])
         break
     }
 
-    // Pagination
-    const startIndex = (page - 1) * limit
-    const endIndex = startIndex + limit
-    const paginatedProfiles = profiles.slice(startIndex, endIndex)
+    // Execute query with pagination
+    const { data: profiles, error, count } = await query
+      .range((page - 1) * limit, page * limit - 1)
+      .order('last_active_at', { ascending: false })
+
+    if (error) {
+      console.error('Error fetching profiles:', error)
+      throw error
+    }
+
+    // Transform profiles and calculate compatibility
+    const transformedProfiles = (profiles || []).map(profile => {
+      const compatibility = calculateCompatibilityScore(currentUserProfile, profile)
+      
+      return {
+        id: profile.user_id,
+        first_name: profile.full_name?.split(' ')[0] || 'User',
+        last_name: profile.full_name?.split(' ')[1]?.[0] + '.' || '',
+        age: profile.age,
+        location: profile.location,
+        profession: profile.profession,
+        photos: profile.profile_photos || [],
+        bio: profile.about_me || 'No bio available',
+        compatibility,
+        last_active: profile.last_active_at,
+        verified: profile.identity_verified,
+        premium_member: profile.subscription_tier !== 'free',
+        religious_level: profile.religious_practice_level,
+        education_level: profile.education_level,
+        family_situation: profile.family_situation,
+        created_at: profile.created_at,
+        updated_at: profile.updated_at
+      }
+    })
 
     return NextResponse.json({
-      profiles: paginatedProfiles,
-      total: profiles.length,
+      profiles: transformedProfiles,
+      total: count || 0,
       page,
       limit,
-      hasMore: endIndex < profiles.length
+      hasMore: (count || 0) > page * limit
     })
+
   } catch (error) {
     console.error('Error fetching profiles:', error)
     return NextResponse.json(
-      { error: 'Internal server error' },
+      { error: 'Failed to fetch profiles', details: error.message },
       { status: 500 }
     )
   }
@@ -156,39 +183,101 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json()
-    const { first_name, last_name, age, location, profession, bio, photos } = body
-
-    // In production, this would create/update profile in Supabase
-    const newProfile = {
-      id: userId,
-      first_name,
-      last_name,
+    const {
+      full_name,
       age,
       location,
       profession,
-      photos: photos || [],
-      bio,
-      compatibility: { score: 0, strengths: [] },
-      last_active: new Date().toISOString(),
-      verified: false,
-      premium_member: false,
-      religious_level: 'practicing',
-      education_level: 'bachelors',
-      created_at: new Date().toISOString(),
+      about_me,
+      profile_photos,
+      gender,
+      religious_practice_level,
+      education_level,
+      family_situation,
+      looking_for,
+      interests
+    } = body
+
+    // Validate required fields
+    if (!full_name || !age || !gender) {
+      return NextResponse.json(
+        { error: 'Missing required fields: full_name, age, gender' },
+        { status: 400 }
+      )
+    }
+
+    // Create or update profile in Supabase
+    const profileData = {
+      user_id: userId,
+      full_name,
+      age: parseInt(age),
+      location: location || 'Singapore',
+      profession: profession || '',
+      about_me: about_me || '',
+      profile_photos: profile_photos || [],
+      gender,
+      religious_practice_level: religious_practice_level || 'practicing',
+      education_level: education_level || 'bachelors',
+      family_situation: family_situation || 'single',
+      looking_for: looking_for || 'marriage',
+      interests: interests || [],
+      profile_active: true,
+      profile_completion: 100,
+      last_active_at: new Date().toISOString(),
       updated_at: new Date().toISOString()
     }
 
-    // Add to mock database
-    MOCK_PROFILES.push(newProfile)
+    const { data: profile, error } = await supabase
+      .from('profiles')
+      .upsert(profileData)
+      .select()
+      .single()
+
+    if (error) {
+      console.error('Error creating/updating profile:', error)
+      throw error
+    }
 
     return NextResponse.json({ 
-      message: 'Profile created successfully',
-      profile: newProfile 
+      message: 'Profile saved successfully',
+      profile
     })
+
   } catch (error) {
-    console.error('Error creating profile:', error)
+    console.error('Error in profile POST:', error)
     return NextResponse.json(
-      { error: 'Internal server error' },
+      { error: 'Failed to save profile', details: error.message },
+      { status: 500 }
+    )
+  }
+}
+
+// GET current user's own profile
+export async function PUT(request: NextRequest) {
+  try {
+    const { userId } = getAuth(request)
+    
+    if (!userId) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
+    const { data: profile, error } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('user_id', userId)
+      .single()
+
+    if (error) {
+      console.error('Error fetching user profile:', error)
+      return NextResponse.json({ error: 'Profile not found' }, { status: 404 })
+    }
+
+    return NextResponse.json({ profile })
+
+  } catch (error) {
+    console.error('Error fetching user profile:', error)
+    return NextResponse.json(
+      { error: 'Failed to fetch profile', details: error.message },
       { status: 500 }
     )
   }

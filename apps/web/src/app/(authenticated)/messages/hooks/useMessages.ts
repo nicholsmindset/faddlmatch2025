@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useAuth } from '@clerk/nextjs'
 
 interface Conversation {
   id: string
@@ -32,95 +33,15 @@ interface UseMessagesReturn {
   refetch: () => Promise<void>
 }
 
-// Mock data for development - replace with actual Supabase integration
-const MOCK_CONVERSATIONS: Conversation[] = [
-  {
-    id: '1',
-    participant: {
-      id: 'user-2',
-      first_name: 'Aisha',
-      avatar_url: undefined,
-      is_online: true,
-      last_seen: undefined
-    },
-    last_message: {
-      content: 'Assalamu alaikum! Thank you for your interest. I would love to get to know you better.',
-      created_at: new Date(Date.now() - 1000 * 60 * 5).toISOString(), // 5 minutes ago
-      sender_id: 'user-2',
-      moderation_status: 'approved'
-    },
-    unread_count: 2,
-    match_status: 'accepted',
-    guardian_approval_required: true,
-    created_at: new Date(Date.now() - 1000 * 60 * 60 * 24).toISOString(), // 1 day ago
-    updated_at: new Date(Date.now() - 1000 * 60 * 5).toISOString()
-  },
-  {
-    id: '2',
-    participant: {
-      id: 'user-3',
-      first_name: 'Fatima',
-      avatar_url: undefined,
-      is_online: false,
-      last_seen: new Date(Date.now() - 1000 * 60 * 30).toISOString() // 30 minutes ago
-    },
-    last_message: {
-      content: 'I appreciate your message. May Allah guide us both in making the right decision.',
-      created_at: new Date(Date.now() - 1000 * 60 * 60 * 2).toISOString(), // 2 hours ago
-      sender_id: 'current-user',
-      moderation_status: 'approved'
-    },
-    unread_count: 0,
-    match_status: 'accepted',
-    guardian_approval_required: false,
-    created_at: new Date(Date.now() - 1000 * 60 * 60 * 48).toISOString(), // 2 days ago
-    updated_at: new Date(Date.now() - 1000 * 60 * 60 * 2).toISOString()
-  },
-  {
-    id: '3',
-    participant: {
-      id: 'user-4',
-      first_name: 'Khadija',
-      avatar_url: undefined,
-      is_online: false,
-      last_seen: new Date(Date.now() - 1000 * 60 * 60 * 24).toISOString() // 1 day ago
-    },
-    last_message: {
-      content: 'This message requires guardian review before being delivered.',
-      created_at: new Date(Date.now() - 1000 * 60 * 60 * 6).toISOString(), // 6 hours ago
-      sender_id: 'user-4',
-      moderation_status: 'guardian_review'
-    },
-    unread_count: 1,
-    match_status: 'accepted',
-    guardian_approval_required: true,
-    created_at: new Date(Date.now() - 1000 * 60 * 60 * 72).toISOString(), // 3 days ago
-    updated_at: new Date(Date.now() - 1000 * 60 * 60 * 6).toISOString()
-  },
-  {
-    id: '4',
-    participant: {
-      id: 'user-5',
-      first_name: 'Maryam',
-      avatar_url: undefined,
-      is_online: false,
-      last_seen: new Date(Date.now() - 1000 * 60 * 60 * 12).toISOString() // 12 hours ago
-    },
-    last_message: undefined,
-    unread_count: 0,
-    match_status: 'pending',
-    guardian_approval_required: false,
-    created_at: new Date(Date.now() - 1000 * 60 * 60 * 12).toISOString(), // 12 hours ago
-    updated_at: new Date(Date.now() - 1000 * 60 * 60 * 12).toISOString()
-  }
-]
-
 export function useMessages(): UseMessagesReturn {
   const [conversations, setConversations] = useState<Conversation[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const { userId } = useAuth()
 
   const fetchConversations = async () => {
+    if (!userId) return
+
     try {
       setIsLoading(true)
       setError(null)
@@ -132,10 +53,36 @@ export function useMessages(): UseMessagesReturn {
       }
 
       const data = await response.json()
-      setConversations(data.conversations || MOCK_CONVERSATIONS)
+      
+      // Transform API response to match our interface
+      const transformedConversations: Conversation[] = (data.conversations || []).map((conv: any) => ({
+        id: conv.id,
+        participant: {
+          id: conv.userId,
+          first_name: conv.userName,
+          avatar_url: conv.userAvatar,
+          is_online: conv.isOnline,
+          last_seen: conv.lastSeen
+        },
+        last_message: conv.lastMessage ? {
+          content: conv.lastMessage.text,
+          created_at: conv.lastMessage.timestamp,
+          sender_id: conv.lastMessage.senderId,
+          moderation_status: 'approved' as const
+        } : undefined,
+        unread_count: conv.unreadCount,
+        match_status: 'accepted' as const, // All conversations are from mutual matches
+        guardian_approval_required: true, // Default for Islamic app
+        created_at: new Date().toISOString(), // Default value
+        updated_at: conv.lastMessage?.timestamp || new Date().toISOString()
+      }))
+
+      setConversations(transformedConversations)
+
     } catch (err) {
-      console.error('Failed to fetch conversations:', err)
-      setError('Failed to load conversations. Please try again.')
+      console.error('Error fetching conversations:', err)
+      setError('Failed to load conversations')
+      setConversations([])
     } finally {
       setIsLoading(false)
     }
@@ -143,7 +90,7 @@ export function useMessages(): UseMessagesReturn {
 
   useEffect(() => {
     fetchConversations()
-  }, [])
+  }, [userId])
 
   const unreadCount = conversations.reduce((total, conv) => total + conv.unread_count, 0)
 
@@ -155,3 +102,4 @@ export function useMessages(): UseMessagesReturn {
     refetch: fetchConversations
   }
 }
+

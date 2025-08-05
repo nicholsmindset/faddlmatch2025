@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { ProfileCard } from '@/components/profile/ProfileCard'
 import { Button } from '@/components/ui/Button'
@@ -17,57 +17,11 @@ import {
   Calendar,
   X,
   Users,
-  Star
+  Star,
+  Loader2
 } from 'lucide-react'
+import { toast } from 'sonner'
 
-// Mock search results
-const mockResults = [
-  {
-    id: '1',
-    name: 'Aisha Rahman',
-    age: 26,
-    location: 'Singapore Central',
-    profession: 'Teacher',
-    photos: [{ url: '/api/placeholder/400/600', visibility: 'public' as const }],
-    bio: 'Practicing Muslimah seeking a kind and practicing husband for marriage. Love teaching and helping children learn.',
-    compatibility: { score: 92, strengths: ['Same religious level', 'Similar interests', 'Compatible age'] },
-    lastActive: new Date(),
-    verified: true,
-    premiumMember: true,
-    religiousLevel: 'practicing',
-    educationLevel: 'bachelors'
-  },
-  {
-    id: '2',
-    name: 'Fatima Al-Zahra',
-    age: 24,
-    location: 'Singapore East',
-    profession: 'Doctor',
-    photos: [{ url: '/api/placeholder/400/600', visibility: 'public' as const }],
-    bio: 'Medical doctor who believes in the importance of family and faith. Looking for a partner who shares Islamic values.',
-    compatibility: { score: 88, strengths: ['Education compatibility', 'Religious alignment', 'Family values'] },
-    lastActive: new Date(Date.now() - 3600000),
-    verified: true,
-    premiumMember: false,
-    religiousLevel: 'devout',
-    educationLevel: 'masters'
-  },
-  {
-    id: '3',
-    name: 'Zara Malik',
-    age: 28,
-    location: 'Singapore West',
-    profession: 'Engineer',
-    photos: [{ url: '/api/placeholder/400/600', visibility: 'public' as const }],
-    bio: 'Software engineer with a passion for technology and Islamic studies. Seeking a life partner for both Dunya and Akhirah.',
-    compatibility: { score: 85, strengths: ['Career compatibility', 'Age range', 'Shared interests'] },
-    lastActive: new Date(Date.now() - 7200000),
-    verified: true,
-    premiumMember: true,
-    religiousLevel: 'practicing',
-    educationLevel: 'masters'
-  }
-]
 
 const educationOptions = [
   { value: 'high_school', label: 'High School' },
@@ -86,7 +40,7 @@ export function SearchInterface() {
   const [searchQuery, setSearchQuery] = useState('')
   const [showFilters, setShowFilters] = useState(false)
   const [isSearching, setIsSearching] = useState(false)
-  const [results, setResults] = useState(mockResults)
+  const [results, setResults] = useState<any[]>([])
   
   // Filter state
   const [filters, setFilters] = useState({
@@ -101,35 +55,74 @@ export function SearchInterface() {
   const handleSearch = async () => {
     setIsSearching(true)
     
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000))
     
-    // Filter results based on search criteria
-    let filteredResults = mockResults.filter(profile => {
-      const matchesQuery = !searchQuery || 
-        profile.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        profile.profession.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        profile.location.toLowerCase().includes(searchQuery.toLowerCase())
+    try {
+      // Build query parameters
+      const params = new URLSearchParams()
       
-      const matchesAge = profile.age >= filters.ageRange[0] && profile.age <= filters.ageRange[1]
+      if (searchQuery.trim()) {
+        params.append('search', searchQuery.trim())
+      }
       
-      const matchesLocation = !filters.location || 
-        profile.location.toLowerCase().includes(filters.location.toLowerCase())
+      if (filters.location) {
+        params.append('location', filters.location)
+      }
       
-      const matchesEducation = filters.education.length === 0 || 
-        filters.education.includes(profile.educationLevel)
+      if (filters.education.length > 0) {
+        params.append('education', filters.education.join(','))
+      }
       
-      const matchesReligious = filters.religiousLevel.length === 0 || 
-        filters.religiousLevel.includes(profile.religiousLevel)
+      if (filters.religiousLevel.length > 0) {
+        params.append('religious_level', filters.religiousLevel.join(','))
+      }
       
-      const matchesProfession = !filters.profession || 
-        profile.profession.toLowerCase().includes(filters.profession.toLowerCase())
+      if (filters.profession) {
+        params.append('profession', filters.profession)
+      }
       
-      return matchesQuery && matchesAge && matchesLocation && matchesEducation && matchesReligious && matchesProfession
-    })
-    
-    setResults(filteredResults)
-    setIsSearching(false)
+      // Add age range
+      params.append('min_age', filters.ageRange[0].toString())
+      params.append('max_age', filters.ageRange[1].toString())
+      
+      // Call the profiles API with search filters
+      const response = await fetch(`/api/profiles?${params.toString()}`)
+      
+      if (!response.ok) {
+        throw new Error('Search failed')
+      }
+      
+      const data = await response.json()
+      
+      // Transform API response to match expected format
+      const searchResults = (data.profiles || []).map((profile: any) => ({
+        id: profile.id,
+        name: `${profile.first_name} ${profile.last_name}`,
+        age: profile.age,
+        location: profile.location,
+        profession: profile.profession,
+        photos: profile.photos || [],
+        bio: profile.bio,
+        compatibility: profile.compatibility || { score: 0, strengths: [] },
+        lastActive: new Date(profile.last_active),
+        verified: profile.verified,
+        premiumMember: profile.premium_member,
+        religiousLevel: profile.religious_level,
+        educationLevel: profile.education_level
+      }))
+      
+      setResults(searchResults)
+      
+      if (searchResults.length === 0) {
+        toast.info('No profiles found matching your criteria. Try adjusting your filters.')
+      }
+      
+    } catch (error) {
+      console.error('Search error:', error)
+      toast.error('Search failed. Please try again.')
+      setResults([])
+    } finally {
+      setIsSearching(false)
+    }
   }
 
   const addEducationFilter = (education: string) => {

@@ -8,6 +8,45 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 )
 
+// Helper function to calculate compatibility score
+function calculateCompatibilityScore(user1: any, user2: any): { score: number, strengths: string[] } {
+  let score = 60 // Base score
+  const strengths: string[] = []
+
+  // Age compatibility (±5 years gets bonus)
+  const ageDiff = Math.abs(user1.age - user2.age)
+  if (ageDiff <= 5) {
+    score += 15
+    strengths.push('Compatible age range')
+  }
+
+  // Religious practice level
+  if (user1.religious_practice_level === user2.religious_practice_level) {
+    score += 20
+    strengths.push('Same religious practice level')
+  }
+
+  // Education level compatibility
+  if (user1.education_level === user2.education_level) {
+    score += 10
+    strengths.push('Similar education background')
+  }
+
+  // Location proximity
+  if (user1.location === user2.location) {
+    score += 10
+    strengths.push('Same location')
+  }
+
+  // Family situation compatibility
+  if (user1.family_situation === user2.family_situation) {
+    score += 5
+    strengths.push('Compatible family situation')
+  }
+
+  return { score: Math.min(score, 100), strengths }
+}
+
 export async function GET(request: NextRequest) {
   try {
     const { userId } = getAuth(request)
@@ -98,10 +137,7 @@ export async function GET(request: NextRequest) {
       profession: profile.profession,
       photos: profile.profile_photos || [],
       bio: profile.about_me || 'No bio available',
-      compatibility: {
-        score: Math.floor(Math.random() * 20) + 80, // TODO: Implement real compatibility
-        strengths: ['Similar values', 'Compatible age']
-      },
+      compatibility: calculateCompatibilityScore(currentUserProfile, profile),
       last_active: profile.last_active_at,
       verified: profile.identity_verified,
       premium_member: profile.subscription_tier !== 'free',
