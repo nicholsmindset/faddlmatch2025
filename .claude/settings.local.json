@@ -47,7 +47,8 @@
       "Bash(npm run lint:*)",
       "Bash(npm run netlify:install:*)",
       "Bash(./build-netlify.sh)",
-      "Bash(npm run netlify:build:web:*)"
+      "Bash(npm run netlify:build:web:*)",
+      "Bash(./netlify-ultimate-build.sh)"
     ],
     "deny": []
   }
