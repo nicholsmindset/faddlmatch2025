@@ -65,6 +65,7 @@ cat > package.json << 'EOF'
     "stripe": "^14.21.0",
     "svix": "^1.15.0",
     "tailwind-merge": "^2.2.1",
+    "tailwindcss-animate": "^1.0.7",
     "zod": "^3.22.4"
   },
   "devDependencies": {
@@ -283,6 +284,27 @@ export const useUser = () => {
 export const useUserContext = useUser;
 EOF
 
+# Create Supabase server client
+echo "📝 Creating Supabase server client"
+mkdir -p src/lib/supabase
+cat > src/lib/supabase/server.ts << 'EOF'
+import { createClient as createSupabaseClient } from '@supabase/supabase-js'
+
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
+const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+
+export function createClient() {
+  return createSupabaseClient(supabaseUrl, supabaseAnonKey)
+}
+
+export function createAdminClient() {
+  return createSupabaseClient(supabaseUrl, supabaseServiceKey)
+}
+
+export { createClient as createSupabaseClient, createAdminClient as createSupabaseAdminClient }
+EOF
+
 # Create enhanced utils file
 echo "📝 Creating enhanced utils file"
 cat > src/lib/utils.ts << 'EOF'
@@ -328,24 +350,100 @@ export function debounce<T extends (...args: any[]) => any>(
 }
 EOF
 
-# Create tailwind.config.js if it doesn't exist
-echo "📝 Ensuring tailwind.config.js exists"
-if [ ! -f "tailwind.config.js" ]; then
+# Create tailwind.config.js with complete config
+echo "📝 Creating production tailwind.config.js"
 cat > tailwind.config.js << 'EOF'
 /** @type {import('tailwindcss').Config} */
 module.exports = {
+  darkMode: ["class"],
   content: [
-    './src/pages/**/*.{js,ts,jsx,tsx,mdx}',
-    './src/components/**/*.{js,ts,jsx,tsx,mdx}',
-    './src/app/**/*.{js,ts,jsx,tsx,mdx}',
+    './pages/**/*.{ts,tsx}',
+    './components/**/*.{ts,tsx}',
+    './app/**/*.{ts,tsx}',
+    './src/**/*.{ts,tsx}',
   ],
   theme: {
-    extend: {},
+    container: {
+      center: true,
+      padding: "2rem",
+      screens: {
+        "2xl": "1400px",
+      },
+    },
+    extend: {
+      colors: {
+        border: "hsl(var(--border))",
+        input: "hsl(var(--input))",
+        ring: "hsl(var(--ring))",
+        background: "hsl(var(--background))",
+        foreground: "hsl(var(--foreground))",
+        primary: {
+          DEFAULT: "hsl(var(--primary))",
+          foreground: "hsl(var(--primary-foreground))",
+          50: '#f1f8e9',
+          100: '#dcedc8',
+          200: '#c5e1a5', 
+          300: '#aed581',
+          400: '#9ccc65',
+          500: '#8bc34a',
+          600: '#7cb342',
+          700: '#689f38',
+          800: '#558b2f',
+          900: '#33691e',
+        },
+        secondary: {
+          DEFAULT: "hsl(var(--secondary))",
+          foreground: "hsl(var(--secondary-foreground))",
+        },
+        // Islamic color palette
+        islamic: {
+          green: '#2E7D32',
+          gold: '#FFB300',
+          navy: '#1565C0',
+          cream: '#FFF8E1',
+        },
+        // Neutral palette
+        neutral: {
+          50: '#F5F5F5',
+          100: '#EEEEEE',
+          200: '#E0E0E0',
+          300: '#BDBDBD',
+          400: '#9E9E9E',
+          500: '#757575',
+          600: '#666666',
+          700: '#424242',
+          800: '#303030',
+          900: '#1A1A1A',
+        }
+      },
+      borderRadius: {
+        lg: "var(--radius)",
+        md: "calc(var(--radius) - 2px)",
+        sm: "calc(var(--radius) - 4px)",
+      },
+      keyframes: {
+        "accordion-down": {
+          from: { height: 0 },
+          to: { height: "var(--radix-accordion-content-height)" },
+        },
+        "accordion-up": {
+          from: { height: "var(--radix-accordion-content-height)" },
+          to: { height: 0 },
+        },
+      },
+      animation: {
+        "accordion-down": "accordion-down 0.2s ease-out",
+        "accordion-up": "accordion-up 0.2s ease-out",
+      },
+      fontFamily: {
+        sans: ['Inter', 'system-ui', 'sans-serif'],
+        arabic: ['Noto Naskh Arabic', 'serif'],
+      },
+    },
   },
-  plugins: [],
+  plugins: [require("tailwindcss-animate")],
 }
 EOF
-fi
 
 # Create postcss.config.js if it doesn't exist
 echo "📝 Ensuring postcss.config.js exists"
