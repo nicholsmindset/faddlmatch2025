@@ -21,28 +21,23 @@
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
     "clean": "turbo run clean",
     "install:deps": "npm install && npm run build:packages",
-    
     "netlify:build:complete": "npm run netlify:validate && npm run netlify:install:robust && npm run netlify:build:packages && npm run netlify:build:web && npm run netlify:verify",
     "netlify:validate": "echo \"🔍 Validating monorepo structure\" && npm run netlify:check:structure",
     "netlify:check:structure": "test -d packages/types && test -d packages/api-client && test -d packages/ai-integration && test -d apps/web && echo \"✅ All workspace packages present\"",
-    
     "netlify:install:robust": "npm run netlify:clean && npm run netlify:install:root && npm run netlify:install:packages",
     "netlify:clean": "echo \"🧹 Deep cleaning for fresh build\" && rm -rf node_modules package-lock.json apps/web/node_modules apps/web/package-lock.json packages/*/node_modules packages/*/package-lock.json packages/*/dist",
     "netlify:install:root": "echo \"📦 Installing root workspace dependencies\" && npm install --legacy-peer-deps --include-workspace-root",
     "netlify:install:packages": "echo \"📦 Installing workspace package dependencies\" && npm run netlify:install:package:api-client && npm run netlify:install:package:ai-integration",
     "netlify:install:package:api-client": "cd packages/api-client && if [ -f package.json ] && grep -q '\"dependencies\"' package.json; then echo \"Installing api-client deps\" && npm install --legacy-peer-deps; fi",
     "netlify:install:package:ai-integration": "cd packages/ai-integration && if [ -f package.json ] && grep -q '\"dependencies\"' package.json; then echo \"Installing ai-integration deps\" && npm install --legacy-peer-deps; fi",
-    
     "netlify:build:packages": "echo \"🔨 Building workspace packages in dependency order\" && npm run netlify:build:types && npm run netlify:build:api-client && npm run netlify:build:ai-integration",
     "netlify:build:types": "echo \"Building @faddl/types\" && cd packages/types && npm run type-check",
     "netlify:build:api-client": "echo \"Building @faddlmatch/api-client\" && cd packages/api-client && npm run build",
     "netlify:build:ai-integration": "echo \"Building @faddl-match/ai-integration\" && cd packages/ai-integration && npm run build",
-    
     "netlify:build:web": "echo \"🌐 Building web application\" && cd apps/web && npm run netlify:install:web && npm run build",
     "netlify:verify": "npm run netlify:verify:packages && npm run netlify:verify:web",
     "netlify:verify:packages": "echo \"🔍 Verifying package builds\" && test -f packages/api-client/dist/index.js && echo \"✅ api-client built\" && test -f packages/ai-integration/dist/index.js && echo \"✅ ai-integration built\"",
     "netlify:verify:web": "echo \"🔍 Verifying web build\" && test -d apps/web/.next && echo \"✅ Web app built successfully\"",
-    
     "netlify:build": "npm run netlify:install && npm run netlify:build:web",
     "netlify:install": "rm -rf node_modules package-lock.json apps/web/node_modules apps/web/package-lock.json && npm install --legacy-peer-deps",
     "netlify:build:web:legacy": "npm run build:packages && cd apps/web && npm run build",
@@ -51,19 +46,21 @@
     "db:seed": "supabase db seed --project-ref dvydbgjoagrzgpqdhqoq"
   },
   "dependencies": {
+    "@faddl-match/ai-integration": "file:./packages/ai-integration",
     "@faddl/types": "file:./packages/types",
     "@faddlmatch/api-client": "file:./packages/api-client",
-    "@faddl-match/ai-integration": "file:./packages/ai-integration"
+    "@supabase/supabase-js": "^2.53.0",
+    "dotenv": "^17.2.1"
   },
   "devDependencies": {
     "@turbo/gen": "^1.12.4",
-    "turbo": "^1.12.4",
-    "prettier": "^3.0.0",
-    "typescript": "^5.3.0",
     "@types/node": "^20.0.0",
     "autoprefixer": "^10.4.16",
     "postcss": "^8.4.32",
-    "tailwindcss": "^3.4.0"
+    "prettier": "^3.0.0",
+    "tailwindcss": "^3.4.0",
+    "turbo": "^1.12.4",
+    "typescript": "^5.3.0"
   },
   "engines": {
     "node": ">=18.0.0",
